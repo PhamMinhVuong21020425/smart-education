@@ -12,15 +12,11 @@
 
 - Đăng ký tài khoản: Có thể đăng ký tài khoản với vai trò là một Học viên hoặc một Giảng viên. Tài khoản đăng ký cần phải được kích hoạt thông qua việc hệ thống sẽ gửi email xác thực người dùng. Khi đăng ký là một Giảng viên thì cần phải được Admin phê duyệt và chấp nhận.
 
-- Xem thông tin chi tiết của một khóa học bao gồm tên khóa học, mô tả, cấp độ, giảng viên, số học viên đã đăng ký...
-
-- Xem thông tin chi tiết của giảng viên bao gồm tên, email, số điện thoại liên hệ, giới thiệu, chuyên ngành và các khóa học của giảng viên đó phụ trách.
+- Xem thông tin chi tiết của giảng viên, khóa học.
 
 - Tìm kiếm thông tin giảng viên hoặc khóa học theo từ khóa.
 
 - Các thông tin cần được sắp xếp dựa trên tiêu chí nhất định như khóa học có nhiều học viên đăng ký hoặc giảng viên có nhiều học viên theo học nhất.
-
-- Chuyển đổi ngôn ngữ giữa tiếng Anh và tiếng Việt.
 
 ### Chức năng cho Học viên (Student):
 
@@ -54,7 +50,7 @@
 
 - Quản lý khóa học: Thêm, sửa, xóa khóa học. Chỉ được xóa khi khóa học không có học viên nào đăng ký.
 
-- Quản lý tiết học/bài giảng trong khóa học.
+- Quản lý tiết học/bài giảng trong khóa học: Có thể upload pdf, video...
 
 - Quản lý bài kiểm tra của khóa học.
 
@@ -66,9 +62,13 @@
 
 - Thêm nhận xét, đánh giá cho từng sinh viên trong khóa học.
 
+- Tạo phòng học online.
+
+- Tạo diễn đàn trao đổi, thảo luận.
+
 ### Chức năng cho Người quản lý hệ thống (Admin):
 
-- Đăng nhập, đăng xuất tài khoản, xác thực, đổi mật khẩu
+- Đăng nhập, đăng xuất tài khoản, xác thực, đổi mật khẩu.
 
 - Xem số liệu thống kê về hệ thống: số khóa học, số giảng viên, số học viên…
 
@@ -81,3 +81,5 @@
 - Tự động gửi thông báo về các hoạt động liên quan đến lớp học.
 
 - Lưu trữ hoạt động của người dùng.
+
+- Chuyển đổi ngôn ngữ giữa tiếng Anh và tiếng Việt.
