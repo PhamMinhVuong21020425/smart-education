@@ -10,7 +10,12 @@
     "watch": "tsc -w",
     "lint": "eslint src/**/*.{ts,tsx,json}",
     "lint:fix": "eslint --fix src/**/*.{ts,tsx,json}",
-    "format": "prettier --write src/**/*.{ts,tsx,json}"
+    "format": "prettier --write src/**/*.{ts,tsx,json}",
+    "typeorm": "npx typeorm-ts-node-commonjs",
+    "migrate:generate": "npm run typeorm -- migration:generate -d ./src/config/data-source.ts",
+    "migrate:run": "npm run typeorm -- migration:run -d ./src/config/data-source.ts",
+    "migrate:revert": "npm run typeorm -- migration:revert -d ./src/config/data-source.ts",
+    "migrate:show": "npm run typeorm -- migration:show -d ./src/config/data-source.ts"
   },
   "dependencies": {
     "cookie-parser": "~1.4.6",
