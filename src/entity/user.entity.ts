@@ -30,6 +30,12 @@ export class User {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  phone: string;
+
+  @Column({ nullable: true })
+  about: string;
+
   @Column({ type: 'date', nullable: true })
   birthday: Date;
 
