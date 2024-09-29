@@ -3,6 +3,9 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+import i18next from 'i18next';
+import Backend from 'i18next-fs-backend';
+import middleware from 'i18next-http-middleware';
 
 import indexRouter from './routes/index';
 
@@ -10,9 +13,6 @@ import 'reflect-metadata';
 import { AppDataSource } from './config/data-source';
 
 import * as dotenv from 'dotenv';
-import i18next from 'i18next';
-import Backend from 'i18next-fs-backend';
-import middleware from 'i18next-http-middleware';
 
 dotenv.config();
 

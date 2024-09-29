@@ -1,16 +1,22 @@
-import express, { Request, Response, NextFunction } from 'express';
-import lessonRouter from './lesson.route';
-import examRoute from './exam.route';
-import userRoute from './user.route';
-const router = express.Router();
+import { Router } from 'express';
+import homeRouter from './home.routes';
+import authRouter from './auth.routes';
+import userRouter from './user.routes';
+import courseRouter from './course.routes';
+import lessonRouter from './lesson.routes';
+import examRouter from './exam.routes';
+import questionRouter from './question.routes';
 
-/* GET home page. */
-router.get('/', function (req: Request, res: Response, next: NextFunction) {
-  res.render('index', { title: 'Express' });
-});
+const router: Router = Router();
 
-router.use('/courses/:id/lessons', lessonRouter);
-router.use('/courses/:id/exam', examRoute);
-router.use('/users', userRoute);
+router.use('/auth', authRouter);
+router.use('/users', userRouter);
+router.use('/courses/:courseId/lessons', lessonRouter);
+router.use('/courses/:courseId/exam', examRouter);
+router.use('/courses', courseRouter);
+router.use('/lessons', lessonRouter);
+router.use('/exams', examRouter);
+router.use('/questions', questionRouter);
+router.use('/', homeRouter);
 
 export default router;
