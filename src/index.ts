@@ -34,8 +34,8 @@ i18next
     supportedLngs: ['en', 'vi'],
     preload: ['en', 'vi'],
     saveMissing: true,
-    ns: ['lesson', 'user', 'common', 'exam'],
-    defaultNS: ['lesson', 'user', 'common', 'exam'],
+    ns: ['lesson', 'user', 'common', 'exam', 'course'],
+    defaultNS: ['lesson', 'user', 'common', 'exam', 'course'],
     backend: {
       loadPath: path.join(__dirname, './locales/{{lng}}/{{ns}}.json'),
       addPath: path.join(__dirname, 'locales/{{lng}}/{{ns}}.missing.json'),
