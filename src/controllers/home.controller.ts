@@ -14,6 +14,7 @@ export const index = asyncHandler(
       instructors,
       students,
       currentPath: req.baseUrl + req.path,
+      user: res.locals.user || null,
     });
   }
 );
