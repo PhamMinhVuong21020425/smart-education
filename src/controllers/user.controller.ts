@@ -34,11 +34,16 @@ export const getStudentList = asyncHandler(
 
 export const getUserById = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const user = users.find(user => user.id === req.params.id);
+    const user = await userService.getUserById(req.params.id);
+    if (!user) {
+      return next(Error(req.t('error.userNotFound')));
+    }
+
     res.render('users/detail', {
-      title: 'User Detail',
+      title: req.t('title.user_detail'),
       courseRecommends,
       user,
+      UserRole,
     });
   }
 );

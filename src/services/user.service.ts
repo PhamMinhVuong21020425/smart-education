@@ -17,3 +17,7 @@ export const getStudentList = async () => {
     where: { role: UserRole.STUDENT },
   });
 };
+
+export const getUserById = async (id: string) => {
+  return userRepository.findOne({ where: { id } });
+};
