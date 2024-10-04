@@ -1,14 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
 import asyncHandler from 'express-async-handler';
-import { courseRecommends, courseLearns, user } from '../mock/data';
+import * as userService from '../services/user.service';
+import { courseRecommends, courseLearns } from '../mock/data';
 
 export const index = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    const instructors = await userService.getInstructorList();
+    const students = await userService.getStudentList();
     res.render('index', {
       title: 'Smart Education',
       courseRecommends,
       courseLearns,
-      user,
+      instructors,
+      students,
+      currentPath: req.baseUrl + req.path,
     });
   }
 );
