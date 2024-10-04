@@ -1,0 +1,16 @@
+{
+  "error": {
+    "userNotFound": "User not found",
+    "internalServerError": "Internal server error",
+    "badRequest": "Bad request",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "conflict": "Conflict",
+    "unprocessableEntity": "Unprocessable entity",
+    "tooManyRequests": "Too many requests",
+    "serviceUnavailable": "Service unavailable",
+    "gatewayTimeout": "Gateway timeout",
+    "notImplemented": "Not implemented",
+    "unknown": "Unknown error"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "error": {
+    "userNotFound": "Không tìm thấy người dùng",
+    "internalServerError": "Lỗi máy chủ",
+    "badRequest": "Yêu cầu không hợp lệ",
+    "unauthorized": "Không được ủy quyền",
+    "forbidden": "Bị cấm",
+    "conflict": "Xung đột",
+    "unprocessableEntity": "Không thể xử lý yêu cầu",
+    "tooManyRequests": "Quá nhiều yêu cầu",
+    "serviceUnavailable": "Dịch vụ không khả dụng",
+    "gatewayTimeout": "Quá thời gian chờ",
+    "notImplemented": "Chức năng chưa được triển khai",
+    "unknown": "Lỗi không xác định"
+  }
+}

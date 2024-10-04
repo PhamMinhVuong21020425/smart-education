@@ -7,11 +7,17 @@ block content
 
         div(class="flex flex-col items-center justify-center")
           .flex.items-center.space-x-4
-            if user.avatar_url
-              img(class="w-24 h-24 rounded-full" src=user.avatar_url alt="Avatar")
-            else
-              div(class="w-24 h-24 flex items-center justify-center bg-orange-400 rounded-full")
-                span.text-xl.text-white User
+            .w-24.h-24.rounded-full.mr-4.overflow-hidden.flex-shrink-0
+              if user.avatar_url
+                img.w-full.h-full.object-cover(
+                  src= user.avatar_url
+                  alt= user.username
+                )
+              else
+                img.w-full.h-full.object-cover(
+                  src= (user.role === UserRole.INSTRUCTOR) ? '/images/default_avatar.png' : '/images/student.png'
+                  alt= user.username
+                )
 
           .mt-4
           h2.text-2xl.font-bold.mb-2.text-center #{user.name}
@@ -30,14 +36,11 @@ block content
                 strong #{t('user.detail.role')}:
                 |  #{user.role}
               li.mt-2
-                strong #{t('user.detail.email')}:
-                |  #{user.email}
-              li.mt-2
                 strong #{t('user.detail.birthday')}:
-                |  #{user.birthday.toLocaleDateString("en-GB")}
+                |  #{user.birthday ? user.birthday.toLocaleDateString("en-GB") : 'N/A'}
               li.mt-2
                 strong #{t('user.detail.phone')}:
-                |  #{user.phone}
+                |  #{user.phone ? user.phone : 'N/A'}
 
     .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
