@@ -3,6 +3,10 @@ import * as userController from '../controllers/user.controller';
 
 const router: Router = Router();
 
+router.get('/instructors', userController.getInstructorList);
+
+router.get('/students', userController.getStudentList);
+
 router.get('/create', userController.userCreateGet);
 
 router.post('/create', userController.userCreatePost);

@@ -1,0 +1,11 @@
+{
+  "title": {
+    "home": "Home",
+    "instructors": "Instructors",
+    "list_instructor": "List Instructor",
+    "students": "Students",
+    "list_student": "List Student",
+    "courses": "Courses",
+    "list_course": "List Course"
+  }
+}
