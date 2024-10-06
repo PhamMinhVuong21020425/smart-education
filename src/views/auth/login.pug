@@ -15,7 +15,7 @@ html
       .login-container
         img.logo(src='/favicon.ico', alt='Logo')
         h2= t('welcome_message')
-        
+
         //- Hiển thị thông báo lỗi
         if error_message
           p.error-message= error_message
@@ -58,9 +58,4 @@ html
               img.flag(src='/images/vietnam-flag.png', alt='Vietnamese Flag')
               | #{ t('vietnamese') }
 
-    script.
-      document.getElementById('show-password').addEventListener('change', function () {
-        var passwordField = document.getElementById('password');
-        var type = this.checked ? 'text' : 'password';
-        passwordField.setAttribute('type', type);
-      });
+    script(src='/javascripts/login.js')
