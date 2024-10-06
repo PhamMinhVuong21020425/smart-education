@@ -1,16 +1,3 @@
-import 'express-session';
-import { UserRole } from './enums/UserRole';
-
-declare module 'express-session' {
-  interface SessionData {
-    userId?: string;
-    username?: string;
-    name?: string;
-    role?: UserRole;
-    avatar_url?: string;
-  }
-}
-
 import createError, { HttpError } from 'http-errors';
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
@@ -20,8 +7,13 @@ import i18next from 'i18next';
 import Backend from 'i18next-fs-backend';
 import middleware from 'i18next-http-middleware';
 import session from 'express-session';
-import { sessionMiddleware } from './middleware/auth.middleware';
 import flash from 'express-flash';
+import MySQLSession, { Options } from 'express-mysql-session';
+import * as expressSession from 'express-session';
+import { sessionMiddleware } from './middleware/auth.middleware';
+import { User } from './entity/user.entity';
+import { UserRole } from './enums/UserRole';
+import { THREE_HOURS } from './constants';
 
 import indexRouter from './routes/index';
 
@@ -31,6 +23,12 @@ import { AppDataSource } from './config/data-source';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
+
+declare module 'express-session' {
+  interface SessionData {
+    user?: User;
+  }
+}
 
 // establish database connection
 AppDataSource.initialize()
@@ -98,16 +96,37 @@ app.use(
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.locals.t = req.t;
   res.locals.language = req.language;
+  res.locals.UserRole = UserRole;
   next();
 });
+
+const MySQLStore = MySQLSession(expressSession);
+
+const options: Options = {
+  connectionLimit: parseInt(process.env.CONNECTION_LIMIT || '10'),
+  password: process.env.DB_PASSWORD,
+  user: process.env.DB_USER,
+  database: process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT || '3306'),
+  createDatabaseTable: true,
+};
+
+const sessionStore = new MySQLStore(options);
 
 // Cấu hình session trong Express
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'abcxyz',
     resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false }, // Đặt thành true nếu sử dụng HTTPS
+    saveUninitialized: true,
+    store: sessionStore,
+    cookie: {
+      secure: false, // Đặt thành true nếu sử dụng HTTPS
+      maxAge: THREE_HOURS, // 3h
+      httpOnly: true,
+      sameSite: true,
+    },
   })
 );
 

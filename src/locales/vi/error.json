@@ -1,6 +1,7 @@
 {
   "error": {
     "userNotFound": "Không tìm thấy người dùng",
+    "courseNotFound": "Không tìm thấy khóa học",
     "internalServerError": "Lỗi máy chủ",
     "badRequest": "Yêu cầu không hợp lệ",
     "unauthorized": "Không được ủy quyền",
@@ -13,7 +14,6 @@
     "notImplemented": "Chức năng chưa được triển khai",
     "unknown": "Lỗi không xác định",
     "invalidId": "ID không hợp lệ.",
-    "courseNotFound": "Không tìm thấy khóa học.",
     "failedToRetrieveCourseDetails": "Không thể lấy thông tin khóa học.",
     "search_failed": "Đã xảy ra lỗi trong quá trình tìm kiếm"
   }
