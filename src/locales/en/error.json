@@ -11,6 +11,10 @@
     "serviceUnavailable": "Service unavailable",
     "gatewayTimeout": "Gateway timeout",
     "notImplemented": "Not implemented",
-    "unknown": "Unknown error"
+    "unknown": "Unknown error",
+    "invalidId": "The provided ID is invalid.",
+    "courseNotFound": "Course not found.",
+    "failedToRetrieveCourseDetails": "Failed to retrieve course details.",
+    "search_failed": "An error occurred during the search"
   }
 }

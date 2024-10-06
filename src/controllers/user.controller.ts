@@ -1,6 +1,7 @@
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as userService from '../services/user.service';
+import * as courseService from '../services/course.service';
 import { users, courseRecommends } from '../mock/data';
 import { UserRole } from '../enums/UserRole';
 
@@ -32,21 +33,21 @@ export const getStudentList = asyncHandler(
   }
 );
 
-export const getUserById = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const user = await userService.getUserById(req.params.id);
-    if (!user) {
-      return next(Error(req.t('error.userNotFound')));
-    }
+export const getInstructorById = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.id;
+    const instructor = await userService.getUserById(userId);
+    const managedCourses = await courseService.getCoursesByInstructorId(userId);
 
-    res.render('users/detail', {
-      title: req.t('title.user_detail'),
-      courseRecommends,
-      user,
-      UserRole,
+    res.render('instructors/detail', {
+      instructor,
+      courses: managedCourses || [],
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
-);
+};
 
 export const userCreateGet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

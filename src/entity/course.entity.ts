@@ -25,6 +25,15 @@ export class Course {
   @Column()
   description: string;
 
+  @Column({ nullable: true })
+  image_url: string;
+
+  @Column({ nullable: true })
+  duration: string;
+
+  @Column({ nullable: true })
+  level: string;
+
   @ManyToOne(() => User, user => user.instructorCourses, { nullable: false })
   @JoinColumn({ name: 'instructor_id' })
   instructor: User;

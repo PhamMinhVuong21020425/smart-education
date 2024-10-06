@@ -6,6 +6,7 @@ import courseRouter from './course.routes';
 import lessonRouter from './lesson.routes';
 import examRouter from './exam.routes';
 import questionRouter from './question.routes';
+import searchRouter from './search.routes';
 
 const router: Router = Router();
 
@@ -17,6 +18,7 @@ router.use('/courses', courseRouter);
 router.use('/lessons', lessonRouter);
 router.use('/exams', examRouter);
 router.use('/questions', questionRouter);
+router.use('/', searchRouter);
 router.use('/', homeRouter);
 
 export default router;

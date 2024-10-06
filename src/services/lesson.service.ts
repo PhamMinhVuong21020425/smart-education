@@ -28,3 +28,13 @@ export const getLessonList = async (userId: string, courseId: string) => {
 
 export const getLessonById = async (id: string) =>
   await lessonRepository.findOne({ where: { id } });
+
+export const getLessonsByCourseId = async (
+  courseId: string
+): Promise<Lesson[]> => {
+  return lessonRepository
+    .createQueryBuilder('lesson')
+    .innerJoin('lesson.courses', 'course')
+    .where('course.id = :courseId', { courseId })
+    .getMany();
+};
