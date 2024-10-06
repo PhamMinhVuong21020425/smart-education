@@ -16,7 +16,8 @@
     "migrate:run": "npm run typeorm -- migration:run -d ./src/config/data-source.ts",
     "migrate:revert": "npm run typeorm -- migration:revert -d ./src/config/data-source.ts",
     "migrate:show": "npm run typeorm -- migration:show -d ./src/config/data-source.ts",
-    "tailwind:css": "postcss src/public/stylesheets/tailwind.css -o src/public/stylesheets/global.css -w"
+    "tailwind:css": "postcss src/public/stylesheets/tailwind.css -o src/public/stylesheets/global.css -w",
+    "seed": "npx ts-node src/seed.ts"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
