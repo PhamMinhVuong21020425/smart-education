@@ -19,7 +19,7 @@ router.get('/:id/update', userController.userUpdateGet);
 
 router.post('/:id/update', userController.userUpdatePost);
 
-router.get('/:id', userController.getUserById);
+router.get('/:id', userController.getInstructorById);
 
 router.get('/', userController.getUserList);
 

@@ -7,5 +7,20 @@
       "instructor": "Instructor",
       "subInstructor": "Sub Instructor"
     }
+  },
+  "courseLevels": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "expert": "Expert"
+  },
+  "buttons": {
+    "enrollNow": "Enroll Now"
+  },
+  "courseDetails": {
+    "instructor": "Instructor",
+    "students": "students",
+    "duration": "Duration",
+    "lessons": "Lessons List"
   }
 }

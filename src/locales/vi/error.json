@@ -11,6 +11,10 @@
     "serviceUnavailable": "Dịch vụ không khả dụng",
     "gatewayTimeout": "Quá thời gian chờ",
     "notImplemented": "Chức năng chưa được triển khai",
-    "unknown": "Lỗi không xác định"
+    "unknown": "Lỗi không xác định",
+    "invalidId": "ID không hợp lệ.",
+    "courseNotFound": "Không tìm thấy khóa học.",
+    "failedToRetrieveCourseDetails": "Không thể lấy thông tin khóa học.",
+    "search_failed": "Đã xảy ra lỗi trong quá trình tìm kiếm"
   }
 }

@@ -13,9 +13,10 @@ nav.bg-white.border-gray-200.mb-4(class='dark:bg-gray-900')
       span.self-center.text-2xl.font-semibold.whitespace-nowrap(class='dark:text-white') SmartEdu
 
     .flex.items-center.space-x-4
-      form.relative
+      form.relative(action="/search", method="get")
         input(
           type='text'
+          name="keyword"
           placeholder='Search...'
           class='w-full p-2 pr-10 text-sm text-gray-900 border border-gray-300 rounded-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
         )
@@ -50,15 +51,15 @@ nav.bg-white.border-gray-200.mb-4(class='dark:bg-gray-900')
         )
           li
             a.flex.items-center.px-4.py-2.text-gray-900.rounded-lg.space-x-2(
-              href='?lng=en'
-              onclick='selectLanguage("en", "/icons/gb.png", "English")'
+              href='#'
+              onclick=`selectLanguage("en", "/icons/gb.png", "English"); return false;`
             )
               img.w-5.h-5(src='/icons/gb.png' alt='English')
               span English
           li
             a.flex.items-center.px-4.py-2.text-gray-900.rounded-lg.space-x-2(
-              href='?lng=vi'
-              onclick='selectLanguage("vi", "/icons/vn.svg", "Vietnamese")'
+              href='#'
+              onclick=`selectLanguage("vi", "/icons/vn.svg", "Vietnamese"); return false;`
             )
               img.w-5.h-5(src='/icons/vn.svg' alt='Vietnamese')
               span Vietnamese
@@ -121,6 +122,15 @@ script.
     flagImg.src = flagSrc;
     flagImg.alt = langText;
     langSpan.textContent = langText;
+
+    // Lấy URL hiện tại và tham số tìm kiếm
+    const url = new URL(window.location.href);
+    const keyword = url.searchParams.get('keyword'); 
+    url.searchParams.set('lng', lang);
+    if (keyword) {
+      url.searchParams.set('keyword', keyword);
+    }
+    window.location.href = url.toString();
     toggleDropdown();
   }
 
