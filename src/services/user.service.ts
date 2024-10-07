@@ -21,3 +21,15 @@ export const getStudentList = async () => {
 export const getUserById = async (id: string) => {
   return userRepository.findOne({ where: { id } });
 };
+
+export const updateUser = async (
+  id: string,
+  updateData: Partial<User>
+): Promise<User | null> => {
+  const user = await getUserById(id);
+  if (!user) {
+    return null;
+  }
+  Object.assign(user, updateData);
+  return userRepository.save(user);
+};

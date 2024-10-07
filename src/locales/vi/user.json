@@ -17,5 +17,26 @@
     "action": {
       "add": "Thêm người dùng"
     }
+  },
+  "profile": {
+    "title": "Thông tin cá nhân",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "about": "Giới thiệu",
+    "birthday": "Ngày sinh",
+    "not_available": "N/A",
+    "update_button": "Cập nhật thông tin",
+    "avatar": "Ảnh đại diện",
+    "name": "Tên"
+  },
+  "title": {
+    "update_profile": "Cập nhật trang cá nhân"
+  },
+  "error": {
+    "user_not_authenticated": "Người dùng chưa được xác thực",
+    "user_not_found": "Người dùng không được tìm thấy"
+  },
+  "success": {
+    "profile_updated": "Cập nhật hồ sơ thành công"
   }
 }
