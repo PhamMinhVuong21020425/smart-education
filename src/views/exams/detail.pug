@@ -1,46 +1,27 @@
 extends ../layout
 
 block content
-  a(href='/courses/1') #{ t('common.back') }
-  br
-  br
-  .card
-    .card-header.d-flex.justify-content-between
-      div #{ t('exam.name') }
-      div #{ t('exam.total') }: 12
-    form
-      .card-body
-        h5.card-title #{ t('exam.question') }: Special title treatment
-        p.card-text
-          div
-            .form-check.form-check-inline
-              input#inlineRadio1.form-check-input(
-                type='radio',
-                name='inlineRadioOptions',
-                value='option1'
-              )
-              label.form-check-label(for='inlineRadio1') 1
-            .form-check.form-check-inline
-              input#inlineRadio2.form-check-input(
-                type='radio',
-                name='inlineRadioOptions',
-                value='option2'
-              )
-              label.form-check-label(for='inlineRadio2') 2
-          div
-            .form-check.form-check-inline
-              input#inlineRadio3.form-check-input(
-                type='radio',
-                name='inlineRadioOptions',
-                value='option3'
-              )
-              label.form-check-label(for='inlineRadio3') 3
-            .form-check.form-check-inline
-              input#inlineRadio4.form-check-input(
-                type='radio',
-                name='inlineRadioOptions',
-                value='option4'
-              )
-              label.form-check-label(for='inlineRadio4') 4
-      .card-footer.text-center
-        button.btn.btn-success #{ t('common.submit') }
+  if questions
+    form.bg-white.w-full.rounded-lg.overflow-hidden.mx-auto.mt-4(
+      method='post',
+      class='shadow-[0_4px_12px_-5px_rgba(0,0,0,0.4)] font-[sans-serif]'
+    )
+      .p-6.w-full
+        .pb-2
+          .text-3xl.text-center #{ exam.name }
+          .flex.justify-between
+            .text-sm.text-gray-600 #{ t('exam.total') }: #{ questions.length }
+            //- .text-sm.text-gray-600 #{ t('exam.time') }: 20:00
+        p.mt-2.text-sm.text-gray-500.leading-relaxed
+          each question, index in questions
+            .mb-6
+              p.mt-2 #{ index + 1 }. #{ question.content }
+            each option, index in question.options? question.options : ['There are no option!']
+              .mb-4.flex.gap-2
+                input(type='radio', name=question.id, value=option.id)
+                div #{ option.content }
+        .flex.justify-center
+          button.mt-4.px-5.rounded-lg.text-white.text-sm.tracking-wider.border-none.outline-none.bg-blue-600(
+            type='submit',
+            class='py-2.5 hover:bg-blue-700'
+          ) #{ t('common.submit') }

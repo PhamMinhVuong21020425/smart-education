@@ -1,0 +1,37 @@
+extends ../layout
+
+block content
+  if detailAnswers
+    .bg-white.w-full.rounded-lg.overflow-hidden.mx-auto.mt-4(
+      class='shadow-[0_4px_12px_-5px_rgba(0,0,0,0.4)] font-[sans-serif]'
+    )
+      .p-6.w-full
+        .pb-2
+          .text-3xl.text-center #{ exam.name }
+          .flex.justify-between
+            .text-sm.text-gray-600 #{ t('exam.total') }: #{ detailAnswers.length }
+            .text-sm.text-gray-600.font-bold #{ t('exam.score') }: #{ score } / #{ detailAnswers.length }
+        p.mt-2.text-sm.text-gray-500.leading-relaxed
+          each answer, index in detailAnswers
+            .mb-6
+              p.mt-2 #{ index + 1 }. #{ answer.question.content }
+            each option, index in answer.question.options? answer.question.options : ['There are no option!']
+              .mb-4.flex.gap-2.items-center
+                input(
+                  type='radio',
+                  name=answer.question.id,
+                  value=option.id,
+                  checked=answer.option.id == option.id
+                )
+                div #{ option.content }
+                if option.is_correct
+                  svg.bi.bi-check-circle-fill(
+                    xmlns='http://www.w3.org/2000/svg',
+                    width='16',
+                    height='16',
+                    fill='#22c55e',
+                    viewBox='0 0 16 16'
+                  )
+                    path(
+                      d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z'
+                    )

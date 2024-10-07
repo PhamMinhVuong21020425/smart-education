@@ -7,6 +7,8 @@
     "status": "Trạng thái",
     "description": "Mô tả",
     "doExam": "Làm bài thi",
-    "total": "Tổng"
+    "total": "Tổng",
+    "time": "Thời gian",
+    "score": "Điểm"
   }
 }

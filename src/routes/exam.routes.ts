@@ -15,7 +15,11 @@ router.get('/:id/update', examController.examUpdateGet);
 
 router.post('/:id/update', examController.examUpdatePost);
 
+router.get('/:id/result', examController.resultExam);
+
 router.get('/:id', examController.getExamDetail);
+
+router.post('/:id', examController.submitExam);
 
 router.get('/', examController.getExamInfo);
 

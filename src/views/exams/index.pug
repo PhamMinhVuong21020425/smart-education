@@ -1,17 +1,19 @@
 extends ../layout
 
 block content
-  a(href='/courses/1') #{ t('common.back') }
-  .d-flex.justify-content-center
-    h1 #{ t('exam.name') }
-  .d-flex.justify-content-between
-    strong #{ t('exam.deadline') }: 26/12/2023
-    strong #{ t('exam.question') }: 12
-    strong #{ t('exam.maxGrade') }: 20
-    strong #{ t('exam.status') }: Pass
-  br
-  div
-    h3 #{ t('exam.description') }
-    p Exam description
-  .d-flex.justify-content-center
-    a.btn.btn-outline-primary(href='/courses/1/exam/1') #{ t('exam.doExam') }
+  if grade
+    .flex.justify-center.text-5xl.font-bold.pb-5 #{ grade.assignment.name }
+    .flex.justify-between
+      strong #{ t('exam.deadline') }: #{ grade.assignment.deadline }
+      strong #{ t('exam.maxGrade') }: #{ grade.max_grade }
+      strong #{ t('exam.status') }: #{ grade.status }
+    br
+    .pb-5
+      strong #{ t('exam.description') }
+      p #{ grade.assignment.description }
+    .flex.justify-center
+      a.px-5.rounded-lg.text-sm.tracking-wider.font-medium.border.border-blue-700.outline-none.bg-transparent.text-blue-700.transition-all.duration-300(
+        class='py-2.5 hover:bg-blue-700 hover:text-white',
+        type='submit',
+        href=`exams/${grade.assignment.id}`
+      ) #{ t('exam.doExam') }
