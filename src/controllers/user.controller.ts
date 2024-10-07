@@ -4,6 +4,8 @@ import * as userService from '../services/user.service';
 import * as courseService from '../services/course.service';
 import { users, courseRecommends } from '../mock/data';
 import { UserRole } from '../enums/UserRole';
+import cloudinary from '../config/cloudinary-config';
+import i18next from 'i18next';
 
 export const getUserList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -48,6 +50,97 @@ export const getInstructorById = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).send('Internal Server Error');
   }
+};
+
+export const validateUserCurrent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.session.user || !req.session.user.id) {
+    req.flash('error', i18next.t('error.user_not_authenticated'));
+    return res.redirect('/login');
+  }
+
+  const user = await userService.getUserById(req.session.user.id);
+  if (!user) {
+    req.flash('error', i18next.t('error.user_not_found'));
+    return res.redirect('/profile');
+  }
+
+  res.locals.user = user;
+};
+
+export const getUserProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  await validateUserCurrent(req, res, next);
+
+  return res.render('users/profile', {
+    title: req.t('title.profile'),
+    user: res.locals.user,
+  });
+};
+
+export const userUpdateProfileGet = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  await validateUserCurrent(req, res, next);
+
+  res.render('users/update_profile', {
+    title: req.t('title.update_profile'),
+    user: res.locals.user,
+  });
+};
+
+export const userUpdateProfilePost = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // Kiểm tra xem người dùng đã đăng nhập chưa
+  if (!req.session.user?.id) {
+    req.flash('error', i18next.t('error.unauthorized'));
+    return res.redirect('/login');
+  }
+
+  // Xử lý tải lên ảnh
+  let avatarUrl = '';
+  if (req.file) {
+    const result = await cloudinary.v2.uploader.upload(req.file.path, {
+      folder: 'avatars',
+    });
+    avatarUrl = result.secure_url;
+  }
+
+  // Lấy dữ liệu từ body và chuyển đổi kiểu ngày
+  const updateData = {
+    name: req.body.name,
+    phone: req.body.phone,
+    about: req.body.about,
+    birthday: req.body.birthday ? new Date(req.body.birthday) : undefined,
+    avatar_url: avatarUrl || req.body.avatar_url,
+  };
+
+  // Cập nhật người dùng
+  const updatedUser = await userService.updateUser(
+    req.session.user.id,
+    updateData
+  );
+  if (!updatedUser) {
+    req.flash('error', i18next.t('error.user_not_found'));
+    return res.redirect('/profile');
+  }
+
+  // Cập nhật thông tin người dùng trong session
+  req.session.user = updatedUser;
+
+  req.flash('success', i18next.t('success.profile_updated'));
+  res.redirect('/profile');
 };
 
 export const userCreateGet = asyncHandler(

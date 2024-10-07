@@ -7,6 +7,13 @@ import lessonRouter from './lesson.routes';
 import examRouter from './exam.routes';
 import questionRouter from './question.routes';
 import searchRouter from './search.routes';
+import upload from '../config/multer-config';
+
+import {
+  getUserProfile,
+  userUpdateProfileGet,
+  userUpdateProfilePost,
+} from '../controllers/user.controller';
 
 const router: Router = Router();
 
@@ -20,5 +27,9 @@ router.use('/exams', examRouter);
 router.use('/questions', questionRouter);
 router.use('/', searchRouter);
 router.use('/', homeRouter);
+
+router.get('/profile', getUserProfile);
+router.get('/profile/update', userUpdateProfileGet);
+router.post('/profile/update', upload.single('avatar'), userUpdateProfilePost);
 
 export default router;
