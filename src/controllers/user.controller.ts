@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as userService from '../services/user.service';
@@ -6,6 +7,7 @@ import { users, courseRecommends } from '../mock/data';
 import { UserRole } from '../enums/UserRole';
 import cloudinary from '../config/cloudinary-config';
 import i18next from 'i18next';
+import { Enrollment } from '../entity/enrollment.entity';
 
 export const getUserList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -26,25 +28,36 @@ export const getInstructorList = asyncHandler(
 
 export const getStudentList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    const userSession = req.session.user;
     const students = await userService.getStudentList();
+
+    let enrollments: Enrollment[] = [];
+    if (userSession && userSession.role === UserRole.INSTRUCTOR) {
+      enrollments = await courseService.getEnrollmentForInstructor(userSession);
+    }
     res.render('students/list', {
       title: req.t('title.list_student'),
       students,
+      enrollments,
       currentPath: req.baseUrl + req.path,
     });
   }
 );
 
-export const getInstructorById = async (req: Request, res: Response) => {
+export const userDetail = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
-    const instructor = await userService.getUserById(userId);
-    const managedCourses = await courseService.getCoursesByInstructorId(userId);
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      res.status(404).send('User not found');
+      return;
+    }
+    const managedCourses = await courseService.getUserCourseList(user);
 
-    res.render('instructors/detail', {
+    res.render('users/detail', {
       title: req.t('title.user_detail'),
-      instructor,
-      courses: managedCourses || [],
+      user,
+      userCourses: managedCourses || [],
     });
   } catch (error) {
     console.error(error);
@@ -115,6 +128,9 @@ export const userUpdateProfilePost = async (
       folder: 'avatars',
     });
     avatarUrl = result.secure_url;
+
+    // Xóa file tạm thời sau khi upload thành công
+    fs.unlinkSync(req.file.path);
   }
 
   // Lấy dữ liệu từ body và chuyển đổi kiểu ngày
@@ -123,7 +139,7 @@ export const userUpdateProfilePost = async (
     phone: req.body.phone,
     about: req.body.about,
     birthday: req.body.birthday ? new Date(req.body.birthday) : undefined,
-    avatar_url: avatarUrl || req.body.avatar_url,
+    avatar_url: avatarUrl || req.session.user.avatar_url,
   };
 
   // Cập nhật người dùng

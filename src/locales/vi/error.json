@@ -1,5 +1,6 @@
 {
   "error": {
+    "title": "Lỗi",
     "userNotFound": "Không tìm thấy người dùng",
     "courseNotFound": "Không tìm thấy khóa học",
     "internalServerError": "Lỗi máy chủ",
@@ -14,6 +15,7 @@
     "notImplemented": "Chức năng chưa được triển khai",
     "unknown": "Lỗi không xác định",
     "invalidId": "ID không hợp lệ.",
+    "permissionDenied": "Không có quyền truy cập",
     "failedToRetrieveCourseDetails": "Không thể lấy thông tin khóa học.",
     "search_failed": "Đã xảy ra lỗi trong quá trình tìm kiếm"
   }

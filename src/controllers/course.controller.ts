@@ -5,13 +5,24 @@ import * as courseService from '../services/course.service';
 import { Course } from '../entity/course.entity';
 import { CourseLevel } from '../enums/CourseLevel';
 import * as lessonService from '../services/lesson.service';
+import { CourseWithEnrollStatus } from '../helpers/course.helper';
+import { UserRole } from '../enums/UserRole';
 
 export const courseList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const courseRecommends = await courseService.getCourseList();
+    const allCourses = await courseService.getCourseList();
+
+    let myCourses: CourseWithEnrollStatus[] = [];
+    if (req.session.user) {
+      myCourses = await courseService.getUserCourseList(req.session.user);
+    }
+    const courseRecommends = allCourses.filter(
+      course => !myCourses.find(myCourse => myCourse.id === course.id)
+    );
     res.render('courses/index', {
       title: req.t('title.list_course'),
       courseRecommends,
+      myCourses,
       currentPath: req.baseUrl,
     });
   }
@@ -49,6 +60,12 @@ export const courseDetail = async (req: Request, res: Response) => {
   // Lấy danh sách bài học của khóa học
   const lessons = await lessonService.getLessonsByCourseId(course.id);
 
+  // Kiểm tra xem người dùng đã đăng ký khóa học chưa
+  const enrollment = await courseService.getEnrollment(
+    course,
+    req.session.user
+  );
+
   try {
     res.render('courses/detail', {
       title: req.t('title.course_detail'),
@@ -56,12 +73,72 @@ export const courseDetail = async (req: Request, res: Response) => {
       CourseLevel,
       lessons,
       studentCount,
+      enrollment,
     });
   } catch (error) {
     req.flash('error', i18next.t('error.failedToRetrieveCourseDetails'));
     res.redirect('/error');
   }
 };
+
+export const courseEnrollGet = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (req.session.user) {
+      const course = await validateCourse(req, res);
+      if (course === null) return;
+      const user = req.session.user;
+      await courseService.enrollCourse(course, user);
+      return res.redirect(`/courses/${course.id}`);
+    }
+    return res.redirect('/auth/login');
+  }
+);
+
+export const approveEnrollGet = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { enrollmentId } = req.params;
+    const userSession = req.session.user;
+    if (userSession && userSession.role === UserRole.INSTRUCTOR) {
+      await courseService.approveEnrollment(enrollmentId);
+      return res.redirect('back');
+    }
+    return res.redirect('/auth/login');
+  }
+);
+
+export const rejectEnrollGet = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { enrollmentId } = req.params;
+    const userSession = req.session.user;
+    if (userSession && userSession.role === UserRole.INSTRUCTOR) {
+      await courseService.rejectEnrollment(enrollmentId);
+      return res.redirect('back');
+    }
+    return res.redirect('/auth/login');
+  }
+);
+
+export const courseManageGet = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userSession = req.session.user;
+    const course = await validateCourse(req, res);
+    if (!course) return;
+    if (
+      (userSession && course.instructor.id === userSession.id) ||
+      (userSession && course.subInstructor?.id === userSession.id)
+    ) {
+      const enrollments = await courseService.getEnrollmentForCourse(course);
+      res.render('courses/manage', {
+        title: req.t('title.course_detail'),
+        course,
+        enrollments,
+      });
+    } else {
+      req.flash('error', i18next.t('error.permissionDenied'));
+      res.redirect('/error');
+    }
+  }
+);
 
 export const courseCreateGet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

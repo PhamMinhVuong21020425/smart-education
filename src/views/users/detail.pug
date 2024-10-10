@@ -33,7 +33,7 @@ block content
                 | &nbsp;#{ user.role }
               li.mt-2
                 strong #{ t('user.detail.birthday') }:
-                | &nbsp;#{ user.birthday ? user.birthday.toLocaleDateString("en-GB") : 'N/A' }
+                | &nbsp;#{ user.birthday ? new Date(user.birthday).toLocaleDateString("en-GB") : 'N/A' }
               li.mt-2
                 strong #{ t('user.detail.phone') }:
                 | &nbsp;#{ user.phone ? user.phone : 'N/A' }
@@ -41,7 +41,7 @@ block content
     .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
       h2.text-xl.font-bold.mb-4 #{ t('user.detail.about') }
-      p.text-gray-600.text-justify= user.about ? user.about : 'N/A'
+      p.text-gray-600.text-justify= user.about || 'N/A'
       .mb-6
       .flex.justify-between.items-center.mb-6
         h2.text-xl.font-bold #{ t('user.detail.courses') }

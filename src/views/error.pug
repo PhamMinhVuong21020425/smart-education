@@ -1,6 +1,9 @@
 extends layout
 
 block content
-  h1.font-bold.text-3xl.mb-3= message
-  h2= error.status
-  pre #{ error.stack }
+  if error_message
+    h1.font-bold.text-3xl.mb-3= error_message
+  else
+    h1.font-bold.text-3xl.mb-3= message
+    h2= error.status
+    pre #{ error.stack }
