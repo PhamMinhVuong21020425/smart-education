@@ -90,10 +90,8 @@ export const loginPost = asyncHandler(
 
       if (user.role === UserRole.ADMIN) {
         res.redirect('/admin');
-      } else if (user.role === UserRole.INSTRUCTOR) {
-        res.redirect('/instructor');
       } else {
-        res.redirect('/'); // Mặc định chuyển hướng đến trang sinh viên
+        res.redirect('/');
       }
     } else {
       req.flash('error', i18next.t('login.errors.invalid_credentials'));

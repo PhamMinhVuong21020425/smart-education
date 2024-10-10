@@ -1,19 +1,73 @@
 extends ../layout
 
 block content
-  .grid.grid-cols-1.gap-4.p-4(class='md:grid-cols-2 lg:grid-cols-3')
-    each student in students
-      a.block.bg-white.rounded-lg.shadow-md.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-        class='hover:shadow-xl hover:scale-105',
-        href=`/users/${student.id}`
-      )
-        .flex.items-center.mb-4
-          .w-12.h-12.rounded-full.mr-4.overflow-hidden.flex-shrink-0
-            img.w-full.h-full.object-cover(
-              src=student.avatar_url ? student.avatar_url : '/images/student.png',
-              alt=student.username
+  if current_user && current_user.role === UserRole.INSTRUCTOR
+    .container.mx-auto.px-4.mb-6
+      .flex.justify-between.items-center.mb-4
+        h2.text-xl.font-bold My Students
+
+      ul.divide-y.divide-gray-200
+        each enrollment in enrollments
+          li.grid.gap-4(class='lg:grid-cols-12 hover:shadow-sm hover:bg-blue-50')
+            a.inline-block.col-span-5.flex.items-center.p-4.rounded-md.transition-all.duration-300.ease-in-out.cursor-pointer(
+              href=`/users/${enrollment.student.id}`,
+              class='hover:bg-red-100'
             )
-          .flex.flex-col
-            h3.font-semibold= student.name
-            p.text-sm.text-gray-500= student.email
-        p.text-sm.text-gray-600= student.about
+              .w-12.h-12.rounded-full.mr-4.overflow-hidden.flex-shrink-0
+                img.w-full.h-full.object-cover(
+                  src=enrollment.student.avatar_url || '/images/student.png',
+                  alt=enrollment.student.name
+                )
+              .flex.flex-col
+                p.text-sm.truncate.font-medium.text-gray-900
+                  | #{ enrollment.student.name }
+                p.text-sm.truncate.text-gray-500
+                  | #{ enrollment.student.email }
+
+            a.inline-block.col-span-5.flex.items-center.p-4.rounded-md.transition-all.duration-300.ease-in-out.cursor-pointer(
+              href=`/courses/${enrollment.course.id}`,
+              class='hover:bg-red-100'
+            )
+              .w-12.h-12.rounded-sm.mr-4.overflow-hidden.flex-shrink-0
+                img.w-full.h-full.object-cover(
+                  src=enrollment.course.image_url || '/images/course.png',
+                  alt='Course Image'
+                )
+              .flex.flex-col
+                p.text-sm.truncate.font-medium.text-gray-900
+                  | #{ enrollment.course.name }
+
+            .col-span-2.flex.flex-col.items-center.space-y-2.p-2.justify-center
+              if enrollment.status === EnrollStatus.PENDING
+                a.block.px-2.py-1.rounded-full.text-xs.font-medium.bg-green-100.text-green-800.cursor-pointer(
+                  class='hover:bg-green-400',
+                  href=`/courses/${enrollment.id}/approve`
+                ) Approve
+                a.block.px-3.py-1.rounded-full.text-xs.font-medium.bg-red-100.text-red-800.cursor-pointer(
+                  class='hover:bg-red-400',
+                  href=`/courses/${enrollment.id}/reject`
+                ) Reject
+              else if enrollment.status === EnrollStatus.REJECTED
+                span.block.px-2.py-1.rounded-sm.text-xs.font-medium.bg-red-100.text-red-800= enrollment.status
+              else if enrollment.status === EnrollStatus.APPROVED
+                span.block.px-2.py-1.rounded-sm.text-xs.font-medium.bg-green-100.text-green-800= enrollment.status
+
+  .container.mx-auto.px-4
+    .flex.justify-between.items-center
+      h2.text-xl.font-bold List Students
+    .grid.grid-cols-1.gap-4.p-4(class='md:grid-cols-2 lg:grid-cols-3')
+      each student in students
+        a.block.bg-white.rounded-lg.shadow-md.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
+          class='hover:shadow-xl hover:scale-105',
+          href=`/users/${student.id}`
+        )
+          .flex.items-center.mb-4
+            .w-12.h-12.rounded-full.mr-4.overflow-hidden.flex-shrink-0
+              img.w-full.h-full.object-cover(
+                src=student.avatar_url ? student.avatar_url : '/images/student.png',
+                alt=student.username
+              )
+            .flex.flex-col
+              h3.font-semibold= student.name
+              p.text-sm.text-gray-500= student.email
+          p.text-sm.text-gray-600= student.about

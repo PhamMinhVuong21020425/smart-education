@@ -1,6 +1,6 @@
 export enum AssignmentStatus {
-  TODO = 'TODO',
-  DOING = 'DOING',
-  PASS = 'PASS',
-  FAIL = 'FAIL',
+  TODO = 'Todo',
+  DOING = 'Doing',
+  PASS = 'Pass',
+  FAIL = 'Fail',
 }

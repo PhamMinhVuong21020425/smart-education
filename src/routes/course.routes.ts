@@ -15,6 +15,14 @@ router.get('/:id/update', courseController.courseUpdateGet);
 
 router.post('/:id/update', courseController.courseUpdatePost);
 
+router.get('/:id/manage', courseController.courseManageGet);
+
+router.get('/:id/enroll', courseController.courseEnrollGet);
+
+router.get('/:enrollmentId/approve', courseController.approveEnrollGet);
+
+router.get('/:enrollmentId/reject', courseController.rejectEnrollGet);
+
 router.get('/:id', courseController.courseDetail);
 
 router.get('/', courseController.courseList);

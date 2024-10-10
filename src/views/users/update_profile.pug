@@ -44,7 +44,7 @@ block content
                 )= user.about || ''
               .col-span-1
                 label.block.text-gray-700.text-sm.font-semibold(for='birthday')= t('profile.birthday')
-                - var birthdayValue = user.birthday instanceof Date ? user.birthday.toISOString().split('T')[0] : '';
+                - var birthdayValue = user.birthday || '';
                 input#birthday.mt-2.block.w-full.px-4.py-3.border.border-gray-300.rounded-lg.shadow-sm(
                   type='date',
                   name='birthday',

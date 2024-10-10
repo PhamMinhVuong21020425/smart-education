@@ -1,5 +1,6 @@
 {
   "error": {
+    "title": "Error",
     "userNotFound": "User not found",
     "courseNotFound": "Course not found",
     "internalServerError": "Internal server error",
@@ -14,6 +15,7 @@
     "notImplemented": "Not implemented",
     "unknown": "Unknown error",
     "invalidId": "The provided ID is invalid.",
+    "permissionDenied": "Permission denied",
     "failedToRetrieveCourseDetails": "Failed to retrieve course details.",
     "search_failed": "An error occurred during the search"
   }

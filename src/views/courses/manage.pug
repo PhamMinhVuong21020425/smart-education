@@ -1,0 +1,64 @@
+extends ../layout
+
+block content
+  .container.mx-auto.px-4
+    // Course Title
+    .flex.justify-between.items-center
+      h1.text-4xl.font-bold.mb-4= course.name
+        sup.ml-4
+          case course.level
+            when CourseLevel.BEGINNER
+              span.text-xs.bg-green-200.text-green-800.px-2.py-1.rounded-sm.font-bold #{ t('courseLevels.beginner') }
+            when CourseLevel.INTERMEDIATE
+              span.text-xs.bg-amber-200.text-amber-800.px-2.py-1.rounded-sm.font-bold #{ t('courseLevels.intermediate') }
+            when CourseLevel.ADVANCED
+              span.text-xs.bg-red-200.text-red-800.px-2.py-1.rounded-sm.font-bold #{ t('courseLevels.advanced') }
+            when CourseLevel.EXPERT
+              span.text-xs.bg-purple-200.text-purple-800.px-2.py-1.rounded-sm.font-bold #{ t('courseLevels.expert') }
+
+    // Course Description
+    p.text-gray-700.ml-2.mb-6= course.description
+
+    // Student List
+    h2#studentlist.text-xl.font-bold.mb-4 Student List
+    ul.grid.gap-4(class='lg:grid-cols-2')
+      each enrollment in enrollments
+        li.grid(class='lg:grid-cols-6 hover:shadow-sm hover:bg-blue-50')
+          a.inline-block.col-span-4.flex.items-center.p-4.rounded-md.transition-all.duration-300.ease-in-out.cursor-pointer(
+            href=`/users/${enrollment.student.id}`,
+            class='hover:bg-red-100'
+          )
+            .w-12.h-12.rounded-full.mr-4.overflow-hidden.flex-shrink-0
+              img.w-full.h-full.object-cover(
+                src=enrollment.student.avatar_url || '/images/student.png',
+                alt=enrollment.student.name
+              )
+            .flex.flex-col
+              p.text-sm.truncate.font-medium.text-gray-900
+                | #{ enrollment.student.name }
+              p.text-sm.truncate.text-gray-500
+                | #{ enrollment.student.email }
+
+          .col-span-2.flex.items-center.justify-center.p-4
+            if enrollment.status === EnrollStatus.PENDING
+              select.text-xs.rounded-sm.px-2.py-1.bg-purple-100.text-purple-800(
+                name='status',
+                onchange=`window.location.href = '/courses/${enrollment.id}/' + this.value;`
+              )
+                option.bg-purple-100.text-purple-800(value='pending', selected)= EnrollStatus.PENDING
+                option.bg-green-100.text-green-800(value='approve')= EnrollStatus.APPROVED
+                option.bg-red-100.text-red-800(value='reject')= EnrollStatus.REJECTED
+            else if enrollment.status === EnrollStatus.APPROVED
+              select.text-xs.rounded-sm.px-2.py-1.bg-green-100.text-green-800(
+                name='status',
+                onchange=`window.location.href = '/courses/${enrollment.id}/reject';`
+              )
+                option.bg-green-100.text-green-800(value='approve', selected)= EnrollStatus.APPROVED
+                option.bg-red-100.text-red-800(value='reject')= EnrollStatus.REJECTED
+            else if enrollment.status === EnrollStatus.REJECTED
+              select.text-xs.rounded-sm.px-2.py-1.bg-red-100.text-red-800(
+                name='status',
+                onchange=`window.location.href = '/courses/${enrollment.id}/approve';`
+              )
+                option.bg-green-100.text-green-800(value='approve')= EnrollStatus.APPROVED
+                option.bg-red-100.text-red-800(value='reject', selected)= EnrollStatus.REJECTED

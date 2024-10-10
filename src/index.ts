@@ -12,7 +12,7 @@ import MySQLSession, { Options } from 'express-mysql-session';
 import * as expressSession from 'express-session';
 import { sessionMiddleware } from './middleware/auth.middleware';
 import { User } from './entity/user.entity';
-import { UserRole } from './enums/UserRole';
+import * as EnumType from './enums';
 import { THREE_HOURS } from './constants';
 
 import indexRouter from './routes/index';
@@ -96,7 +96,11 @@ app.use(
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.locals.t = req.t;
   res.locals.language = req.language;
-  res.locals.UserRole = UserRole;
+  res.locals.UserRole = EnumType.UserRole;
+  res.locals.EnrollStatus = EnumType.EnrollStatus;
+  res.locals.CourseLevel = EnumType.CourseLevel;
+  res.locals.CourseStatus = EnumType.CourseStatus;
+  res.locals.AssignmentStatus = EnumType.AssignmentStatus;
   next();
 });
 

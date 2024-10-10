@@ -22,63 +22,99 @@ block content
             alt='Learning illustration'
           )
 
-    .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
-      .grid.gap-6.mb-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4')
-        .bg-teal-100.p-4.rounded-lg.flex.flex-col.items-center
-          span.text-3xl.font-bold.text-teal-700 24
-          span.text-sm.text-teal-600 Enrolled Courses
-          a.text-teal-500.text-sm.mt-2(href='#') View details →
-        .bg-purple-100.p-4.rounded-lg.flex.flex-col.items-center
-          span.text-3xl.font-bold.text-purple-700 56
-          span.text-sm.text-purple-600 Lessons
-          a.text-purple-500.text-sm.mt-2(href='#') View details →
-        .bg-orange-100.p-4.rounded-lg.flex.flex-col.items-center
-          span.text-3xl.font-bold.text-orange-700 17
-          span.text-sm.text-orange-600 Assignments
-          a.text-orange-500.text-sm.mt-2(href='#') View details →
-        .flex.flex-col.items-center
-          .text-lg.font-semibold.mb-2 Progress
-          .w-16.h-16.rounded-full.border-2.border-orange-500.flex.items-center.justify-center
-            img.w-14.h-14.rounded-full.object-cover(
-              src='/images/avatar.png',
-              alt='User'
-            )
-          .mt-2.text-center
-            .font-semibold Alesia Karapova
-            .text-sm.text-gray-500 Student
-    .mb-6
-    .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
-      .flex.justify-between.items-center.mb-6
-        h2.text-xl.font-bold Continue Learning
-        a.text-teal-500(href='/courses#learning') See All
-      .space-y-4
-        each course in courseLearns
-          .flex.items-center.justify-between.bg-gray-50.p-4.rounded-lg
-            .flex.items-center.space-x-4
-              .w-10.h-10.bg-teal-500.rounded-lg
-              .flex.flex-col
-                .font-semibold= course.name
-                .text-sm.text-gray-500= `${course.level} • ${course.duration}`
-            .flex.items-center.space-x-4
-              .w-32.bg-gray-200.rounded-full.h-2
-                .bg-teal-500.rounded-full.h-2(
-                  style=`width: ${course.progress}`
-                )
-              span.text-sm.text-gray-500= course.progress
-              span.text-sm(
-                class=course.status === 'Completed' ? 'text-green-500' : 'text-orange-500'
-              )= course.status
-              svg.w-6.h-6.text-gray-400(
-                fill='none',
-                stroke='currentColor',
-                viewBox='0 0 24 24'
+    if current_user && current_user.role === UserRole.STUDENT
+      .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+        .grid.gap-6.mb-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4')
+          .bg-teal-100.p-4.rounded-lg.flex.flex-col.items-center.justify-center
+            span.text-3xl.font-bold.text-teal-700= totalCourses
+            span.text-sm.text-teal-600 Enrolled Courses
+            a.text-teal-500.text-sm.mt-2(href='/courses') View details →
+          .bg-purple-100.p-4.rounded-lg.flex.flex-col.items-center.justify-center
+            span.text-3xl.font-bold.text-purple-700= totalLessons
+            span.text-sm.text-purple-600 Lessons
+            a.text-purple-500.text-sm.mt-2(href='/courses') View details →
+          .bg-orange-100.p-4.rounded-lg.flex.flex-col.items-center.justify-center
+            span.text-3xl.font-bold.text-orange-700= totalAssignments
+            span.text-sm.text-orange-600 Assignments
+            a.text-orange-500.text-sm.mt-2(href='/courses') View details →
+          .flex.flex-col.items-center
+            .text-lg.font-semibold.mb-2 Progress
+            .w-16.h-16.rounded-full.border-2.border-orange-500.flex.items-center.justify-center
+              img.w-14.h-14.rounded-full.object-cover(
+                src=current_user.avatar_url || '/images/student.png',
+                alt='User'
               )
-                path(
-                  stroke-linecap='round',
-                  stroke-linejoin='round',
-                  stroke-width='2',
-                  d='M9 5l7 7-7 7'
+            .mt-2.text-center
+              .font-semibold= current_user ? current_user.name : 'Guest'
+              .text-sm.text-gray-500= current_user ? current_user.role : ''
+      .mb-6
+      .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+        .flex.justify-between.items-center.mb-6
+          h2.text-xl.font-bold Continue Learning
+          a.text-teal-500(href='/courses#learning') See All
+        .space-y-4
+          each course in courseLearns
+            a.flex.items-center.justify-between.bg-gray-50.p-4.rounded-md(
+              class='hover:bg-blue-50',
+              href=`/courses/${course.id}`
+            )
+              .flex.items-center.space-x-4
+                .w-10.h-10.rounded-sm.overflow-hidden.flex-shrink-0
+                  img.h-full.object-cover(
+                    src=course.image_url === null ? '/images/course.png' : course.image_url,
+                    alt='Image'
+                  )
+                .flex.flex-col
+                  .font-semibold= course.name
+                  .text-sm.text-gray-500= `${course.level} • ${course.duration}`
+              .flex.items-center.space-x-4
+                .w-32.bg-gray-200.rounded-full.h-2
+                  .bg-teal-500.rounded-full.h-2(
+                    style=`width: ${course.progress}%`
+                  )
+                span.text-sm.text-gray-500= `${course.progress}%`
+
+                case course.status
+                  when CourseStatus.COMPLETED
+                    span.text-sm.text-green-500= course.status
+                  when CourseStatus.INPROGRESS
+                    span.text-sm.text-orange-500= course.status
+                  default
+                    span.text-sm.text-gray-500= CourseStatus.NOTSTARTED
+                svg.w-6.h-6(
+                  fill='none',
+                  stroke='currentColor',
+                  viewBox='0 0 24 24'
                 )
+                  path(
+                    stroke-linecap='round',
+                    stroke-linejoin='round',
+                    stroke-width='2',
+                    d='M9 5l7 7-7 7'
+                  )
+    else if current_user && current_user.role === UserRole.INSTRUCTOR
+      .mb-6
+      .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+        .flex.justify-between.items-center.mb-6
+          h2.text-xl.font-bold My Courses
+          a.text-teal-500(href='/courses') See All
+        .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
+          each course in myCourses.slice(0, 6)
+            a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
+              class='hover:shadow-xl hover:scale-105',
+              href=`/courses/${course.id}`
+            )
+              .bg-gray-50.rounded-lg.overflow-hidden
+                .flex.justify-center.items-center.h-48
+                  img.h-full(
+                    src=course.image_url === null ? '/images/course.png' : course.image_url,
+                    alt='Image'
+                  )
+                .p-4
+                  h3.font-semibold.mb-2= course.name
+                  p.text-sm.text-gray-600.mb-4= course.description
+                  .flex.justify-between.items-center.text-sm.text-gray-500
+                    span= `${course.level} • ${course.duration}`
 
     .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
@@ -124,7 +160,7 @@ block content
                 h3.font-semibold.mb-2= instructor.name
                 p.text-sm.text-gray-600.mb-4= instructor.about
                 .flex.justify-between.items-center.text-sm.text-gray-500
-                  span= `Instructor • 5 courses • 1058 students`
+                  span= `Instructor • ${instructor.numberOfCourse} courses`
 
     .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
@@ -147,4 +183,4 @@ block content
                 h3.font-semibold.mb-2= student.name
                 p.text-sm.text-gray-600.mb-4= student.about
                 .flex.justify-between.items-center.text-sm.text-gray-500
-                  span= `Student • 6 courses`
+                  span= `Student • ${student.numberOfCourse} courses`
