@@ -13,11 +13,11 @@ export class StudentLesson {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, student => student.studentLessons)
+  @ManyToOne(() => User, student => student.studentLessons, { nullable: false })
   @JoinColumn({ name: 'student_id' })
   student: User;
 
-  @ManyToOne(() => Lesson, lesson => lesson.studentLessons)
+  @ManyToOne(() => Lesson, lesson => lesson.studentLessons, { nullable: false })
   @JoinColumn({ name: 'lesson_id' })
   lesson: Lesson;
 

@@ -5,7 +5,8 @@ import { User } from '../entity/user.entity';
 import { Answer } from '../entity/answer.entity';
 import { Option } from '../entity/option.entity';
 import { AppDataSource } from '../config/data-source';
-import { formatDateTime } from '../helpers/date.helper';
+import { AssignmentStatus } from '../enums/AssignmentStatus';
+import { RATE_PASS } from '../constants';
 
 const gradeRepository = AppDataSource.getRepository(Grade);
 const questionRepository = AppDataSource.getRepository(Question);
@@ -13,8 +14,11 @@ const examRepository = AppDataSource.getRepository(Assignment);
 const optionRepository = AppDataSource.getRepository(Option);
 const answerRepository = AppDataSource.getRepository(Answer);
 
-export const getExamGradeByCourseId = async (courseId: string) => {
-  const grade = await gradeRepository.findOne({
+export const getGradesByCourseId = async (
+  courseId: string,
+  studentId: string
+) => {
+  const grades = await gradeRepository.find({
     relations: ['assignment'],
     where: {
       assignment: {
@@ -22,17 +26,87 @@ export const getExamGradeByCourseId = async (courseId: string) => {
           id: courseId,
         },
       },
+      student: {
+        id: studentId,
+      },
     },
   });
-  if (!grade) return;
-  (grade as any).assignment.deadline = formatDateTime(
-    grade.assignment.deadline
-  );
-  return grade;
+
+  return grades;
+};
+
+export const getBestGradeByCourseId = async (
+  courseId: string,
+  studentId: string
+) => {
+  const grades = await getGradesByCourseId(courseId, studentId);
+
+  const bestGrade = grades.find(grade => {
+    return grade.grade === Math.max(...grades.map(g => g.grade));
+  });
+
+  return bestGrade;
+};
+
+export const updateGradeWhenStartExam = async (
+  exam: Assignment,
+  student: User
+) => {
+  const grades = await getGradesByCourseId(exam.course.id, student.id);
+  let lastAttempt = 1;
+  for (const grade of grades) {
+    if (grade.attempt > lastAttempt) {
+      lastAttempt = grade.attempt;
+    }
+  }
+  if (grades.length === 1 && grades[0].status === AssignmentStatus.TODO) {
+    grades[0].start_time = new Date();
+    grades[0].status = AssignmentStatus.DOING;
+    return gradeRepository.save(grades[0]);
+  } else if (grades[0].status !== AssignmentStatus.DOING) {
+    const newGrade = new Grade({
+      student,
+      assignment: exam,
+      attempt: lastAttempt + 1,
+      start_time: new Date(),
+      status: AssignmentStatus.DOING,
+    });
+    return gradeRepository.save(newGrade);
+  }
+};
+
+export const updateGradeWhenSubmitExam = async (
+  exam: Assignment,
+  student: User,
+  grade: number,
+  max_grade: number,
+  feedback?: string
+) => {
+  const grades = await getGradesByCourseId(exam.course.id, student.id);
+  let lastAttempt = grades[0].attempt;
+  let lastGrade = grades[0];
+  for (const grade of grades) {
+    if (grade.attempt > lastAttempt) {
+      lastAttempt = grade.attempt;
+      lastGrade = grade;
+    }
+  }
+  lastGrade.submit_time = new Date();
+  lastGrade.grade = grade;
+  lastGrade.max_grade = max_grade;
+  lastGrade.feedback = feedback || '';
+  if (grade / max_grade >= RATE_PASS) {
+    lastGrade.status = AssignmentStatus.PASS;
+  } else {
+    lastGrade.status = AssignmentStatus.FAIL;
+  }
+
+  return gradeRepository.save(lastGrade);
 };
 
 export const getExamById = async (examId: string) => {
   const exam = await examRepository.findOne({
+    relations: ['course'],
     where: {
       id: examId,
     },
@@ -49,8 +123,11 @@ export const getQuestionsByExamId = async (examId: string) => {
       },
     },
     relations: ['options', 'answers', 'assignment'],
+    order: {
+      content: 'ASC',
+    },
   });
-  if (!questions) return;
+  if (!questions) return [];
   return questions;
 };
 
@@ -76,10 +153,12 @@ export const getOptionById = async (optionId: string) => {
 
 export const createAnswersFromExam = async (
   question: Question,
-  option: Option,
-  user: User
+  user: User,
+  optionId: string | undefined
 ) => {
-  const existingAnswer = await answerRepository.findOne({
+  let attempt = 1;
+
+  const existingAnswers = await answerRepository.find({
     where: {
       question: {
         id: question.id,
@@ -90,16 +169,22 @@ export const createAnswersFromExam = async (
     },
   });
 
-  if (existingAnswer) {
-    existingAnswer.option = option;
-    return answerRepository.save(existingAnswer);
-  } else {
-    const answer = new Answer();
-    answer.question = question;
-    answer.option = option;
-    answer.student = user;
-    return answerRepository.save(answer);
+  for (const answer of existingAnswers) {
+    if (answer.attempt >= attempt) {
+      attempt = answer.attempt + 1;
+    }
   }
+
+  const answer = new Answer({
+    student: user,
+    question,
+    attempt,
+  });
+  if (optionId) {
+    const option = await getOptionById(optionId);
+    answer.option = option!;
+  }
+  return answerRepository.save(answer);
 };
 
 export const getResultOfExam = async (userId: string, examId: string) => {
@@ -108,17 +193,39 @@ export const getResultOfExam = async (userId: string, examId: string) => {
       student: {
         id: userId,
       },
+      question: {
+        assignment: {
+          id: examId,
+        },
+      },
     },
-    relations: ['option', 'question', 'question.options'],
+    relations: [
+      'option',
+      'question',
+      'question.options',
+      'question.assignment',
+    ],
+    order: {
+      question: {
+        content: 'ASC',
+      },
+    },
   });
-  const questions = await getQuestionsByExamId(examId);
-  const questionIds = questions?.map(question => question.id);
+
+  let lastAttempt = 1;
+  for (const answer of answers) {
+    if (answer.attempt > lastAttempt) {
+      lastAttempt = answer.attempt;
+    }
+  }
+
   const filteredAnswers = answers.filter(answer => {
-    return answer.question && questionIds?.includes(answer.question.id);
+    return answer.attempt === lastAttempt;
   });
-  if (!filteredAnswers) return;
+
   const score = filteredAnswers.filter(
     answer => answer.option && answer.option.is_correct
   ).length;
+
   return { filteredAnswers, score };
 };

@@ -24,7 +24,13 @@ export class Assignment {
   @Column({ type: 'datetime', nullable: true })
   deadline: Date;
 
-  @OneToOne(() => Course, course => course.assignment)
+  @Column({ nullable: true })
+  time_limit: number;
+
+  @Column({ nullable: true })
+  attempt_limit: number;
+
+  @OneToOne(() => Course, course => course.assignment, { nullable: false })
   @JoinColumn({ name: 'course_id' })
   course: Course;
 

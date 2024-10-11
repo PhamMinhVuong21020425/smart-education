@@ -18,7 +18,9 @@ export class Question {
   @Column()
   content: string;
 
-  @ManyToOne(() => Assignment, assignment => assignment.questions)
+  @ManyToOne(() => Assignment, assignment => assignment.questions, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'assignment_id' })
   assignment: Assignment;
 

@@ -5,6 +5,7 @@
     "delete": "Delete",
     "submit": "Submit",
     "confirmMessage": "Are you sure?",
-    "back": "Back"
+    "back": "Back",
+    "minutes": "minutes"
   }
 }

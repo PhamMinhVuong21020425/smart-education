@@ -19,11 +19,9 @@ const router: Router = Router();
 
 router.use('/auth', authRouter);
 router.use('/users', userRouter);
+router.use('/courses', courseRouter);
 router.use('/courses/:courseId/lessons', lessonRouter);
 router.use('/courses/:courseId/exam', examRouter);
-router.use('/courses', courseRouter);
-router.use('/lessons', lessonRouter);
-router.use('/exams', examRouter);
 router.use('/questions', questionRouter);
 router.use('/', searchRouter);
 router.use('/', homeRouter);

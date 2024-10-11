@@ -5,7 +5,8 @@
       "content": "Nội dung",
       "reference": "Tài liệu tham khảo",
       "done": "Đã hoàn thành",
-      "markAsDone": "Đánh dấu đã hoàn thành"
+      "markAsDone": "Đánh dấu đã hoàn thành",
+      "unmarkAsDone": "Bỏ đánh dấu đã hoàn thành"
     }
   }
 }

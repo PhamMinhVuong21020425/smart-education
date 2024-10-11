@@ -15,7 +15,8 @@
     "expert": "Chuyên gia"
   },
   "buttons": {
-    "enrollNow": "Đăng ký ngay"
+    "enrollNow": "Đăng ký ngay",
+    "learnNow": "Học ngay"
   },
   "courseDetails": {
     "instructor": "Giảng viên",

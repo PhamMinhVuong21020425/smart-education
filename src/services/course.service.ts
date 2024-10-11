@@ -2,15 +2,20 @@ import { AppDataSource } from '../config/data-source';
 import { Course } from '../entity/course.entity';
 import { User } from '../entity/user.entity';
 import { Enrollment } from '../entity/enrollment.entity';
+import { Lesson } from '../entity/lesson.entity';
 import { StudentLesson } from '../entity/student_lesson.entity';
 import { Grade } from '../entity/grade.entity';
 import { UserRole } from '../enums/UserRole';
 import { EnrollStatus } from '../enums/EnrollStatus';
 import { AssignmentStatus } from '../enums/AssignmentStatus';
+import { Assignment } from '../entity/assignment.entity';
+import { getBestGradeByCourseId, getQuestionsByExamId } from './exam.service';
 
 const courseRepository = AppDataSource.getRepository(Course);
 const enrollmentRepository = AppDataSource.getRepository(Enrollment);
+const lessonRepository = AppDataSource.getRepository(Lesson);
 const studentLessonRepository = AppDataSource.getRepository(StudentLesson);
+const assignmentRepository = AppDataSource.getRepository(Assignment);
 const gradeRepository = AppDataSource.getRepository(Grade);
 
 export const getCourseList = async () => {
@@ -114,12 +119,51 @@ export const approveEnrollment = async (
   enrollmentId: string
 ): Promise<void> => {
   const enrollment = await enrollmentRepository.findOne({
+    relations: ['course', 'student'],
     where: { id: enrollmentId },
   });
 
   if (enrollment) {
     enrollment.status = EnrollStatus.APPROVED;
     await enrollmentRepository.save(enrollment);
+
+    const lessons = await lessonRepository.find({
+      relations: ['courses', 'studentLessons'],
+      where: { courses: { id: enrollment.course.id } },
+    });
+
+    for (const lesson of lessons) {
+      const studentLesson = await studentLessonRepository.findOne({
+        where: { student: enrollment.student, lesson },
+      });
+      if (!studentLesson) {
+        const newStudentLesson = new StudentLesson({
+          student: enrollment.student,
+          lesson,
+        });
+        await studentLessonRepository.save(newStudentLesson);
+      }
+    }
+
+    const assignment = await assignmentRepository.findOne({
+      where: { course: enrollment.course },
+    });
+
+    if (assignment) {
+      const grade = await gradeRepository.findOne({
+        where: { student: enrollment.student, assignment },
+      });
+      if (!grade) {
+        const questions = await getQuestionsByExamId(assignment.id);
+        const newGrade = new Grade({
+          student: enrollment.student,
+          assignment,
+          grade: 0,
+          max_grade: questions.length,
+        });
+        await gradeRepository.save(newGrade);
+      }
+    }
   }
 };
 
@@ -152,18 +196,23 @@ export const getProgressInCourse = async (
     }
   }
 
-  if (courseDetail?.assignment) {
-    const gradeOfAssignment = await gradeRepository.findOne({
-      where: { student, assignment: courseDetail?.assignment },
-    });
+  const assignment = await assignmentRepository.findOne({
+    where: { course: { id: course.id } },
+  });
 
-    if (
-      gradeOfAssignment &&
-      gradeOfAssignment.status === AssignmentStatus.PASS
-    ) {
-      totalDone++;
-    }
-  } else {
+  if (!assignment) {
+    return Math.floor((totalDone / totalLesson) * 100);
+  }
+
+  const bestGradeOfStudent = await getBestGradeByCourseId(
+    course.id,
+    student.id
+  );
+
+  if (
+    bestGradeOfStudent &&
+    bestGradeOfStudent.status === AssignmentStatus.PASS
+  ) {
     totalDone++;
   }
 

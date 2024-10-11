@@ -25,7 +25,10 @@ block content
           when EnrollStatus.PENDING
             span.text-sm.font-bold.bg-purple-100.text-purple-800.px-2.py-1.rounded-md= enrollment.status
           when EnrollStatus.APPROVED
-            span.text-sm.font-bold.bg-green-100.text-green-800.px-2.py-1.rounded-md= enrollment.status
+            a.px-6.py-2.text-red-400.font-bold.rounded-sm.transition.duration-300.border.border-red-400(
+              class='hover:bg-red-100',
+              href=`/courses/${course.id}/lessons`
+            ) #{ t('buttons.learnNow') } →
           when EnrollStatus.REJECTED
             span.text-sm.font-bold.bg-red-100.text-red-800.px-2.py-1.rounded-md= enrollment.status
       else if current_user && current_user.role === UserRole.INSTRUCTOR
@@ -90,7 +93,7 @@ block content
 
     // Lessons List
     h2.text-2xl.font-semibold.mb-4 #{ t('courseDetails.lessons') }
-    ul.list-disc.list-inside.mb-8
+    ol.list-decimal.list-inside.mb-8
       each lesson in lessons
-        li.mb-4.text-gray-800
+        li.mb-4.text-gray-800.italic
           | #{ lesson.title }
