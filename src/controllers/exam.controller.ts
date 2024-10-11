@@ -3,16 +3,16 @@ import asyncHandler from 'express-async-handler';
 import {
   createAnswersFromExam,
   getExamById,
-  getExamGradeByCourseId,
-  getOptionById,
-  getQuestionById,
+  getBestGradeByCourseId,
+  updateGradeWhenStartExam,
+  updateGradeWhenSubmitExam,
   getQuestionsByExamId,
   getResultOfExam,
 } from '../services/exam.service';
 import { RequestWithCourseID } from '../helpers/lesson.helper';
 import { validateUserCurrent } from './user.controller';
-import { Answer } from '../entity/answer.entity';
 import { getUserById } from '../services/user.service';
+import { getLessonList } from '../services/lesson.service';
 
 export const examList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -22,16 +22,47 @@ export const examList = asyncHandler(
 
 export const getExamInfo = asyncHandler(
   async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
-    const grade = await getExamGradeByCourseId(req.courseID!);
-    res.render('exams/index', { grade });
+    const userSession = req.session.user!;
+    const lessonList = await getLessonList(userSession.id, req.courseID!);
+    const grade = await getBestGradeByCourseId(req.courseID!, userSession.id);
+    res.render('lessons/index', {
+      title: req.t('lesson.finalExam'),
+      lessonList,
+      examStatus: grade?.status,
+      grade,
+      courseID: req.courseID,
+    });
   }
 );
 
 export const getExamDetail = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    const userSession = req.session.user!;
     const questions = await getQuestionsByExamId(req.params.id);
     const exam = await getExamById(req.params.id);
-    res.render('exams/detail', { questions, exam });
+    await updateGradeWhenStartExam(exam!, userSession);
+
+    res.render('exams/detail', {
+      title: req.t('exam.doExam'),
+      questions,
+      exam,
+      courseID: req.courseID,
+      selectedAnswers: req.session.selectedAnswers || {},
+    });
+  }
+);
+
+export const saveAnswer = asyncHandler(
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    const { questionId, answerId } = req.body;
+
+    if (!req.session.selectedAnswers) {
+      req.session.selectedAnswers = {};
+    }
+
+    req.session.selectedAnswers[questionId] = answerId;
+
+    res.json({ success: true, message: 'Answer saved' });
   }
 );
 
@@ -74,24 +105,34 @@ export const examUpdatePost = asyncHandler(
 export const submitExam = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     await validateUserCurrent(req, res, next);
-    const answers = req.body;
-    for (const key in answers) {
-      const question = await getQuestionById(key);
-      const option = await getOptionById(answers[key]);
+    req.session.selectedAnswers = {};
+    const questions = await getQuestionsByExamId(req.params.id);
+    const answers = req.body as { [key: string]: string };
+    for (const question of questions) {
+      const optionId = answers[question.id];
       const user = await getUserById(res.locals.user.id);
-      await createAnswersFromExam(question!, option!, user!);
+      await createAnswersFromExam(question!, user!, optionId);
     }
     res.redirect(`${req.params.id}/result`);
   }
 );
 
 export const resultExam = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    await validateUserCurrent(req, res, next);
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    const userSession = req.session.user!;
     const exam = await getExamById(req.params.id);
-    const result = await getResultOfExam(res.locals.user.id, req.params.id);
+    const result = await getResultOfExam(userSession.id, req.params.id);
     const detailAnswers = result?.filteredAnswers;
     const score = result?.score;
-    res.render('exams/result', { detailAnswers, score, exam });
+    const totalQuestions = result?.filteredAnswers.length;
+    await updateGradeWhenSubmitExam(exam!, userSession, score, totalQuestions);
+
+    res.render('exams/result', {
+      title: req.t('exam.viewResult'),
+      detailAnswers,
+      score,
+      exam,
+      courseID: req.courseID,
+    });
   }
 );

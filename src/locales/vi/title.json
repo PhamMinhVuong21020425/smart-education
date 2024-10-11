@@ -10,6 +10,8 @@
     "user_detail": "Chi tiết người dùng",
     "course_detail": "Chi tiết khóa học",
     "profile": "Trang cá nhân",
-    "my_courses": "Khóa học của tôi"
+    "my_courses": "Khóa học của tôi",
+    "list_lesson": "Danh sách bài học",
+    "lesson_detail": "Chi tiết bài học"
   }
 }

@@ -17,7 +17,7 @@ export class Option {
   @Column()
   content: string;
 
-  @ManyToOne(() => Question, question => question.options)
+  @ManyToOne(() => Question, question => question.options, { nullable: false })
   @JoinColumn({ name: 'question_id' })
   question: Question;
 

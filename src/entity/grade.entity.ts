@@ -14,11 +14,13 @@ export class Grade {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Assignment, assignment => assignment.grades)
+  @ManyToOne(() => Assignment, assignment => assignment.grades, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'assignment_id' })
   assignment: Assignment;
 
-  @ManyToOne(() => User, student => student.grades)
+  @ManyToOne(() => User, student => student.grades, { nullable: false })
   @JoinColumn({ name: 'student_id' })
   student: User;
 
@@ -37,6 +39,15 @@ export class Grade {
 
   @Column({ nullable: true })
   feedback: string;
+
+  @Column({ type: 'datetime', nullable: true })
+  start_time: Date;
+
+  @Column({ type: 'datetime', nullable: true })
+  submit_time: Date;
+
+  @Column({ default: 1 })
+  attempt: number;
 
   constructor(partial?: Partial<Grade>) {
     Object.assign(this, partial);

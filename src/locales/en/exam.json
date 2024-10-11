@@ -9,6 +9,14 @@
     "doExam": "Do Exam",
     "total": "Total",
     "time": "Time",
-    "score": "Score"
+    "score": "Score",
+    "noExam": "This course has no exam",
+    "todo": "Not started",
+    "doing": "Doing",
+    "pass": "Pass",
+    "fail": "Fail",
+    "viewResult": "View result exam",
+    "backToExam": "Back to exam",
+    "result": "Your best result"
   }
 }

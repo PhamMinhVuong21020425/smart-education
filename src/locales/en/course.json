@@ -15,7 +15,8 @@
     "expert": "Expert"
   },
   "buttons": {
-    "enrollNow": "Enroll Now"
+    "enrollNow": "Enroll Now",
+    "learnNow": "Learn Now"
   },
   "courseDetails": {
     "instructor": "Instructor",

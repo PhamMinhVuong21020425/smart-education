@@ -22,7 +22,7 @@ export class Lesson {
   @Column({ nullable: true })
   file_url: string;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'datetime', nullable: true })
   study_time: Date;
 
   @OneToMany(() => StudentLesson, studentLesson => studentLesson.lesson)

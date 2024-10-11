@@ -7,22 +7,17 @@ const studentLessonRepository = AppDataSource.getRepository(StudentLesson);
 
 export const getLessonList = async (userId: string, courseId: string) => {
   const lessons = await lessonRepository.find({
-    relations: ['studentLessons.student', 'courses'],
+    relations: ['courses', 'studentLessons', 'studentLessons.student'],
+    where: { courses: { id: courseId } },
   });
-  const filteredLessons = lessons.filter(
-    lesson =>
-      lesson.courses.some(course => course.id === courseId) &&
-      lesson.studentLessons.some(
-        studentLesson => studentLesson.student.id === userId
-      )
-  );
-  const lessonsWithDoneStatus = filteredLessons.map(lesson => {
+
+  const lessonsWithDoneStatus = lessons.map(lesson => {
     const studentLesson = lesson.studentLessons.find(
       sl => sl.student.id === userId
     );
     return {
       ...lesson,
-      done: studentLesson ? studentLesson.done : null,
+      done: studentLesson ? studentLesson.done : false,
     };
   });
   return lessonsWithDoneStatus;
@@ -49,7 +44,7 @@ export const markDoneLesson = async (id: string) => {
   if (!studentLesson) {
     return;
   }
-  studentLesson.done = true;
+  studentLesson.done = !studentLesson.done;
   await studentLessonRepository.save(studentLesson);
   return studentLesson;
 };

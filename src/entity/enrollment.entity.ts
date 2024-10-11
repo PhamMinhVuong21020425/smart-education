@@ -14,11 +14,11 @@ export class Enrollment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, student => student.enrollments)
+  @ManyToOne(() => User, student => student.enrollments, { nullable: false })
   @JoinColumn({ name: 'student_id' })
   student: User;
 
-  @ManyToOne(() => Course, course => course.enrollments)
+  @ManyToOne(() => Course, course => course.enrollments, { nullable: false })
   @JoinColumn({ name: 'course_id' })
   course: Course;
 

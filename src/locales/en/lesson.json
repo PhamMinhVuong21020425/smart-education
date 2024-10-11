@@ -5,7 +5,8 @@
       "content": "Content",
       "reference": "Reference",
       "done": "Done",
-      "markAsDone": "Mark As Done"
+      "markAsDone": "Mark as done",
+      "unmarkAsDone": "Unmark done"
     }
   }
 }
