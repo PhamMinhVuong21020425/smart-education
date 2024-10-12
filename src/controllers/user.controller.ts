@@ -8,6 +8,7 @@ import { UserRole } from '../enums/UserRole';
 import cloudinary from '../config/cloudinary-config';
 import i18next from 'i18next';
 import { Enrollment } from '../entity/enrollment.entity';
+import { LIMIT_RECORDS } from '../constants';
 
 export const getUserList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -29,16 +30,42 @@ export const getInstructorList = asyncHandler(
 export const getStudentList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const userSession = req.session.user;
+    if (!userSession) {
+      res.redirect('/auth/login');
+      return;
+    }
     const students = await userService.getStudentList();
+    const courses = await courseService.getUserCourseList(userSession);
 
     let enrollments: Enrollment[] = [];
     if (userSession && userSession.role === UserRole.INSTRUCTOR) {
       enrollments = await courseService.getEnrollmentForInstructor(userSession);
     }
+
+    const page = parseInt(req.query.page as string) || 1;
+    const courseFilter = req.query.course;
+    const statusFilter = req.query.status;
+
+    const filterEnrollments = enrollments.filter(enrollment => {
+      if (courseFilter && enrollment.course.id !== courseFilter) return false;
+      if (statusFilter && enrollment.status !== statusFilter) return false;
+      return true;
+    });
+    const totalRecords = filterEnrollments.length;
+    const totalPages = Math.ceil(totalRecords / LIMIT_RECORDS);
+
     res.render('students/list', {
       title: req.t('title.list_student'),
       students,
-      enrollments,
+      courses,
+      enrollments: filterEnrollments.slice(
+        (page - 1) * LIMIT_RECORDS,
+        page * LIMIT_RECORDS
+      ),
+      currentPage: page,
+      totalPages,
+      courseFilter,
+      statusFilter,
       currentPath: req.baseUrl + req.path,
     });
   }
