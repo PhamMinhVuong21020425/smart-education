@@ -155,7 +155,6 @@ export const userUpdateProfilePost = async (
       folder: 'avatars',
     });
     avatarUrl = result.secure_url;
-
     // Xóa file tạm thời sau khi upload thành công
     fs.unlinkSync(req.file.path);
   }
