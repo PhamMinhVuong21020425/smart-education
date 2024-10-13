@@ -70,6 +70,8 @@ export const updateGradeWhenStartExam = async (
       attempt: lastAttempt + 1,
       start_time: new Date(),
       status: AssignmentStatus.DOING,
+      grade: 0,
+      max_grade: grades[0].max_grade,
     });
     return gradeRepository.save(newGrade);
   }
