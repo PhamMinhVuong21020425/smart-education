@@ -3,6 +3,7 @@ import { AppDataSource } from '../config/data-source';
 import { Lesson } from '../entity/lesson.entity';
 import { Course } from '../entity/course.entity';
 import { formatDateTime } from '../helpers/date.helper';
+import { User } from '../entity/user.entity';
 
 const lessonRepository = AppDataSource.getRepository(Lesson);
 const studentLessonRepository = AppDataSource.getRepository(StudentLesson);
@@ -106,4 +107,19 @@ export const updateLessonById = async (
   });
   Object.assign(lesson, lessonUpdate);
   return await lessonRepository.save(lesson);
+};
+
+export const getLessonListOfInstructor = async (instructor: User) => {
+  return lessonRepository.find({
+    relations: ['courses', 'courses.instructor', 'courses.subInstructor'],
+    where: [
+      {
+        courses: { instructor: { id: instructor.id } },
+      },
+      {
+        courses: { subInstructor: { id: instructor.id } },
+      },
+    ],
+    order: { title: 'ASC' },
+  });
 };

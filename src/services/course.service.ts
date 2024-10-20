@@ -9,7 +9,10 @@ import { UserRole } from '../enums/UserRole';
 import { EnrollStatus } from '../enums/EnrollStatus';
 import { AssignmentStatus } from '../enums/AssignmentStatus';
 import { Assignment } from '../entity/assignment.entity';
+import { CourseLevel } from '../enums';
 import { getBestGradeByCourseId, getQuestionsByExamId } from './exam.service';
+import { getUserById } from './user.service';
+import { getLessonById } from './lesson.service';
 
 const courseRepository = AppDataSource.getRepository(Course);
 const enrollmentRepository = AppDataSource.getRepository(Enrollment);
@@ -244,4 +247,58 @@ export const getEnrollmentForCourse = async (
     where: { course },
     relations: ['student', 'course'],
   });
+};
+
+export const createCourse = async (
+  att: Record<string, string>,
+  instructor: User
+): Promise<Course> => {
+  const course = new Course();
+  course.name = att.name;
+  course.description = att.description;
+  course.level = att.level as CourseLevel;
+  course.duration = att.duration;
+  course.instructor = instructor;
+  course.image_url = att.image_url;
+
+  const subInstructorId = att.subInstructor;
+  const subInstructor = await getUserById(subInstructorId);
+  if (subInstructor) course.subInstructor = subInstructor;
+
+  const lessonIdsArray = att.lessonIds.split(', ');
+  const lessonPromises = lessonIdsArray.map((id: string) => getLessonById(id));
+
+  const lessons = await Promise.all(lessonPromises);
+
+  course.lessons = lessons.filter(lesson => lesson !== null);
+
+  return courseRepository.save(course);
+};
+
+export const updateCourse = async (
+  course: Course,
+  att: Record<string, string>
+): Promise<Course> => {
+  course.name = att.name;
+  course.description = att.description;
+  course.level = att.level as CourseLevel;
+  course.duration = att.duration;
+  course.image_url = att.image_url || course.image_url;
+
+  const subInstructorId = att.subInstructor;
+  const subInstructor = await getUserById(subInstructorId);
+  if (subInstructor) course.subInstructor = subInstructor;
+
+  const lessonIdsArray = att.lessonIds.split(', ');
+  const lessonPromises = lessonIdsArray.map((id: string) => getLessonById(id));
+
+  const lessons = await Promise.all(lessonPromises);
+
+  course.lessons = lessons.filter(lesson => lesson !== null);
+
+  return courseRepository.save(course);
+};
+
+export const deleteCourse = async (id: string) => {
+  return courseRepository.delete(id);
 };

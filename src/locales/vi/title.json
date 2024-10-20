@@ -12,7 +12,9 @@
     "profile": "Trang cá nhân",
     "my_courses": "Khóa học của tôi",
     "list_lesson": "Danh sách bài học",
-    "lesson_detail": "Chi tiết bài học"
+    "lesson_detail": "Chi tiết bài học",
+    "create_course": "Tạo khóa học mới",
+    "edit_course": "Chỉnh sửa khóa học"
   },
   "message": {
     "found_results": "Tìm thấy {{count}} kết quả với từ khóa '{{keyword}}'"
