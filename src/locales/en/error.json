@@ -17,6 +17,7 @@
     "invalidId": "The provided ID is invalid.",
     "permissionDenied": "Permission denied",
     "failedToRetrieveCourseDetails": "Failed to retrieve course details.",
-    "search_failed": "An error occurred during the search"
+    "search_failed": "An error occurred during the search",
+    "lessonNotFound": "Lesson Not Found"
   }
 }

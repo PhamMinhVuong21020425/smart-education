@@ -9,3 +9,13 @@ export const formatDateTime = (date: Date) => {
   const formattedDate = `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
   return formattedDate;
 };
+
+export const dateFromTimeAndDate = (time: string, date: string) => {
+  return new Date(`${date}T${time}:00`);
+};
+
+export const timeAndDateFromDateObject = (date: Date) => {
+  const dateString = date.toISOString().split('T')[0];
+  const timeString = date.toTimeString().split(' ')[0].substring(0, 5);
+  return { time: timeString, date: dateString };
+};

@@ -6,7 +6,14 @@
       "reference": "Reference",
       "done": "Done",
       "markAsDone": "Mark as done",
-      "unmarkAsDone": "Unmark done"
-    }
+      "unmarkAsDone": "Unmark done",
+      "title": "Title",
+      "file": "File",
+      "study_time": "Study time",
+      "student_done": "Student done"
+    },
+    "create": "Create lesson",
+    "edit": "Edit lesson",
+    "backToCourseManagement": "Back to course management"
   }
 }

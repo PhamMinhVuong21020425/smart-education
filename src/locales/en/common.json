@@ -6,6 +6,8 @@
     "submit": "Submit",
     "confirmMessage": "Are you sure?",
     "back": "Back",
-    "minutes": "minutes"
+    "minutes": "minutes",
+    "create": "Create",
+    "action": "Action"
   }
 }
