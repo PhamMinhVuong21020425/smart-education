@@ -1,3 +1,4 @@
+import { Not } from 'typeorm';
 import { AppDataSource } from '../config/data-source';
 import { User } from '../entity/user.entity';
 import { UserRole } from '../enums/UserRole';
@@ -16,6 +17,19 @@ export const getInstructorList = async () => {
     instructor.numberOfCourse = courses.length;
   }
   return instructors;
+};
+
+export const getSubInstructorList = async (instructor: User) => {
+  const subInstructors = await userRepository.find({
+    order: { name: 'ASC' },
+    where: {
+      role: UserRole.INSTRUCTOR,
+      id: Not(instructor.id),
+      specialization: instructor.specialization,
+    },
+  });
+
+  return subInstructors;
 };
 
 export const getStudentList = async () => {

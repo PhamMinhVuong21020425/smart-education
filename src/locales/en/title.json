@@ -12,7 +12,9 @@
     "profile": "User Profile",
     "my_courses": "My Courses",
     "list_lesson": "List Lesson",
-    "lesson_detail": "Lesson Detail"
+    "lesson_detail": "Lesson Detail",
+    "create_course": "Add New Course",
+    "edit_course": "Edit Course"
   },
   "message": {
     "found_results": "Found {{count}} results for the keyword '{{keyword}}'"

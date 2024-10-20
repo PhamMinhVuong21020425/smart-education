@@ -1,13 +1,16 @@
+import fs from 'fs';
 import { Request, Response, NextFunction } from 'express';
 import asyncHandler from 'express-async-handler';
 import i18next from 'i18next';
 import * as courseService from '../services/course.service';
+import * as lessonService from '../services/lesson.service';
+import * as userService from '../services/user.service';
 import { Course } from '../entity/course.entity';
 import { CourseLevel } from '../enums/CourseLevel';
-import * as lessonService from '../services/lesson.service';
 import { CourseWithEnrollStatus } from '../helpers/course.helper';
 import { UserRole } from '../enums/UserRole';
 import { LIMIT_RECORDS } from '../constants';
+import cloudinary from '../config/cloudinary-config';
 
 export const courseList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -48,6 +51,39 @@ async function validateCourse(
   }
 
   return course;
+}
+
+async function uploadImage(req: Request) {
+  let image_url = '';
+  if (req.file) {
+    const result = await cloudinary.v2.uploader.upload(req.file.path, {
+      folder: 'course_images',
+    });
+    image_url = result.secure_url;
+    fs.unlinkSync(req.file.path);
+  }
+  return image_url;
+}
+
+async function getAttributesForView(req: Request, res: Response) {
+  const instructor = req.session.user!;
+  const subInstructors = await userService.getSubInstructorList(instructor);
+  const lessons = await lessonService.getLessonListOfInstructor(instructor);
+  if (!req.params.id)
+    return {
+      subInstructors,
+      lessons,
+    };
+  const course = await validateCourse(req, res);
+  const lessonIdsSelected = course?.lessons.map(lesson => lesson.id);
+  const lessonNamesSelected = course?.lessons.map(lesson => lesson.title);
+  return {
+    subInstructors,
+    lessons,
+    course,
+    lessonIdsSelected,
+    lessonNamesSelected,
+  };
 }
 
 // Hiển thị trang chi tiết của một khóa học cụ thể.
@@ -155,36 +191,64 @@ export const courseManageGet = asyncHandler(
 
 export const courseCreateGet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    res.send('course is created with method GET');
+    const { subInstructors, lessons } = await getAttributesForView(req, res);
+    res.render('courses/form', {
+      title: req.t('title.create_course'),
+      subInstructors,
+      lessons,
+    });
   }
 );
 
 export const courseCreatePost = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    res.send('course is created with method POST');
+    const instructor = req.session.user!;
+    req.body.image_url = await uploadImage(req);
+
+    const course = await courseService.createCourse(req.body, instructor);
+    res.redirect(`/courses/${course.id}`);
   }
 );
 
 export const courseDeleteGet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    res.send(`course ${req.params.id} is deleted with method GET`);
+    const attributes = await getAttributesForView(req, res);
+    if (!attributes.course) return;
+    const studentCount = await courseService.getStudentCountByCourseId(
+      attributes.course.id
+    );
+    res.render('courses/form', {
+      title: req.t('title.edit_course'),
+      ...attributes,
+      studentCount,
+    });
   }
 );
 
 export const courseDeletePost = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    res.send(`course ${req.params.id} is deleted with method POST`);
+    await courseService.deleteCourse(req.body.courseId);
+    res.redirect('/courses');
   }
 );
 
 export const courseUpdateGet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    res.send(`course ${req.params.id} is updated with method GET `);
+    const attributes = await getAttributesForView(req, res);
+    res.render('courses/form', {
+      title: req.t('title.edit_course'),
+      ...attributes,
+    });
   }
 );
 
 export const courseUpdatePost = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    res.send(`course ${req.params.id} is updated with method POST`);
+    const course = await validateCourse(req, res);
+    if (!course) return;
+    req.body.image_url = await uploadImage(req);
+
+    await courseService.updateCourse(course, req.body);
+    res.redirect(`/courses/${course.id}`);
   }
 );

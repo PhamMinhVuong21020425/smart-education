@@ -1,19 +1,33 @@
 import { Router } from 'express';
 import * as courseController from '../controllers/course.controller';
+import { requireInstructor } from '../middleware/require-instructor.middleware';
+import upload from '../config/multer-config';
 
 const router: Router = Router();
 
-router.get('/create', courseController.courseCreateGet);
+router.get('/create', requireInstructor, courseController.courseCreateGet);
 
-router.post('/create', courseController.courseCreatePost);
+router.post(
+  '/create',
+  [requireInstructor, upload.single('image')],
+  courseController.courseCreatePost
+);
 
-router.get('/:id/delete', courseController.courseDeleteGet);
+router.get('/:id/delete', requireInstructor, courseController.courseDeleteGet);
 
-router.post('/:id/delete', courseController.courseDeletePost);
+router.post(
+  '/:id/delete',
+  requireInstructor,
+  courseController.courseDeletePost
+);
 
-router.get('/:id/update', courseController.courseUpdateGet);
+router.get('/:id/update', requireInstructor, courseController.courseUpdateGet);
 
-router.post('/:id/update', courseController.courseUpdatePost);
+router.post(
+  '/:id/update',
+  [requireInstructor, upload.single('image')],
+  courseController.courseUpdatePost
+);
 
 router.get('/:id/manage', courseController.courseManageGet);
 
