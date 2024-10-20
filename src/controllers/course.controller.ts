@@ -7,6 +7,7 @@ import { CourseLevel } from '../enums/CourseLevel';
 import * as lessonService from '../services/lesson.service';
 import { CourseWithEnrollStatus } from '../helpers/course.helper';
 import { UserRole } from '../enums/UserRole';
+import { LIMIT_RECORDS } from '../constants';
 
 export const courseList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -120,6 +121,7 @@ export const rejectEnrollGet = asyncHandler(
 
 export const courseManageGet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    const currentLessonPage = parseInt(req.query.lessonPage as string) || 1;
     const userSession = req.session.user;
     const course = await validateCourse(req, res);
     if (!course) return;
@@ -128,10 +130,21 @@ export const courseManageGet = asyncHandler(
       (userSession && course.subInstructor?.id === userSession.id)
     ) {
       const enrollments = await courseService.getEnrollmentForCourse(course);
+      const lessons = await lessonService.getLessonListAdmin(course.id);
+      const totalLessonPages = Math.ceil(lessons.length / LIMIT_RECORDS);
+
+      currentLessonPage;
       res.render('courses/manage', {
         title: req.t('title.course_detail'),
         course,
         enrollments,
+        lessons: lessons.slice(
+          (currentLessonPage - 1) * LIMIT_RECORDS,
+          currentLessonPage * LIMIT_RECORDS
+        ),
+        currentLessonPage,
+        totalLessonPages,
+        LIMIT_RECORDS,
       });
     } else {
       req.flash('error', i18next.t('error.permissionDenied'));

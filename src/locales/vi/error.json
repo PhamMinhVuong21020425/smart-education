@@ -17,6 +17,7 @@
     "invalidId": "ID không hợp lệ.",
     "permissionDenied": "Không có quyền truy cập",
     "failedToRetrieveCourseDetails": "Không thể lấy thông tin khóa học.",
-    "search_failed": "Đã xảy ra lỗi trong quá trình tìm kiếm"
+    "search_failed": "Đã xảy ra lỗi trong quá trình tìm kiếm",
+    "lessonNotFound": "Không tìm thấy bài giảng"
   }
 }

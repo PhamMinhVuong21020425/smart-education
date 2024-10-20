@@ -1,6 +1,7 @@
 import { Router, Response, NextFunction } from 'express';
 import * as lessonController from '../controllers/lesson.controller';
 import { RequestWithCourseID } from '../helpers/lesson.helper';
+import upload from '../config/multer-config';
 
 const router: Router = Router();
 
@@ -11,7 +12,11 @@ router.use((req: RequestWithCourseID, res: Response, next: NextFunction) => {
 
 router.get('/create', lessonController.lessonCreateGet);
 
-router.post('/create', lessonController.lessonCreatePost);
+router.post(
+  '/create',
+  upload.single('file'),
+  lessonController.lessonCreatePost
+);
 
 router.get('/:id/delete', lessonController.lessonDeleteGet);
 
@@ -19,7 +24,11 @@ router.post('/:id/delete', lessonController.lessonDeletePost);
 
 router.get('/:id/update', lessonController.lessonUpdateGet);
 
-router.post('/:id/update', lessonController.lessonUpdatePost);
+router.post(
+  '/:id/update',
+  upload.single('file'),
+  lessonController.lessonUpdatePost
+);
 
 router.get('/:id', lessonController.getLessonDetail);
 

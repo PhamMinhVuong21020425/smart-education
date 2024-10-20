@@ -6,6 +6,8 @@
     "submit": "Gửi",
     "confirmMessage": "Bạn có chắc không?",
     "back": "Quay lại",
-    "minutes": "phút"
+    "minutes": "phút",
+    "create": "Tạo mới",
+    "action": "Hành động"
   }
 }
