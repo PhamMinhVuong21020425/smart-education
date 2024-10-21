@@ -2,6 +2,7 @@ import { Not } from 'typeorm';
 import { AppDataSource } from '../config/data-source';
 import { User } from '../entity/user.entity';
 import { UserRole } from '../enums/UserRole';
+import { AuthType } from '../enums/AuthType';
 import { UserWithNumberOfCourse } from '../helpers/user.helper';
 import { getUserCourseList } from './course.service';
 
@@ -59,4 +60,25 @@ export const updateUser = async (
   }
   Object.assign(user, updateData);
   return userRepository.save(user);
+};
+
+// Tìm người dùng theo googleId
+export const findUserByGoogleId = async (
+  googleId: string
+): Promise<User | null> => {
+  return userRepository.findOne({
+    where: { googleId },
+  });
+};
+
+// Tạo người dùng mới
+export const createUser = async (data: Partial<User>): Promise<User> => {
+  const newUser = userRepository.create(data);
+  newUser.hash_password = await newUser.hashPassword('', AuthType.GOOGLE);
+  return userRepository.save(newUser);
+};
+
+// Tìm người dùng theo ID
+export const findUserById = async (id: string): Promise<User | null> => {
+  return userRepository.findOneBy({ id });
 };

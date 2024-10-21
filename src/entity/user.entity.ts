@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Course } from './course.entity';
 import { Enrollment } from './enrollment.entity';
@@ -6,18 +7,28 @@ import { Answer } from './answer.entity';
 import { Grade } from './grade.entity';
 import { UserRole } from '../enums/UserRole';
 import { Specialization } from '../enums/Specialization';
-import * as bcrypt from 'bcrypt';
+import { AuthType } from '../enums/AuthType';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ nullable: true })
+  googleId: string;
+
   @Column()
   email: string;
 
   @Column()
   hash_password: string;
+
+  @Column({
+    type: 'enum',
+    enum: AuthType,
+    default: AuthType.LOCAL,
+  })
+  auth_type: AuthType;
 
   @Column()
   username: string;
@@ -73,8 +84,10 @@ export class User {
     Object.assign(this, partial);
   }
 
-  // Hash mật khẩu trước khi lưu
-  static async hashPassword(password: string): Promise<string> {
+  async hashPassword(password: string, auth_type: AuthType): Promise<string> {
+    if (auth_type === AuthType.GOOGLE && password === '') {
+      password = process.env.GOOGLE_PASSWORD!;
+    }
     const salt = await bcrypt.genSalt(10);
     return bcrypt.hash(password, salt);
   }
