@@ -14,6 +14,8 @@ import { sessionMiddleware } from './middleware/auth.middleware';
 import { User } from './entity/user.entity';
 import * as EnumType from './enums';
 import { THREE_HOURS } from './constants';
+import passport from 'passport';
+import './config/passport';
 
 import indexRouter from './routes/index';
 
@@ -102,8 +104,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.locals.CourseLevel = EnumType.CourseLevel;
   res.locals.CourseStatus = EnumType.CourseStatus;
   res.locals.AssignmentStatus = EnumType.AssignmentStatus;
+  res.locals.Specialization = EnumType.Specialization;
   next();
 });
+
+// Cấu hình Passport
+app.use(passport.initialize());
 
 const MySQLStore = MySQLSession(expressSession);
 
@@ -130,7 +136,7 @@ app.use(
       secure: false, // Đặt thành true nếu sử dụng HTTPS
       maxAge: THREE_HOURS, // 3h
       httpOnly: true,
-      sameSite: true,
+      sameSite: 'lax',
     },
   })
 );

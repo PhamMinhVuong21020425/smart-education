@@ -13,6 +13,7 @@ import { LoginDTO } from '../dtos/login.dto';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { Specialization } from '../enums/Specialization';
+import { AuthType } from '../enums/AuthType';
 
 export const registerGet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -32,6 +33,7 @@ export const registerPost = asyncHandler(
     if (errors.length > 0) {
       return res.render('auth/register', {
         user: dto,
+        attribute: req.body,
         errors: errors.map(err => ({
           param: err.property,
           msg: Object.values(err.constraints || {})[0],
@@ -42,8 +44,11 @@ export const registerPost = asyncHandler(
     // Kiểm tra xem người dùng đã tồn tại chưa
     const userExists = await findUserByUsername(dto.username);
     if (userExists) {
-      req.flash('error', i18next.t('username_exists'));
-      return res.redirect('/auth/register');
+      return res.render('auth/register', {
+        user: dto,
+        attribute: req.body,
+        error_message: i18next.t('username_exists'),
+      });
     }
 
     // Tạo đối tượng User mới
@@ -51,7 +56,7 @@ export const registerPost = asyncHandler(
     user.name = dto.name;
     user.username = dto.username;
     user.email = dto.email;
-    user.hash_password = await User.hashPassword(dto.password); // Hash mật khẩu
+    user.hash_password = await user.hashPassword(dto.password, AuthType.LOCAL);
 
     if (dto.role === UserRole.INSTRUCTOR) {
       user.about = dto.about || '';
@@ -72,7 +77,7 @@ export const registerPost = asyncHandler(
     }
 
     // Chuyển hướng đến trang chính
-    res.redirect('/auth/register');
+    res.redirect('/auth/login');
   }
 );
 
@@ -99,6 +104,7 @@ export const loginPost = asyncHandler(
         title: i18next.t('login.title'),
         errors: formattedErrors,
         messages: { error: formattedErrors.map(err => err.msg) },
+        attribute: req.body,
       });
     }
 
@@ -106,8 +112,11 @@ export const loginPost = asyncHandler(
 
     if (user) {
       if (user.role === UserRole.PENDING_APPROVAL) {
-        req.flash('error', i18next.t('login.errors.pending_approval'));
-        return res.redirect('/auth/login');
+        return res.render('auth/login', {
+          title: i18next.t('login.title'),
+          attribute: req.body,
+          error_message: i18next.t('login.errors.pending_approval'),
+        });
       }
 
       // Lưu thông tin người dùng vào session
@@ -119,8 +128,11 @@ export const loginPost = asyncHandler(
         res.redirect('/');
       }
     } else {
-      req.flash('error', i18next.t('login.errors.invalid_credentials'));
-      res.redirect('/auth/login');
+      res.render('auth/login', {
+        title: i18next.t('login.title'),
+        attribute: req.body,
+        error_message: i18next.t('login.errors.invalid_credentials'),
+      });
     }
   }
 );
@@ -133,3 +145,14 @@ export const logout = (req: Request, res: Response, next: NextFunction) => {
     res.redirect('/');
   });
 };
+
+export const googleCallback = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      res.status(400).json({ error: 'Authentication failed' });
+    }
+
+    req.session.user = req.user as User;
+    res.redirect('/');
+  }
+);
