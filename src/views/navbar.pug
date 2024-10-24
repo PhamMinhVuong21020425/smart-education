@@ -176,7 +176,8 @@ nav.relative.bg-white.border-gray-200.mb-4.z-10(class='dark:bg-gray-900')
         +navLink('/', 'Home')
         +navLink('/courses', 'Courses')
         +navLink('/users/instructors', 'Instructors')
-        +navLink('/users/students', 'Students')
+        if current_user
+          +navLink('/users/students', 'Students')
 
 // JavaScript for toggling the menu
 script(src='/javascripts/navbar.js')

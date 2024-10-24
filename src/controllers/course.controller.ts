@@ -23,10 +23,21 @@ export const courseList = asyncHandler(
     const courseRecommends = allCourses.filter(
       course => !myCourses.find(myCourse => myCourse.id === course.id)
     );
+
+    const levelFilter = req.query.level;
+    const statusFilter = req.query.status;
+    const filteredMyCourses = myCourses.filter(course => {
+      if (levelFilter && course.level !== levelFilter) return false;
+      if (statusFilter && course.enrollStatus !== statusFilter) return false;
+      return true;
+    });
+
     res.render('courses/index', {
       title: req.t('title.list_course'),
       courseRecommends,
-      myCourses,
+      myCourses: filteredMyCourses,
+      levelFilter,
+      statusFilter,
       currentPath: req.baseUrl,
     });
   }

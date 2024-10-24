@@ -16,4 +16,6 @@ block content
           .flex.flex-col
             h3.font-semibold= instructor.name
             p.text-sm.text-gray-500= instructor.email
-        p.text-sm.text-gray-600= instructor.about
+        .flex.justify-between.items-center.text-sm.text-gray-600
+          p= instructor.about
+          span= `${instructor.studentCount} students`

@@ -10,6 +10,24 @@ block content
             href='/courses/create',
             class='hover:text-blue-800 hover:bg-blue-100'
           ) Add New Course
+
+      // Filters
+      .mb-4.flex.space-x-4
+        select#levelFilter.border-2.border-black.rounded.px-2.py-1(
+          onchange='filterMyCourses()'
+        )
+          option(value='') All Levels
+          each value, key in CourseLevel
+            option(value=value, selected=levelFilter === value ? true : false)= key
+
+        select#statusFilter.border-2.border-black.rounded.px-2.py-1(
+          onchange='filterMyCourses()',
+          class=current_user.role === UserRole.INSTRUCTOR ? 'hidden' : ''
+        )
+          option(value='') All Status
+          each value, key in EnrollStatus
+            option(value=value, selected=statusFilter === value ? true : false)= key
+
       .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
         each course in myCourses
           a.block.bg-white.shadow-md.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
@@ -27,6 +45,8 @@ block content
                 p.text-sm.text-gray-600.mb-4= course.description
                 .flex.justify-between.items-center.text-sm.text-gray-500
                   span= `${course.level} • ${course.duration}`
+                  if current_user.role === UserRole.INSTRUCTOR
+                    span= `${course.studentCount} students`
                   if course.enrollStatus
                     case course.enrollStatus
                       when EnrollStatus.PENDING
@@ -57,3 +77,5 @@ block content
               p.text-sm.text-gray-600.mb-4= course.description
               .flex.justify-between.items-center.text-sm.text-gray-500
                 span= `${course.level} • ${course.duration}`
+                span= `${course.studentCount} students`
+  script(src='/javascripts/filter.js')

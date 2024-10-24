@@ -3,20 +3,58 @@ import { AppDataSource } from '../config/data-source';
 import { User } from '../entity/user.entity';
 import { UserRole } from '../enums/UserRole';
 import { AuthType } from '../enums/AuthType';
-import { UserWithNumberOfCourse } from '../helpers/user.helper';
-import { getUserCourseList } from './course.service';
+import {
+  UserWithNumberOfCourse,
+  InstructorWithStudentCount,
+} from '../helpers/user.helper';
+import { getStudentCountByCourseId, getUserCourseList } from './course.service';
 
 const userRepository = AppDataSource.getRepository(User);
 
+export const sortInstructorByMajor = (
+  instructors: InstructorWithStudentCount[],
+  userSession: User
+) => {
+  return instructors.sort((a, b) => {
+    if (
+      a.specialization === userSession.specialization &&
+      b.specialization !== userSession.specialization
+    )
+      return -1;
+
+    if (
+      a.specialization !== userSession.specialization &&
+      b.specialization === userSession.specialization
+    )
+      return 1;
+
+    return b.studentCount! - a.studentCount!;
+  });
+};
+
 export const getInstructorList = async () => {
-  const instructors: UserWithNumberOfCourse[] = await userRepository.find({
+  const instructors: InstructorWithStudentCount[] = await userRepository.find({
     order: { username: 'ASC' },
     where: { role: UserRole.INSTRUCTOR },
   });
+
   for (const instructor of instructors) {
     const courses = await getUserCourseList(instructor);
+    const studentCountsPromises = courses.map(course =>
+      getStudentCountByCourseId(course.id)
+    );
+
+    const studentCounts = await Promise.all(studentCountsPromises);
+
     instructor.numberOfCourse = courses.length;
+    instructor.studentCount = studentCounts.reduce(
+      (acc, count) => acc + count,
+      0
+    );
   }
+
+  instructors.sort((a, b) => b.studentCount! - a.studentCount!);
+
   return instructors;
 };
 
@@ -43,6 +81,9 @@ export const getStudentList = async () => {
     const courses = await getUserCourseList(student);
     student.numberOfCourse = courses.length;
   }
+
+  students.sort((a, b) => b.numberOfCourse! - a.numberOfCourse!);
+
   return students;
 };
 
@@ -81,4 +122,17 @@ export const createUser = async (data: Partial<User>): Promise<User> => {
 // Tìm người dùng theo ID
 export const findUserById = async (id: string): Promise<User | null> => {
   return userRepository.findOneBy({ id });
+};
+
+export const getStudentCountByInstructorId = async (
+  instructor: User
+): Promise<number> => {
+  const coursesOfInstructor = await getUserCourseList(instructor);
+  const studentCountsPromises = coursesOfInstructor.map(course =>
+    getStudentCountByCourseId(course.id)
+  );
+
+  const studentCounts = await Promise.all(studentCountsPromises);
+
+  return studentCounts.reduce((acc, count) => acc + count, 0);
 };

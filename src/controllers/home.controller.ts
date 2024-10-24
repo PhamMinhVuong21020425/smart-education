@@ -11,7 +11,7 @@ import { CourseStatus } from '../enums/CourseStatus';
 
 export const index = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const instructors = await userService.getInstructorList();
+    let instructors = await userService.getInstructorList();
     const students = await userService.getStudentList();
 
     const allCourses = await courseService.getCourseList();
@@ -19,6 +19,8 @@ export const index = asyncHandler(
     const courseLearns: CourseWithProgress[] = [];
     if (req.session.user) {
       const userSession = req.session.user;
+      instructors = userService.sortInstructorByMajor(instructors, userSession);
+
       myCourses = await courseService.getUserCourseList(userSession);
 
       for (const course of myCourses) {
