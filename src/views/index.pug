@@ -115,6 +115,7 @@ block content
                   p.text-sm.text-gray-600.mb-4= course.description
                   .flex.justify-between.items-center.text-sm.text-gray-500
                     span= `${course.level} • ${course.duration}`
+                    span= `${course.studentCount} students`
 
     .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
@@ -138,6 +139,7 @@ block content
                 p.text-sm.text-gray-600.mb-4= course.description
                 .flex.justify-between.items-center.text-sm.text-gray-500
                   span= `${course.level} • ${course.duration}`
+                  span= `${course.studentCount} students`
 
     .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
@@ -161,26 +163,28 @@ block content
                 p.text-sm.text-gray-600.mb-4= instructor.about
                 .flex.justify-between.items-center.text-sm.text-gray-500
                   span= `Instructor • ${instructor.numberOfCourse} courses`
+                  span= `${instructor.studentCount} students`
 
-    .mb-6
-    .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
-      .flex.justify-between.items-center.mb-6
-        h2.text-xl.font-bold Student
-        a.text-teal-500(href='/users/students') See All
-      .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
-        each student in students.slice(0, 6)
-          a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-            class='hover:shadow-xl hover:scale-105',
-            href=`/users/${student.id}`
-          )
-            .bg-gray-50.rounded-lg.overflow-hidden
-              .flex.justify-center.items-center.h-48
-                img.h-full(
-                  src=student.avatar_url ? student.avatar_url : '/images/student.png',
-                  alt='Image'
-                )
-              .p-4
-                h3.font-semibold.mb-2= student.name
-                p.text-sm.text-gray-600.mb-4= student.about
-                .flex.justify-between.items-center.text-sm.text-gray-500
-                  span= `Student • ${student.numberOfCourse} courses`
+    if current_user
+      .mb-6
+      .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+        .flex.justify-between.items-center.mb-6
+          h2.text-xl.font-bold Student
+          a.text-teal-500(href='/users/students') See All
+        .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
+          each student in students.slice(0, 6)
+            a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
+              class='hover:shadow-xl hover:scale-105',
+              href=`/users/${student.id}`
+            )
+              .bg-gray-50.rounded-lg.overflow-hidden
+                .flex.justify-center.items-center.h-48
+                  img.h-full(
+                    src=student.avatar_url ? student.avatar_url : '/images/student.png',
+                    alt='Image'
+                  )
+                .p-4
+                  h3.font-semibold.mb-2= student.name
+                  p.text-sm.text-gray-600.mb-4= student.about
+                  .flex.justify-between.items-center.text-sm.text-gray-500
+                    span= `Student • ${student.numberOfCourse} courses`

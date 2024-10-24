@@ -11,6 +11,8 @@ export const searchCourses = async (keyword: string): Promise<Course[]> => {
   return await courseRepository
     .createQueryBuilder('course')
     .where('course.name LIKE :keyword', { keyword: `%${keyword}%` })
+    .orWhere('course.description LIKE :keyword', { keyword: `%${keyword}%` })
+    .orWhere('course.level LIKE :keyword', { keyword: `%${keyword}%` })
     .getMany();
 };
 
@@ -18,6 +20,8 @@ export const searchInstructors = async (keyword: string) => {
   const instructors: UserWithNumberOfCourse[] = await userRepository
     .createQueryBuilder('user')
     .where('user.name LIKE :keyword', { keyword: `%${keyword}%` })
+    .orWhere('user.about LIKE :keyword', { keyword: `%${keyword}%` })
+    .orWhere('user.specialization LIKE :keyword', { keyword: `%${keyword}%` })
     .andWhere('user.role = :role', { role: 'INSTRUCTOR' })
     .getMany();
 

@@ -13,6 +13,7 @@ import { CourseLevel } from '../enums';
 import { getBestGradeByCourseId, getQuestionsByExamId } from './exam.service';
 import { getUserById } from './user.service';
 import { getLessonById } from './lesson.service';
+import { CourseWithStudentCount } from '../helpers/course.helper';
 
 const courseRepository = AppDataSource.getRepository(Course);
 const enrollmentRepository = AppDataSource.getRepository(Enrollment);
@@ -21,17 +22,43 @@ const studentLessonRepository = AppDataSource.getRepository(StudentLesson);
 const assignmentRepository = AppDataSource.getRepository(Assignment);
 const gradeRepository = AppDataSource.getRepository(Grade);
 
+export const getCoursesWithStudentCount = async (courses: Course[]) => {
+  const studentCountsPromises = courses.map(course => {
+    return getStudentCountByCourseId(course.id);
+  });
+
+  const studentCounts = await Promise.all(studentCountsPromises);
+
+  const allCoursesWithStudentCount: CourseWithStudentCount[] = courses.map(
+    (course, index) => {
+      return {
+        ...course,
+        studentCount: studentCounts[index],
+      };
+    }
+  );
+
+  allCoursesWithStudentCount.sort((a, b) => b.studentCount! - a.studentCount!);
+
+  return allCoursesWithStudentCount;
+};
+
 export const getCourseList = async () => {
-  return courseRepository.find({
+  const allCourses = await courseRepository.find({
+    relations: ['instructor', 'subInstructor'],
     order: { name: 'ASC' },
   });
+
+  return getCoursesWithStudentCount(allCourses);
 };
 
 export const getUserCourseList = async (user: User) => {
   if (user.role === UserRole.INSTRUCTOR) {
-    return courseRepository.find({
+    const courses = await courseRepository.find({
       where: [{ instructor: user }, { subInstructor: user }],
     });
+
+    return getCoursesWithStudentCount(courses);
   } else {
     const enrollments = await enrollmentRepository.find({
       where: { student: user },
@@ -39,6 +66,7 @@ export const getUserCourseList = async (user: User) => {
         course: {
           lessons: true,
           assignment: true,
+          enrollments: true,
         },
       },
       order: { status: 'ASC', enrollment_date: 'DESC' },
@@ -47,6 +75,7 @@ export const getUserCourseList = async (user: User) => {
       return {
         ...enrollment.course,
         enrollStatus: enrollment.status,
+        studentCount: enrollment.course.enrollments.length,
       };
     });
   }
@@ -229,7 +258,7 @@ export const getEnrollmentForInstructor = async (
   const enrollments: Enrollment[] = [];
   for (const course of courses) {
     const enrollmentsOfCourse = await enrollmentRepository.find({
-      where: { course },
+      where: { course: { id: course.id } },
       relations: ['student', 'course'],
     });
     enrollments.push(...enrollmentsOfCourse);
@@ -244,7 +273,7 @@ export const getEnrollmentForCourse = async (
   course: Course
 ): Promise<Enrollment[]> => {
   return enrollmentRepository.find({
-    where: { course },
+    where: { course: { id: course.id } },
     relations: ['student', 'course'],
   });
 };

@@ -9,3 +9,5 @@ export type CourseWithProgress = Course & {
   progress?: number;
   enrollStatus?: EnrollStatus;
 };
+
+export type CourseWithStudentCount = Course & { studentCount?: number };

@@ -3,7 +3,7 @@ import { NextFunction, Response, Request } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as userService from '../services/user.service';
 import * as courseService from '../services/course.service';
-import { users, courseRecommends } from '../mock/data';
+import { users } from '../mock/data';
 import { UserRole } from '../enums/UserRole';
 import cloudinary from '../config/cloudinary-config';
 import i18next from 'i18next';
@@ -18,7 +18,14 @@ export const getUserList = asyncHandler(
 
 export const getInstructorList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const instructors = await userService.getInstructorList();
+    let instructors = await userService.getInstructorList();
+    if (req.session.user) {
+      instructors = userService.sortInstructorByMajor(
+        instructors,
+        req.session.user
+      );
+    }
+
     res.render('instructors/list', {
       title: req.t('title.list_instructor'),
       instructors,

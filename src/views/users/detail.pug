@@ -37,6 +37,9 @@ block content
               li.mt-2
                 strong #{ t('user.detail.phone') }:
                 | &nbsp;#{ user.phone ? user.phone : 'N/A' }
+              li.mt-2
+                strong #{ t('user.detail.major') }:
+                | &nbsp;#{ user.specialization ? user.specialization : 'N/A' }
 
     .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
@@ -62,3 +65,4 @@ block content
                 p.text-sm.text-gray-600.mb-4= course.description
                 .flex.justify-between.items-center.text-sm.text-gray-500
                   span= `${course.level} • ${course.duration}`
+                  span= `${course.studentCount} students`
