@@ -136,3 +136,6 @@ export const getStudentCountByInstructorId = async (
 
   return studentCounts.reduce((acc, count) => acc + count, 0);
 };
+export const deleteById = async (id: string): Promise<void> => {
+  await userRepository.delete(id);
+};

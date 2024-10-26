@@ -1,0 +1,8 @@
+extends index
+
+block content
+  .bg-white.p-8.shadow-lg.rounded-lg
+    h2.text-2xl.font-bold.mb-6 Danh Sách Khóa Học
+    ul
+      each course in data.courses
+        li= course
