@@ -60,6 +60,7 @@ i18next
       'title',
       'error',
       'auth',
+      'admin',
     ],
     defaultNS: [
       'lesson',
@@ -70,6 +71,7 @@ i18next
       'title',
       'error',
       'auth',
+      'admin',
     ],
     backend: {
       loadPath: path.join(__dirname, './locales/{{lng}}/{{ns}}.json'),

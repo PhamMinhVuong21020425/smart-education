@@ -21,6 +21,7 @@ const lessonRepository = AppDataSource.getRepository(Lesson);
 const studentLessonRepository = AppDataSource.getRepository(StudentLesson);
 const assignmentRepository = AppDataSource.getRepository(Assignment);
 const gradeRepository = AppDataSource.getRepository(Grade);
+const userRepository = AppDataSource.getRepository(User);
 
 export const getCoursesWithStudentCount = async (courses: Course[]) => {
   const studentCountsPromises = courses.map(course => {
@@ -330,4 +331,23 @@ export const updateCourse = async (
 
 export const deleteCourse = async (id: string) => {
   return courseRepository.delete(id);
+};
+
+export const findCoursesByInstructorId = async (instructorId: string) => {
+  const instructor = await userRepository.findOneBy({ id: instructorId });
+
+  if (!instructor) {
+    throw new Error('Instructor not found');
+  }
+
+  return await courseRepository.find({
+    where: { instructor },
+    relations: ['enrollments'],
+  });
+};
+
+export const deleteCoursesByInstructorId = async (
+  instructorId: string
+): Promise<void> => {
+  await courseRepository.delete({ instructor: { id: instructorId } });
 };
