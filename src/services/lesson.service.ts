@@ -6,6 +6,7 @@ import { formatDateTime } from '../helpers/date.helper';
 import { User } from '../entity/user.entity';
 
 const lessonRepository = AppDataSource.getRepository(Lesson);
+const courseRepository = AppDataSource.getRepository(Course);
 const studentLessonRepository = AppDataSource.getRepository(StudentLesson);
 
 export const getLessonList = async (userId: string, courseId: string) => {
@@ -122,4 +123,32 @@ export const getLessonListOfInstructor = async (instructor: User) => {
     ],
     order: { title: 'ASC' },
   });
+};
+
+export const getStudentLessonByLessonId = async (lessonId: string) => {
+  return await studentLessonRepository.find({
+    where: {
+      lesson: {
+        id: lessonId,
+      },
+    },
+  });
+};
+
+export const deleteLessonByLessonId = async (
+  courseId: string,
+  lessonId: string
+) => {
+  const course = await courseRepository.findOne({
+    where: {
+      id: courseId,
+    },
+    relations: ['lessons'],
+  });
+  if (!course) {
+    return;
+  }
+  course.lessons = course.lessons.filter(l => l.id !== lessonId);
+  await courseRepository.save(course);
+  return await lessonRepository.delete(lessonId);
 };

@@ -2,8 +2,10 @@ import { NextFunction, Response, Request } from 'express';
 import asyncHandler from 'express-async-handler';
 import {
   createLesson,
+  deleteLessonByLessonId,
   getLessonById,
   getLessonList,
+  getStudentLessonByLessonId,
   markDoneLesson,
   updateLessonById,
 } from '../services/lesson.service';
@@ -102,14 +104,24 @@ export const lessonCreatePost = asyncHandler(
 );
 
 export const lessonDeleteGet = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    res.send(`lesson ${req.params.id} is deleted with method GET`);
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    const lessonId = req.params.id;
+    const studentLesson = await getStudentLessonByLessonId(lessonId);
+    const lesson = await getLessonById(lessonId);
+    res.render('lessons/delete', {
+      courseID: req.courseID,
+      studentLesson,
+      lesson,
+    });
   }
 );
 
 export const lessonDeletePost = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    res.send(`lesson ${req.params.id} is deleted with method POST`);
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    const lessonId = req.params.id;
+    const courseId = req.courseID;
+    await deleteLessonByLessonId(courseId!, lessonId);
+    res.redirect(`/courses/${req.courseID}/manage`);
   }
 );
 
