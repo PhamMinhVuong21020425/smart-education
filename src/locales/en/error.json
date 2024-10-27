@@ -18,6 +18,8 @@
     "permissionDenied": "Permission denied",
     "failedToRetrieveCourseDetails": "Failed to retrieve course details.",
     "search_failed": "An error occurred during the search",
-    "lessonNotFound": "Lesson Not Found"
+    "lessonNotFound": "Lesson Not Found",
+    "notVerify": "Please verify your account firstly",
+    "invalidCode": "Invalid or expired code. Please take the code of latest email."
   }
 }

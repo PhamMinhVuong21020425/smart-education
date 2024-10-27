@@ -17,7 +17,7 @@ export class User {
   @Column({ nullable: true })
   googleId: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
@@ -30,7 +30,7 @@ export class User {
   })
   auth_type: AuthType;
 
-  @Column()
+  @Column({ unique: true })
   username: string;
 
   @Column({
@@ -58,9 +58,18 @@ export class User {
   @Column({
     type: 'enum',
     enum: Specialization,
-    nullable: true,
+    default: Specialization.NONE,
   })
   specialization: Specialization;
+
+  @Column({ nullable: true })
+  authCode: string;
+
+  @Column({ type: 'datetime', nullable: true })
+  authCodeExpires: Date;
+
+  @Column({ nullable: true })
+  isVerify: boolean;
 
   @OneToMany(() => Course, course => course.instructor)
   instructorCourses: Course[];
@@ -82,6 +91,11 @@ export class User {
 
   constructor(partial?: Partial<User>) {
     Object.assign(this, partial);
+  }
+
+  generateAuthCode() {
+    const code = Math.floor(100000 + Math.random() * 900000);
+    return code.toString().padStart(6, '0');
   }
 
   async hashPassword(password: string, auth_type: AuthType): Promise<string> {

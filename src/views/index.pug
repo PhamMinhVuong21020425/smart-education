@@ -50,8 +50,8 @@ block content
       .mb-6
       .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
         .flex.justify-between.items-center.mb-6
-          h2.text-xl.font-bold Continue Learning
-          a.text-teal-500(href='/courses#learning') See All
+          h2.text-xl.font-bold #{ t('course.learning') }
+          a.text-teal-500(href='/courses#learning') #{ t('common.seeAll') }
         .space-y-4
           each course in courseLearns
             a.flex.items-center.justify-between.bg-gray-50.p-4.rounded-md(
@@ -96,8 +96,8 @@ block content
       .mb-6
       .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
         .flex.justify-between.items-center.mb-6
-          h2.text-xl.font-bold My Courses
-          a.text-teal-500(href='/courses') See All
+          h2.text-xl.font-bold #{ t('common.myCourses') }
+          a.text-teal-500(href='/courses') #{ t('common.seeAll') }
         .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
           each course in myCourses.slice(0, 6)
             a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
@@ -115,13 +115,13 @@ block content
                   p.text-sm.text-gray-600.mb-4= course.description
                   .flex.justify-between.items-center.text-sm.text-gray-500
                     span= `${course.level} • ${course.duration}`
-                    span= `${course.studentCount} students`
+                    span= `${course.studentCount} ${t('courseDetails.students')}`
 
     .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
       .flex.justify-between.items-center.mb-6
-        h2.text-xl.font-bold Recommended for you
-        a.text-teal-500(href='/courses#recommend') See All
+        h2.text-xl.font-bold #{ t('common.recommend') }
+        a.text-teal-500(href='/courses#recommend') #{ t('common.seeAll') }
       .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
         each course in courseRecommends.slice(0, 6)
           a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
@@ -139,13 +139,13 @@ block content
                 p.text-sm.text-gray-600.mb-4= course.description
                 .flex.justify-between.items-center.text-sm.text-gray-500
                   span= `${course.level} • ${course.duration}`
-                  span= `${course.studentCount} students`
+                  span= `${course.studentCount} ${t('courseDetails.students')}`
 
     .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
       .flex.justify-between.items-center.mb-6
-        h2.text-xl.font-bold Instructor
-        a.text-teal-500(href='/users/instructors') See All
+        h2.text-xl.font-bold #{ t('courseDetails.instructor') }
+        a.text-teal-500(href='/users/instructors') #{ t('common.seeAll') }
       .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
         each instructor in instructors.slice(0, 6)
           a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
@@ -162,15 +162,15 @@ block content
                 h3.font-semibold.mb-2= instructor.name
                 p.text-sm.text-gray-600.mb-4= instructor.about
                 .flex.justify-between.items-center.text-sm.text-gray-500
-                  span= `Instructor • ${instructor.numberOfCourse} courses`
-                  span= `${instructor.studentCount} students`
+                  span= `${t('courseDetails.instructor')} • ${instructor.numberOfCourse} ${t('course.courses')}`
+                  span= `${instructor.studentCount} ${t('courseDetails.students')}`
 
     if current_user
       .mb-6
       .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
         .flex.justify-between.items-center.mb-6
-          h2.text-xl.font-bold Student
-          a.text-teal-500(href='/users/students') See All
+          h2.text-xl.font-bold #{ t('courseDetails.student') }
+          a.text-teal-500(href='/users/students') #{ t('common.seeAll') }
         .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
           each student in students.slice(0, 6)
             a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
@@ -187,4 +187,4 @@ block content
                   h3.font-semibold.mb-2= student.name
                   p.text-sm.text-gray-600.mb-4= student.about
                   .flex.justify-between.items-center.text-sm.text-gray-500
-                    span= `Student • ${student.numberOfCourse} courses`
+                    span= `${t('courseDetails.student')} • ${student.numberOfCourse} ${t('course.courses')}`

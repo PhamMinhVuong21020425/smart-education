@@ -1,6 +1,11 @@
 {
   "course": {
     "courseInfo": "Thông tin khóa học",
+    "courses": "khóa học",
+    "newCourse": "Tạo khóa học",
+    "allLevels": "Tất cả cấp độ",
+    "allStatus": "Tất cả trạng thái",
+    "learning": "Tiếp tục học",
     "detail": {
       "about": "Về khóa học này",
       "taughtBy": "Dạy bởi",
@@ -20,6 +25,7 @@
   },
   "courseDetails": {
     "instructor": "Giảng viên",
+    "student": "Học viên",
     "students": "học viên",
     "duration": "Thời gian",
     "lessons": "Danh sách bài học"

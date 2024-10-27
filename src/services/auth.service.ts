@@ -11,6 +11,12 @@ export const findUserByUsername = async (
   return user;
 };
 
+// Hàm tìm người dùng theo email
+export const findUserByEmail = async (email: string) => {
+  const user = await userRepository.findOneBy({ email });
+  return user;
+};
+
 // Hàm lưu người dùng vào cơ sở dữ liệu
 export const saveUser = async (user: User): Promise<User> => {
   return await userRepository.save(user);

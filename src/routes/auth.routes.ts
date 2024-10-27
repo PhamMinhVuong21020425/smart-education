@@ -7,6 +7,9 @@ const router: Router = Router();
 router.get('/register', authController.registerGet);
 router.post('/register', authController.registerPost);
 
+router.get('/verify/:email', authController.verifyGet);
+router.post('/verify', authController.verifyPost);
+
 router.get('/login', authController.loginGet);
 router.post('/login', authController.loginPost);
 
