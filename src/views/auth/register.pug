@@ -1,11 +1,11 @@
 extends common-layout
 
 block content
-  .flex.h-screen.bg-gray-100.pt-16
-    .flex-1.flex.flex-col.items-center
+  .flex.items-center.justify-between
+    .flex-1.flex.flex-col.items-center.m-8
       img.h-50(src='/images/banner.png', alt='SmartEdu Logo')
 
-    .flex-1.flex.items-center.justify-center
+    .flex-1.flex.items-center.justify-center.m-8
       .max-w-md.w-full.bg-white.shadow-lg.rounded-lg.p-8
         //- Tiêu đề
         h2.text-xl.font-semibold.mb-3.text-center= t('create_account')
@@ -94,7 +94,7 @@ block content
             select#specialization.w-full.p-2.border.border-gray-300.rounded-md(
               name='specialization'
             )
-              option(value='')= t('select')
+              option(value=Specialization.NONE)= t('select')
               each value, key in Specialization
                 if attribute && value === attribute.specialization
                   option(value=value, selected)= key

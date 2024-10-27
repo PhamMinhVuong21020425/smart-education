@@ -104,11 +104,9 @@ export const updateUser = async (
 };
 
 // Tìm người dùng theo googleId
-export const findUserByGoogleId = async (
-  googleId: string
-): Promise<User | null> => {
+export const findUserByEmail = async (email: string): Promise<User | null> => {
   return userRepository.findOne({
-    where: { googleId },
+    where: { email },
   });
 };
 

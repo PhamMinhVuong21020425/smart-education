@@ -1,3 +1,6 @@
+import pug from 'pug';
+import path from 'path';
+import sendEmail, { mailOptionsTemplate } from '../config/nodemailer-config';
 import { AppDataSource } from '../config/data-source';
 import { Course } from '../entity/course.entity';
 import { User } from '../entity/user.entity';
@@ -56,13 +59,16 @@ export const getCourseList = async () => {
 export const getUserCourseList = async (user: User) => {
   if (user.role === UserRole.INSTRUCTOR) {
     const courses = await courseRepository.find({
-      where: [{ instructor: user }, { subInstructor: user }],
+      where: [
+        { instructor: { id: user.id } },
+        { subInstructor: { id: user.id } },
+      ],
     });
 
     return getCoursesWithStudentCount(courses);
   } else {
     const enrollments = await enrollmentRepository.find({
-      where: { student: user },
+      where: { student: { id: user.id } },
       relations: {
         course: {
           lessons: true,
@@ -130,7 +136,7 @@ export const getEnrollment = async (
   }
 
   return enrollmentRepository.findOne({
-    where: { course, student },
+    where: { course: { id: course.id }, student: { id: student.id } },
   });
 };
 
@@ -146,13 +152,31 @@ export const enrollCourse = async (
   });
 
   await enrollmentRepository.save(enrollment);
+
+  const htmlContent = pug.renderFile(
+    path.join(__dirname, '../views/emails/enroll.pug'),
+    {
+      course,
+      student: user,
+      enrollment_date: enrollment.enrollment_date,
+    }
+  );
+
+  const mailOptions = {
+    ...mailOptionsTemplate,
+    to: [course.instructor.email, course.subInstructor?.email],
+    subject: '[Smart Education] New Request Enrollment Course',
+    html: htmlContent,
+  };
+
+  sendEmail(mailOptions);
 };
 
 export const approveEnrollment = async (
   enrollmentId: string
 ): Promise<void> => {
   const enrollment = await enrollmentRepository.findOne({
-    relations: ['course', 'student'],
+    relations: ['course', 'course.instructor', 'student'],
     where: { id: enrollmentId },
   });
 
@@ -167,7 +191,10 @@ export const approveEnrollment = async (
 
     for (const lesson of lessons) {
       const studentLesson = await studentLessonRepository.findOne({
-        where: { student: enrollment.student, lesson },
+        where: {
+          student: { id: enrollment.student.id },
+          lesson: { id: lesson.id },
+        },
       });
       if (!studentLesson) {
         const newStudentLesson = new StudentLesson({
@@ -179,12 +206,15 @@ export const approveEnrollment = async (
     }
 
     const assignment = await assignmentRepository.findOne({
-      where: { course: enrollment.course },
+      where: { course: { id: enrollment.course.id } },
     });
 
     if (assignment) {
       const grade = await gradeRepository.findOne({
-        where: { student: enrollment.student, assignment },
+        where: {
+          student: { id: enrollment.student.id },
+          assignment: { id: assignment.id },
+        },
       });
       if (!grade) {
         const questions = await getQuestionsByExamId(assignment.id);
@@ -197,17 +227,50 @@ export const approveEnrollment = async (
         await gradeRepository.save(newGrade);
       }
     }
+
+    const htmlContent = pug.renderFile(
+      path.join(__dirname, '../views/emails/approved.pug'),
+      {
+        course: enrollment.course,
+      }
+    );
+
+    const mailOptions = {
+      ...mailOptionsTemplate,
+      to: [enrollment.student.email],
+      subject: '[Smart Education] Course Enrollment Approved',
+      html: htmlContent,
+    };
+
+    sendEmail(mailOptions);
   }
 };
 
 export const rejectEnrollment = async (enrollmentId: string): Promise<void> => {
   const enrollment = await enrollmentRepository.findOne({
+    relations: ['course', 'course.instructor', 'student'],
     where: { id: enrollmentId },
   });
 
   if (enrollment) {
     enrollment.status = EnrollStatus.REJECTED;
     await enrollmentRepository.save(enrollment);
+
+    const htmlContent = pug.renderFile(
+      path.join(__dirname, '../views/emails/rejected.pug'),
+      {
+        course: enrollment.course,
+      }
+    );
+
+    const mailOptions = {
+      ...mailOptionsTemplate,
+      to: [enrollment.student.email],
+      subject: '[Smart Education] Course Enrollment Rejected',
+      html: htmlContent,
+    };
+
+    sendEmail(mailOptions);
   }
 };
 
@@ -222,7 +285,7 @@ export const getProgressInCourse = async (
   let totalDone = 0;
   for (const lesson of lessons) {
     const studentLesson = await studentLessonRepository.findOne({
-      where: { student, lesson },
+      where: { student: { id: student.id }, lesson: { id: lesson.id } },
     });
     if (studentLesson && studentLesson.done === true) {
       totalDone++;

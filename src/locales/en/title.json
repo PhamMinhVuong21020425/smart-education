@@ -14,7 +14,8 @@
     "list_lesson": "List Lesson",
     "lesson_detail": "Lesson Detail",
     "create_course": "Add New Course",
-    "edit_course": "Edit Course"
+    "edit_course": "Edit Course",
+    "verify_account": "Verify Account"
   },
   "message": {
     "found_results": "Found {{count}} results for the keyword '{{keyword}}'"

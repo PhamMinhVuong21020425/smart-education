@@ -1,6 +1,11 @@
 {
   "course": {
     "courseInfo": "Course Info",
+    "courses": "courses",
+    "newCourse": "Add New Course",
+    "allLevels": "All Levels",
+    "allStatus": "All Status",
+    "learning": "Continue Learning",
     "detail": {
       "about": "About this Course",
       "taughtBy": "Taught by",
@@ -20,6 +25,7 @@
   },
   "courseDetails": {
     "instructor": "Instructor",
+    "student": "Student",
     "students": "students",
     "duration": "Duration",
     "lessons": "Lessons List"

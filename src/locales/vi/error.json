@@ -18,6 +18,8 @@
     "permissionDenied": "Không có quyền truy cập",
     "failedToRetrieveCourseDetails": "Không thể lấy thông tin khóa học.",
     "search_failed": "Đã xảy ra lỗi trong quá trình tìm kiếm",
-    "lessonNotFound": "Không tìm thấy bài giảng"
+    "lessonNotFound": "Không tìm thấy bài giảng",
+    "notVerify": "Vui lòng xác minh tài khoản của bạn trước tiên",
+    "invalidCode": "Mã không hợp lệ hoặc đã hết hạn. Vui lòng lấy mã từ email mới nhất."
   }
 }

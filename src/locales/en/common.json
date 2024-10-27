@@ -8,6 +8,9 @@
     "back": "Back",
     "minutes": "minutes",
     "create": "Create",
-    "action": "Action"
+    "action": "Action",
+    "recommend": "Recommend for you",
+    "myCourses": "My Courses",
+    "seeAll": "See All"
   }
 }

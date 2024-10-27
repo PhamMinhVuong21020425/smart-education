@@ -1,7 +1,6 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import * as userService from '../services/user.service';
-import { User } from '../entity/user.entity';
 import { AuthType } from '../enums/AuthType';
 
 passport.use(
@@ -13,7 +12,9 @@ passport.use(
     },
     async (_accessToken, _refreshToken, profile, done) => {
       try {
-        const user = await userService.findUserByGoogleId(profile.id);
+        const user = await userService.findUserByEmail(
+          profile.emails![0].value
+        );
 
         if (!user) {
           const newUser = await userService.createUser({
