@@ -231,3 +231,91 @@ export const getResultOfExam = async (userId: string, examId: string) => {
 
   return { filteredAnswers, score };
 };
+
+export const getAllUserGradesByCourseId = async (courseId: string) => {
+  const grades = await gradeRepository.find({
+    relations: ['assignment', 'student'],
+    where: {
+      assignment: {
+        course: {
+          id: courseId,
+        },
+      },
+    },
+  });
+  return grades;
+};
+
+export const getGradeById = async (gradeId: string) => {
+  const grade = await gradeRepository.findOne({
+    relations: ['assignment', 'student'],
+    where: {
+      id: gradeId,
+    },
+  });
+
+  return grade;
+};
+
+export const getResultOfExamByGradeId = async (gradeId: string) => {
+  const grade = await getGradeById(gradeId);
+  if (!grade) return;
+  const answers = await answerRepository.find({
+    where: {
+      student: {
+        id: grade.student.id,
+      },
+      question: {
+        assignment: {
+          id: grade.assignment.id,
+        },
+      },
+      attempt: grade.attempt,
+    },
+    relations: [
+      'option',
+      'question',
+      'question.options',
+      'question.assignment',
+    ],
+    order: {
+      question: {
+        content: 'ASC',
+      },
+    },
+  });
+
+  const score = answers.filter(
+    answer => answer.option && answer.option.is_correct
+  ).length;
+  return { grade, answers, score };
+};
+
+export const updateGradeById = async (
+  gradeId: string,
+  feedback?: string,
+  assignment?: Assignment,
+  student?: User,
+  status?: AssignmentStatus,
+  grade?: number,
+  max_grade?: number,
+  start_time?: Date,
+  submit_time?: Date,
+  attempt?: number
+) => {
+  const gradeObject = await getGradeById(gradeId);
+  if (!gradeObject) return;
+  const gradeUpdate = new Grade({
+    assignment,
+    student,
+    status,
+    grade,
+    max_grade,
+    feedback,
+    start_time,
+    submit_time,
+    attempt,
+  });
+  Object.assign(gradeObject, gradeUpdate);
+  return await gradeRepository.save(gradeObject);
+};

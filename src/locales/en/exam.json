@@ -17,6 +17,10 @@
     "fail": "Fail",
     "viewResult": "View result exam",
     "backToExam": "Back to exam",
-    "result": "Your best result"
+    "result": "Your best result",
+    "feedback": "Feedback",
+    "grade": "Grade",
+    "studentName": "Student name",
+    "listGradeTitle": "List of Student Exam Submissions"
   }
 }

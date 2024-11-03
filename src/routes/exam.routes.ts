@@ -26,6 +26,8 @@ router.post('/:id/update', examController.examUpdatePost);
 
 router.post('/:id/save-answer', examController.saveAnswer);
 
+router.post('/:id/result', examController.addFeedBackPost);
+
 router.get('/:id/result', examController.resultExam);
 
 router.get('/:id', examController.getExamDetail);

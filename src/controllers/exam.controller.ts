@@ -8,6 +8,8 @@ import {
   updateGradeWhenSubmitExam,
   getQuestionsByExamId,
   getResultOfExam,
+  getResultOfExamByGradeId,
+  updateGradeById,
 } from '../services/exam.service';
 import { RequestWithCourseID } from '../helpers/lesson.helper';
 import { validateUserCurrent } from './user.controller';
@@ -120,19 +122,52 @@ export const submitExam = asyncHandler(
 export const resultExam = asyncHandler(
   async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
     const userSession = req.session.user!;
-    const exam = await getExamById(req.params.id);
-    const result = await getResultOfExam(userSession.id, req.params.id);
-    const detailAnswers = result?.filteredAnswers;
-    const score = result?.score;
-    const totalQuestions = result?.filteredAnswers.length;
-    await updateGradeWhenSubmitExam(exam!, userSession, score, totalQuestions);
+    const gradeId = req.query.grade as string;
+    if (gradeId) {
+      const result = await getResultOfExamByGradeId(gradeId);
+      const detailAnswers = result?.answers;
+      const score = result?.score;
+      const exam = result?.grade.assignment;
+      const grade = result?.grade;
+      res.render('exams/result', {
+        title: req.t('exam.viewResult'),
+        detailAnswers,
+        score,
+        exam,
+        grade,
+        courseID: req.courseID,
+        gradeId,
+      });
+    } else {
+      const exam = await getExamById(req.params.id);
+      const result = await getResultOfExam(userSession.id, req.params.id);
+      const detailAnswers = result?.filteredAnswers;
+      const score = result?.score;
+      const totalQuestions = result?.filteredAnswers.length;
+      await updateGradeWhenSubmitExam(
+        exam!,
+        userSession,
+        score,
+        totalQuestions
+      );
 
-    res.render('exams/result', {
-      title: req.t('exam.viewResult'),
-      detailAnswers,
-      score,
-      exam,
-      courseID: req.courseID,
-    });
+      res.render('exams/result', {
+        title: req.t('exam.viewResult'),
+        detailAnswers,
+        score,
+        exam,
+        courseID: req.courseID,
+      });
+    }
+  }
+);
+
+export const addFeedBackPost = asyncHandler(
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    const gradeId = req.query.grade as string;
+    const courseId = req.courseID;
+    const feedback = req.body.feedback;
+    await updateGradeById(gradeId, feedback);
+    res.redirect(`/courses/${courseId}/manage`);
   }
 );
