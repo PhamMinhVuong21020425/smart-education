@@ -1,3 +1,4 @@
+import { getAllUserGradesByCourseId } from './../services/exam.service';
 import fs from 'fs';
 import { Request, Response, NextFunction } from 'express';
 import asyncHandler from 'express-async-handler';
@@ -169,6 +170,7 @@ export const rejectEnrollGet = asyncHandler(
 export const courseManageGet = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const currentLessonPage = parseInt(req.query.lessonPage as string) || 1;
+    const currentGradePage = parseInt(req.query.gradePage as string) || 1;
     const userSession = req.session.user;
     const course = await validateCourse(req, res);
     if (!course) return;
@@ -180,7 +182,9 @@ export const courseManageGet = asyncHandler(
       const lessons = await lessonService.getLessonListAdmin(course.id);
       const totalLessonPages = Math.ceil(lessons.length / LIMIT_RECORDS);
 
-      currentLessonPage;
+      const grades = await getAllUserGradesByCourseId(course.id);
+      const totalGradePages = Math.ceil(grades.length / LIMIT_RECORDS);
+
       res.render('courses/manage', {
         title: req.t('title.course_detail'),
         course,
@@ -192,6 +196,12 @@ export const courseManageGet = asyncHandler(
         currentLessonPage,
         totalLessonPages,
         LIMIT_RECORDS,
+        grades: grades.slice(
+          (currentGradePage - 1) * LIMIT_RECORDS,
+          currentGradePage * LIMIT_RECORDS
+        ),
+        currentGradePage,
+        totalGradePages,
       });
     } else {
       req.flash('error', i18next.t('error.permissionDenied'));

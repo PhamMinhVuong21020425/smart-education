@@ -17,6 +17,10 @@
     "fail": "Không đạt",
     "viewResult": "Xem kết quả bài thi",
     "backToExam": "Quay lại bài thi",
-    "result": "Kết quả tốt nhất của bạn"
+    "result": "Kết quả tốt nhất của bạn",
+    "feedback": "Nhận xét",
+    "grade": "Điểm",
+    "studentName": "Tên học viên",
+    "listGradeTitle": "Danh sách bài thi của học viên"
   }
 }
