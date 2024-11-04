@@ -274,6 +274,10 @@ export const rejectEnrollment = async (enrollmentId: string): Promise<void> => {
   }
 };
 
+export const deleteEnrollment = async (enrollmentId: string) => {
+  return enrollmentRepository.delete(enrollmentId);
+};
+
 export const getProgressInCourse = async (
   course: Course,
   student: User

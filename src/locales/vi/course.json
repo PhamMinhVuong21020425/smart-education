@@ -3,9 +3,12 @@
     "courseInfo": "Thông tin khóa học",
     "courses": "khóa học",
     "newCourse": "Tạo khóa học",
+    "editCourse": "Chỉnh sửa khóa học",
+    "studentList": "Danh sách học viên",
     "allLevels": "Tất cả cấp độ",
     "allStatus": "Tất cả trạng thái",
     "learning": "Tiếp tục học",
+    "progress": "Tiến độ học tập",
     "detail": {
       "about": "Về khóa học này",
       "taughtBy": "Dạy bởi",

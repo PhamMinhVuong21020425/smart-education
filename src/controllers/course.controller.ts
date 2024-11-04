@@ -12,6 +12,9 @@ import { CourseWithEnrollStatus } from '../helpers/course.helper';
 import { UserRole } from '../enums/UserRole';
 import { LIMIT_RECORDS } from '../constants';
 import cloudinary from '../config/cloudinary-config';
+import { CourseStatus } from '../enums/CourseStatus';
+import { EnrollmentWithProgress } from '../helpers/enrollment.helper';
+import { EnrollStatus } from '../enums/EnrollStatus';
 
 export const courseList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -176,19 +179,43 @@ export const courseManageGet = asyncHandler(
     if (!course) return;
     if (
       (userSession && course.instructor.id === userSession.id) ||
-      (userSession && course.subInstructor?.id === userSession.id)
+      (userSession && course.subInstructor?.id === userSession.id) ||
+      (userSession && userSession.role === UserRole.ADMIN)
     ) {
+      const enrollmentIdDelete = req.params.enrollmentId;
       const enrollments = await courseService.getEnrollmentForCourse(course);
       const lessons = await lessonService.getLessonListAdmin(course.id);
       const totalLessonPages = Math.ceil(lessons.length / LIMIT_RECORDS);
 
       const grades = await getAllUserGradesByCourseId(course.id);
       const totalGradePages = Math.ceil(grades.length / LIMIT_RECORDS);
+      const enrollmentWithProgress: EnrollmentWithProgress[] = [];
+
+      for (const enrollment of enrollments) {
+        if (enrollment.status !== EnrollStatus.APPROVED) continue;
+
+        const progress = await courseService.getProgressInCourse(
+          course,
+          enrollment.student
+        );
+
+        let courseStatus = CourseStatus.NOTSTARTED;
+        if (progress > 0) {
+          courseStatus = CourseStatus.INPROGRESS;
+        }
+
+        if (progress === 100) {
+          courseStatus = CourseStatus.COMPLETED;
+        }
+        enrollmentWithProgress.push({ ...enrollment, progress, courseStatus });
+      }
 
       res.render('courses/manage', {
         title: req.t('title.course_detail'),
         course,
+        enrollmentIdDelete,
         enrollments,
+        enrollmentWithProgress,
         lessons: lessons.slice(
           (currentLessonPage - 1) * LIMIT_RECORDS,
           currentLessonPage * LIMIT_RECORDS
@@ -207,6 +234,16 @@ export const courseManageGet = asyncHandler(
       req.flash('error', i18next.t('error.permissionDenied'));
       res.redirect('/error');
     }
+  }
+);
+
+export const deleteEnrollPost = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { enrollmentId } = req.body;
+    await courseService.deleteEnrollment(enrollmentId);
+
+    const courseId = req.params.id;
+    return res.redirect(`/courses/${courseId}/manage`);
   }
 );
 

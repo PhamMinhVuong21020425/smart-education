@@ -22,6 +22,8 @@ router.get(
 
 router.get('/list-instructors', adminController.showInstructors);
 
+router.get('/list-courses', adminController.showCourses);
+
 router.get('/instructor-detail/:id', adminController.getInstructorDetails);
 
 router.get('/instructors/:id/edit', adminController.instructorUpdateGet);
