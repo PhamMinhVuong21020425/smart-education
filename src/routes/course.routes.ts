@@ -37,6 +37,18 @@ router.get('/:enrollmentId/approve', courseController.approveEnrollGet);
 
 router.get('/:enrollmentId/reject', courseController.rejectEnrollGet);
 
+router.get(
+  '/:id/:enrollmentId/delete',
+  requireInstructor,
+  courseController.courseManageGet
+);
+
+router.post(
+  '/:id/:enrollmentId/delete',
+  requireInstructor,
+  courseController.deleteEnrollPost
+);
+
 router.get('/:id', courseController.courseDetail);
 
 router.get('/', courseController.courseList);

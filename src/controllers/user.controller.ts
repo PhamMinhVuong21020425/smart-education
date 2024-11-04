@@ -9,6 +9,7 @@ import cloudinary from '../config/cloudinary-config';
 import i18next from 'i18next';
 import { Enrollment } from '../entity/enrollment.entity';
 import { LIMIT_RECORDS } from '../constants';
+import { Specialization } from 'src/enums';
 
 export const getUserList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -172,6 +173,7 @@ export const userUpdateProfilePost = async (
     phone: req.body.phone,
     about: req.body.about,
     birthday: req.body.birthday ? new Date(req.body.birthday) : undefined,
+    specialization: req.body.specialization,
     avatar_url: avatarUrl || req.session.user.avatar_url,
   };
 

@@ -188,3 +188,15 @@ export const showInstructors = async (
     searchQuery,
   });
 };
+
+export const showCourses = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const courses = await courseService.getCourseList();
+  res.render('admin/list-courses', {
+    title: req.t('sidebar.list_courses'),
+    courses,
+  });
+};

@@ -31,8 +31,8 @@ block content
             ) #{ t('buttons.learnNow') } →
           when EnrollStatus.REJECTED
             span.text-sm.font-bold.bg-red-100.text-red-800.px-2.py-1.rounded-md= enrollment.status
-      else if current_user && current_user.role === UserRole.INSTRUCTOR
-        if course.instructor.id === current_user.id || (course.subInstructor && course.subInstructor.id === current_user.id)
+      else if current_user && current_user.role !== UserRole.STUDENT
+        if course.instructor.id === current_user.id || (course.subInstructor && course.subInstructor.id === current_user.id) || current_user.role === UserRole.ADMIN
           a.px-6.py-2.text-red-400.font-bold.rounded-md.transition.duration-300.border.border-red-400(
             class='hover:bg-red-100',
             href=`/courses/${course.id}/manage`

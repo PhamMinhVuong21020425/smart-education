@@ -53,6 +53,19 @@ block content
                   class='focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                 )
               .col-span-1
+                label.block.text-gray-700.text-sm.font-semibold(
+                  for='specialization'
+                )= t('user.detail.major')
+                select#specialization.mt-2.w-full.p-2.border.border-gray-300.rounded-md(
+                  name='specialization'
+                )
+                  option(value=Specialization.NONE)= t('select')
+                  each value, key in Specialization
+                    if user && value === user.specialization
+                      option(value=value, selected)= key
+                    else
+                      option(value=value)= key
+              .col-span-1
                 label.block.text-gray-700.text-sm.font-semibold(for='avatar')= t('profile.avatar')
                 input#avatar.mt-2.block.w-full.px-4.py-3.border.border-gray-300.rounded-lg.shadow-sm(
                   type='file',

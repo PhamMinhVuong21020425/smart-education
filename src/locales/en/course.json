@@ -3,9 +3,12 @@
     "courseInfo": "Course Info",
     "courses": "courses",
     "newCourse": "Add New Course",
+    "editCourse": "Edit Course",
+    "studentList": "Student List",
     "allLevels": "All Levels",
     "allStatus": "All Status",
     "learning": "Continue Learning",
+    "progress": "Learning Progress",
     "detail": {
       "about": "About this Course",
       "taughtBy": "Taught by",
