@@ -2,6 +2,7 @@ import { Router, Response, NextFunction } from 'express';
 import * as examController from '../controllers/exam.controller';
 import { RequestWithCourseID } from '../helpers/lesson.helper';
 import { requireUser } from '../middleware/require-user.middleware';
+import { requireInstructor } from '../middleware/require-instructor.middleware';
 
 const router: Router = Router();
 
@@ -12,17 +13,19 @@ router.use((req: RequestWithCourseID, res: Response, next: NextFunction) => {
 
 router.use(requireUser);
 
-router.get('/create', examController.examCreateGet);
+router.get('/create', requireInstructor, examController.examCreateGet);
 
-router.post('/create', examController.examCreatePost);
+router.post('/create', requireInstructor, examController.examCreatePost);
 
-router.get('/:id/delete', examController.examDeleteGet);
+router.get('/:id/delete', requireInstructor, examController.examDeleteGet);
 
-router.post('/:id/delete', examController.examDeletePost);
+router.post('/:id/delete', requireInstructor, examController.examDeletePost);
 
-router.get('/:id/update', examController.examUpdateGet);
+router.get('/:id/update', requireInstructor, examController.examUpdateGet);
 
-router.post('/:id/update', examController.examUpdatePost);
+router.post('/:id/update', requireInstructor, examController.examUpdatePost);
+
+router.get('/:id/manage', requireInstructor, examController.examManageGet);
 
 router.post('/:id/save-answer', examController.saveAnswer);
 

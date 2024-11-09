@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   if current_user
-    #learning.max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+    #learning.max-w-6xl.mx-auto.bg-white.p-6
       .flex.justify-between.items-center.mb-6
         h2.text-xl.font-bold #{ t('common.myCourses') }
         if current_user.role === UserRole.INSTRUCTOR
@@ -10,28 +10,17 @@ block content
             href='/courses/create',
             class='hover:text-blue-800 hover:bg-blue-100'
           ) #{ t('course.newCourse') }
+        if current_user.role === UserRole.STUDENT
+          include ./filter.pug
 
-      // Filters
-      .mb-4.flex.space-x-4
-        select#levelFilter.border-2.border-black.rounded.px-2.py-1(
-          onchange='filterMyCourses()'
-        )
-          option(value='') #{ t('course.allLevels') }
-          each value, key in CourseLevel
-            option(value=value, selected=levelFilter === value ? true : false)= key
-
-        select#statusFilter.border-2.border-black.rounded.px-2.py-1(
-          onchange='filterMyCourses()',
-          class=current_user.role === UserRole.INSTRUCTOR ? 'hidden' : ''
-        )
-          option(value='') #{ t('course.allStatus') }
-          each value, key in EnrollStatus
-            option(value=value, selected=statusFilter === value ? true : false)= key
+      if current_user.role === UserRole.INSTRUCTOR
+        .mx-2.mb-4
+          include ./filter.pug
 
       .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
         each course in myCourses
-          a.block.bg-white.shadow-md.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-            class='hover:shadow-xl hover:scale-105',
+          a.block.bg-white.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
+            class='hover:shadow-lg hover:rounded-lg hover:scale-105',
             href=`/courses/${course.id}`
           )
             .rounded-lg.overflow-hidden
@@ -57,13 +46,13 @@ block content
                         span.text-xs.font-bold.bg-red-100.text-red-800.px-2.py-1.rounded-full= course.enrollStatus
 
   .mb-6
-  #recommend.max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+  #recommend.max-w-6xl.mx-auto.bg-white.p-6
     .flex.justify-between.items-center.mb-6
       h2.text-xl.font-bold #{ t('common.recommend') }
     .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
       each course in courseRecommends
-        a.block.bg-white.shadow-md.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-          class='hover:shadow-xl hover:scale-105',
+        a.block.bg-white.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
+          class='hover:shadow-lg hover:rounded-lg hover:scale-105',
           href=`/courses/${course.id}`
         )
           .rounded-lg.overflow-hidden

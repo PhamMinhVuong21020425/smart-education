@@ -1,53 +1,85 @@
 extends ../layout
 
 block content
-  a.flex.items-center.text-blue-600(
-    class='hover:text-blue-800',
-    href=`/courses/${courseID}/exam`
-  )
-    svg.w-6.h-6.mr-2(
-      xmlns='http://www.w3.org/2000/svg',
-      viewBox='0 0 24 24',
-      fill='none',
-      stroke='currentColor',
-      stroke-width='2',
-      stroke-linecap='round',
-      stroke-linejoin='round'
+  .container.max-w-4xl.mx-auto.px-4.py-8
+    // Back button
+    a.inline-flex.items-center.text-blue-600.transition-colors.mb-6(
+      class='hover:text-blue-800',
+      href=`/courses/${courseID}/exam`
     )
-      circle(cx='12', cy='12', r='10')
-      polyline(points='12 8 8 12 12 16')
-      line(x1='16', y1='12', x2='8', y2='12')
-    span #{ t('exam.backToExam') }
+      svg.w-5.h-5.mr-2(
+        xmlns='http://www.w3.org/2000/svg',
+        viewBox='0 0 24 24',
+        fill='none',
+        stroke='currentColor',
+        stroke-width='2',
+        stroke-linecap='round',
+        stroke-linejoin='round'
+      )
+        circle(cx='12', cy='12', r='10')
+        polyline(points='12 8 8 12 12 16')
+        line(x1='16', y1='12', x2='8', y2='12')
+      span.font-medium #{ t('exam.backToExam') }
 
-  if questions
-    form.bg-white.w-full.rounded-lg.overflow-hidden.mx-auto.mt-4(
-      method='post',
-      class='shadow-[0_4px_12px_-5px_rgba(0,0,0,0.4)] font-[sans-serif]'
-    )
-      .p-6.w-full
-        .pb-2
-          .text-3xl.text-center.font-semibold.mb-2 #{ exam.name }
-          .flex.justify-between
-            .text-gray-600 #{ t('exam.total') }: #{ questions.length }
-            .text-gray-600 #{ t('exam.time') }: #{ exam.time_limit } #{ t('common.minutes') }
-        p.mt-2.text-sm.text-gray-500.leading-relaxed
-          each question, index in questions
-            .mb-6
-              p.font-bold.text-lg.mt-2 #{ index + 1 }. #{ question.content }
-            each option, index in question.options? question.options : ['There are no option!']
-              .mb-4.flex.gap-2
-                input(
-                  type='radio',
-                  name=question.id,
-                  value=option.id,
-                  checked=selectedAnswers && selectedAnswers[question.id] === option.id,
-                  onchange=`saveAnswer(this, '${courseID}', '${exam.id}')`
+    if questions
+      // Sticky header with exam info and timer
+      .sticky.top-0.z-10.bg-white.border-b.border-gray-200.mb-8.py-4
+        .flex.justify-between.items-center
+          h1.text-2xl.font-bold.text-gray-900 #{ exam.name }
+          .flex.items-center.gap-6
+            .flex.items-center.gap-2
+              svg.w-5.h-5.text-gray-500(
+                xmlns='http://www.w3.org/2000/svg',
+                fill='none',
+                viewBox='0 0 24 24',
+                stroke='currentColor'
+              )
+                path(
+                  stroke-linecap='round',
+                  stroke-linejoin='round',
+                  stroke-width='2',
+                  d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
                 )
-                div #{ option.content }
-        .flex.justify-center
-          button.mt-4.px-5.rounded-lg.text-white.text-sm.tracking-wider.border-none.outline-none.bg-blue-600(
-            type='submit',
-            class='py-2.5 hover:bg-blue-700'
-          ) #{ t('common.submit') }
+              #timer.font-mono.text-lg.font-semibold.text-red-600(
+                data-time-limit=exam.time_limit,
+                data-start-time=Math.floor(new Date(startTime).getTime() / 1000)
+              ) --:--
+
+      form#examForm.bg-white.rounded-xl.overflow-hidden(method='post')
+        .p-8
+          // Exam metadata
+          .flex.justify-between.mb-8.text-sm.text-gray-600
+            span #{ t('exam.total') }: #{ questions.length }
+            span #{ t('exam.time') }: #{ exam.time_limit } #{ t('common.minutes') }
+
+          // Questions
+          .space-y-12
+            each question, qIndex in questions
+              .p-6
+                .flex.items-start.gap-3
+                  span.flex-shrink-0.w-8.h-8.flex.items-center.justify-center.bg-blue-600.text-white.rounded-full.font-medium #{ qIndex + 1 }
+                  .flex-1
+                    p.text-lg.font-medium.text-gray-900.mb-6 #{ question.content }
+                    .space-y-4
+                      each option, oIndex in question.options? question.options : ['There are no options!']
+                        label.flex.items-center.gap-3.p-3.rounded-lg.transition-colors.cursor-pointer(
+                          class='hover:bg-gray-100'
+                        )
+                          input.w-4.h-4.text-blue-600.border-gray-300.cursor-pointer(
+                            class='focus:ring-blue-500',
+                            type='radio',
+                            name=question.id,
+                            value=option.id,
+                            checked=selectedAnswers && selectedAnswers[question.id] === option.id,
+                            onchange=`saveAnswer(this, '${courseID}', '${exam.id}')`
+                          )
+                          span.text-gray-700 #{ option.content }
+
+          // Submit button
+          .mt-8.flex.justify-center
+            button.px-6.py-3.bg-blue-600.text-white.font-medium.rounded-lg.transition-colors(
+              type='submit',
+              class='hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+            ) #{ t('common.submit') }
 
   script(src='/javascripts/exam.js')

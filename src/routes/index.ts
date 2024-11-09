@@ -23,7 +23,7 @@ router.use('/users', userRouter);
 router.use('/courses', courseRouter);
 router.use('/courses/:courseId/lessons', lessonRouter);
 router.use('/courses/:courseId/exam', examRouter);
-router.use('/questions', questionRouter);
+router.use('/courses/:courseId/exam/:examId/questions', questionRouter);
 router.use('/', searchRouter);
 router.use('/', homeRouter);
 router.use('/admin', adminRouter);

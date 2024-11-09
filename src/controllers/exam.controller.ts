@@ -1,20 +1,23 @@
 import { Request, Response, NextFunction } from 'express';
 import asyncHandler from 'express-async-handler';
 import {
-  createAnswersFromExam,
   getExamById,
   getBestGradeByCourseId,
   updateGradeWhenStartExam,
   updateGradeWhenSubmitExam,
-  getQuestionsByExamId,
   getResultOfExam,
+  createExam,
+  updateExam,
+  createAnswersFromExam,
   getResultOfExamByGradeId,
   updateGradeById,
 } from '../services/exam.service';
+import { getQuestionsByExamId } from '../services/question.service';
 import { RequestWithCourseID } from '../helpers/lesson.helper';
 import { validateUserCurrent } from './user.controller';
 import { getUserById } from '../services/user.service';
 import { getLessonList } from '../services/lesson.service';
+import { AssignmentStatus } from '../enums';
 
 export const examList = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -33,6 +36,7 @@ export const getExamInfo = asyncHandler(
       examStatus: grade?.status,
       grade,
       courseID: req.courseID,
+      message: req.query.message,
     });
   }
 );
@@ -42,7 +46,18 @@ export const getExamDetail = asyncHandler(
     const userSession = req.session.user!;
     const questions = await getQuestionsByExamId(req.params.id);
     const exam = await getExamById(req.params.id);
-    await updateGradeWhenStartExam(exam!, userSession);
+    const grade = await updateGradeWhenStartExam(exam!, userSession);
+
+    if (
+      exam?.attempt_limit &&
+      grade.attempt >= exam?.attempt_limit &&
+      grade.status !== AssignmentStatus.TODO &&
+      grade.status !== AssignmentStatus.DOING
+    ) {
+      // Render message that user has reached the limit of attempt
+      res.redirect(`/courses/${req.courseID}/exam?message=true`);
+      return;
+    }
 
     res.render('exams/detail', {
       title: req.t('exam.doExam'),
@@ -50,6 +65,7 @@ export const getExamDetail = asyncHandler(
       exam,
       courseID: req.courseID,
       selectedAnswers: req.session.selectedAnswers || {},
+      startTime: grade.start_time,
     });
   }
 );
@@ -69,25 +85,30 @@ export const saveAnswer = asyncHandler(
 );
 
 export const examCreateGet = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    res.send('exam is created with method GET');
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    res.render('exams/form', {
+      title: req.t('title.create_exam'),
+      courseID: req.courseID,
+    });
   }
 );
 
 export const examCreatePost = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    res.send('exam is created with method POST');
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    await createExam(req.body, req.courseID!);
+
+    res.redirect(`/courses/${req.courseID}/manage#exam`);
   }
 );
 
 export const examDeleteGet = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
     res.send(`exam ${req.params.id} is deleted with method GET`);
   }
 );
 
 export const examDeletePost = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
     res.send(`exam ${req.params.id} is deleted with method POST`);
   }
 );
@@ -99,8 +120,23 @@ export const examUpdateGet = asyncHandler(
 );
 
 export const examUpdatePost = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    res.send(`exam ${req.params.id} is updated with method POST`);
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    await updateExam(req.params.id, req.body);
+
+    res.redirect(`/courses/${req.courseID}/exam/${req.params.id}/manage`);
+  }
+);
+
+export const examManageGet = asyncHandler(
+  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    const exam = await getExamById(req.params.id);
+    const questions = await getQuestionsByExamId(req.params.id);
+    res.render('exams/manage', {
+      title: req.t('title.manage_exam'),
+      exam,
+      questions,
+      courseID: req.courseID!,
+    });
   }
 );
 
@@ -110,11 +146,8 @@ export const submitExam = asyncHandler(
     req.session.selectedAnswers = {};
     const questions = await getQuestionsByExamId(req.params.id);
     const answers = req.body as { [key: string]: string };
-    for (const question of questions) {
-      const optionId = answers[question.id];
-      const user = await getUserById(res.locals.user.id);
-      await createAnswersFromExam(question!, user!, optionId);
-    }
+    const user = await getUserById(res.locals.user.id);
+    await createAnswersFromExam(questions!, user!, answers);
     res.redirect(`${req.params.id}/result`);
   }
 );
@@ -168,6 +201,6 @@ export const addFeedBackPost = asyncHandler(
     const courseId = req.courseID;
     const feedback = req.body.feedback;
     await updateGradeById(gradeId, feedback);
-    res.redirect(`/courses/${courseId}/manage`);
+    res.redirect(`/courses/${courseId}/manage#grade`);
   }
 );

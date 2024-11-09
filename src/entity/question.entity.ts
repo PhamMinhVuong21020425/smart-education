@@ -18,6 +18,9 @@ export class Question {
   @Column()
   content: string;
 
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
+
   @ManyToOne(() => Assignment, assignment => assignment.questions, {
     nullable: false,
   })
