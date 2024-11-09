@@ -1,0 +1,30 @@
+.fixed.inset-0.flex.items-center.justify-center.z-50.bg-black.bg-opacity-50.transition-opacity.duration-300.ease-in-out.opacity-0.pointer-events-none(
+  id=`question_delete_modal${index}`
+)
+  #modal_content.bg-white.rounded-lg.shadow-lg.w-full.max-w-2xl.flex.flex-col.transform.transition-all.duration-300.scale-95.opacity-0.p-8(
+    class='max-h-[90vh]'
+  )
+    h2.text-2xl.font-bold.mb-4 Delete Quiz
+    p.mb-6 Are you sure you want to delete this quiz?
+
+    // Quiz Form
+    form.bg-white(
+      method='POST',
+      action=`/courses/${courseID}/exam/${exam.id}/questions/${question.id}/delete`
+    )
+      input.hidden(
+        type='text',
+        name='questionPreviousId',
+        value=index > 0 ? questions[index - 1].id : null
+      )
+      // Action Buttons
+      .flex.justify-end.space-x-4
+        button.bg-gray-200.text-gray-700.px-6.py-2.rounded-md.transition-colors.duration-200(
+          class='hover:bg-gray-300',
+          type='button',
+          onclick=`hideModal('question_delete_modal${index}')`
+        ) Cancel
+        button.bg-red-600.text-white.px-6.py-2.rounded-md.transition-colors.duration-200(
+          class='hover:bg-red-700',
+          type='submit'
+        ) Delete Quiz

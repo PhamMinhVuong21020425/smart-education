@@ -13,6 +13,9 @@ export const getLessonList = async (userId: string, courseId: string) => {
   const lessons = await lessonRepository.find({
     relations: ['courses', 'studentLessons', 'studentLessons.student'],
     where: { courses: { id: courseId } },
+    order: {
+      study_time: 'ASC',
+    },
   });
 
   const lessonsWithDoneStatus = lessons.map(lesson => {
@@ -57,17 +60,24 @@ export const getLessonsByCourseId = async (
     .getMany();
 };
 
-export const markDoneLesson = async (id: string) => {
+export const markDoneLesson = async (lessonId: string, student: User) => {
   const studentLesson = await studentLessonRepository.findOne({
-    where: { id },
+    where: { student: { id: student.id }, lesson: { id: lessonId } },
     relations: ['lesson'],
   });
   if (!studentLesson) {
-    return;
+    // Create new student lesson
+    const lesson = await getLessonById(lessonId);
+    if (!lesson) return;
+    const newStudentLesson = new StudentLesson({
+      student,
+      lesson,
+      done: true,
+    });
+    return studentLessonRepository.save(newStudentLesson);
   }
   studentLesson.done = !studentLesson.done;
-  await studentLessonRepository.save(studentLesson);
-  return studentLesson;
+  return studentLessonRepository.save(studentLesson);
 };
 
 export const createLesson = async (

@@ -3,16 +3,27 @@ import { Question } from '../entity/question.entity';
 import { Assignment } from '../entity/assignment.entity';
 import { User } from '../entity/user.entity';
 import { Answer } from '../entity/answer.entity';
-import { Option } from '../entity/option.entity';
 import { AppDataSource } from '../config/data-source';
 import { AssignmentStatus } from '../enums/AssignmentStatus';
 import { RATE_PASS } from '../constants';
+import { Course } from '../entity/course.entity';
+import { getOptionById } from './question.service';
+import { getUserById } from './user.service';
 
-const gradeRepository = AppDataSource.getRepository(Grade);
-const questionRepository = AppDataSource.getRepository(Question);
 const examRepository = AppDataSource.getRepository(Assignment);
-const optionRepository = AppDataSource.getRepository(Option);
+const gradeRepository = AppDataSource.getRepository(Grade);
 const answerRepository = AppDataSource.getRepository(Answer);
+
+export const getExamById = async (examId: string) => {
+  const exam = await examRepository.findOne({
+    relations: ['course'],
+    where: {
+      id: examId,
+    },
+  });
+  if (!exam) return;
+  return exam;
+};
 
 export const getGradesByCourseId = async (
   courseId: string,
@@ -31,6 +42,25 @@ export const getGradesByCourseId = async (
       },
     },
   });
+
+  if (grades.length === 0) {
+    const student = await getUserById(studentId);
+    const exam = await getExamByCourseId(courseId);
+
+    if (!student || !exam) return [];
+
+    const newGrade = new Grade({
+      student: student,
+      assignment: exam,
+      attempt: 1,
+      start_time: new Date(),
+      status: AssignmentStatus.TODO,
+      grade: 0,
+      max_grade: exam.questions.length,
+    });
+
+    return [newGrade];
+  }
 
   return grades;
 };
@@ -54,16 +84,28 @@ export const updateGradeWhenStartExam = async (
 ) => {
   const grades = await getGradesByCourseId(exam.course.id, student.id);
   let lastAttempt = 1;
+  let lastGrade = grades[0];
   for (const grade of grades) {
     if (grade.attempt > lastAttempt) {
       lastAttempt = grade.attempt;
+      lastGrade = grade;
     }
   }
+
+  if (
+    exam.attempt_limit > 0 &&
+    lastAttempt >= exam.attempt_limit &&
+    lastGrade.status !== AssignmentStatus.TODO &&
+    lastGrade.status !== AssignmentStatus.DOING
+  ) {
+    return lastGrade;
+  }
+
   if (grades.length === 1 && grades[0].status === AssignmentStatus.TODO) {
     grades[0].start_time = new Date();
     grades[0].status = AssignmentStatus.DOING;
     return gradeRepository.save(grades[0]);
-  } else if (grades[0].status !== AssignmentStatus.DOING) {
+  } else if (lastGrade.status !== AssignmentStatus.DOING) {
     const newGrade = new Grade({
       student,
       assignment: exam,
@@ -75,6 +117,8 @@ export const updateGradeWhenStartExam = async (
     });
     return gradeRepository.save(newGrade);
   }
+
+  return lastGrade;
 };
 
 export const updateGradeWhenSubmitExam = async (
@@ -106,64 +150,17 @@ export const updateGradeWhenSubmitExam = async (
   return gradeRepository.save(lastGrade);
 };
 
-export const getExamById = async (examId: string) => {
-  const exam = await examRepository.findOne({
-    relations: ['course'],
-    where: {
-      id: examId,
-    },
-  });
-  if (!exam) return;
-  return exam;
-};
-
-export const getQuestionsByExamId = async (examId: string) => {
-  const questions = await questionRepository.find({
-    where: {
-      assignment: {
-        id: examId,
-      },
-    },
-    relations: ['options', 'answers', 'assignment'],
-    order: {
-      content: 'ASC',
-    },
-  });
-  if (!questions) return [];
-  return questions;
-};
-
-export const getQuestionById = async (questionId: string) => {
-  const question = await questionRepository.findOne({
-    where: {
-      id: questionId,
-    },
-  });
-  if (!question) return;
-  return question;
-};
-
-export const getOptionById = async (optionId: string) => {
-  const option = await optionRepository.findOne({
-    where: {
-      id: optionId,
-    },
-  });
-  if (!option) return;
-  return option;
-};
-
 export const createAnswersFromExam = async (
-  question: Question,
+  questions: Question[],
   user: User,
-  optionId: string | undefined
+  answers: Record<string, string>
 ) => {
   let attempt = 1;
 
   const existingAnswers = await answerRepository.find({
     where: {
       question: {
-        id: question.id,
+        id: questions[0].id,
       },
       student: {
         id: user.id,
@@ -177,16 +174,23 @@ export const createAnswersFromExam = async (
     }
   }
 
-  const answer = new Answer({
-    student: user,
-    question,
-    attempt,
-  });
-  if (optionId) {
-    const option = await getOptionById(optionId);
-    answer.option = option!;
+  const promises: Promise<Answer>[] = [];
+  for (const question of questions) {
+    const optionId = answers[question.id];
+    const answer = new Answer({
+      student: user,
+      question,
+      attempt,
+    });
+    if (optionId) {
+      const option = await getOptionById(optionId);
+      answer.option = option!;
+    }
+
+    promises.push(answerRepository.save(answer));
   }
-  return answerRepository.save(answer);
+
+  return Promise.all(promises);
 };
 
 export const getResultOfExam = async (userId: string, examId: string) => {
@@ -209,7 +213,7 @@ export const getResultOfExam = async (userId: string, examId: string) => {
     ],
     order: {
       question: {
-        content: 'ASC',
+        created_at: 'ASC',
       },
     },
   });
@@ -280,7 +284,7 @@ export const getResultOfExamByGradeId = async (gradeId: string) => {
     ],
     order: {
       question: {
-        content: 'ASC',
+        created_at: 'ASC',
       },
     },
   });
@@ -318,4 +322,53 @@ export const updateGradeById = async (
   });
   Object.assign(gradeObject, gradeUpdate);
   return await gradeRepository.save(gradeObject);
+};
+
+export const getExamByCourseId = async (courseId: string) => {
+  const exam = await examRepository.findOne({
+    where: {
+      course: {
+        id: courseId,
+      },
+    },
+    relations: ['course', 'questions'],
+  });
+  return exam;
+};
+
+export const createExam = async (
+  attribute: Record<string, string>,
+  courseId: string
+) => {
+  const { name, description, deadline, timeLimit, attemptLimit } = attribute;
+  const course = await AppDataSource.getRepository(Course).findOne({
+    where: {
+      id: courseId,
+    },
+  });
+  if (!course) return;
+  const exam = new Assignment({
+    name,
+    description,
+    deadline: new Date(deadline),
+    time_limit: Number(timeLimit),
+    attempt_limit: Number(attemptLimit),
+    course,
+  });
+  return examRepository.save(exam);
+};
+
+export const updateExam = async (
+  examId: string,
+  attribute: Record<string, string>
+) => {
+  const exam = await getExamById(examId);
+  if (!exam) return;
+  const { name, description, deadline, timeLimit, attemptLimit } = attribute;
+  exam.name = name;
+  exam.description = description;
+  exam.deadline = new Date(deadline);
+  exam.time_limit = Number(timeLimit);
+  exam.attempt_limit = Number(attemptLimit);
+  return examRepository.save(exam);
 };

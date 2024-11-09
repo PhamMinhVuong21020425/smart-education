@@ -15,7 +15,11 @@
     "lesson_detail": "Lesson Detail",
     "create_course": "Add New Course",
     "edit_course": "Edit Course",
-    "verify_account": "Verify Account"
+    "verify_account": "Verify Account",
+    "exam": "Final Exam",
+    "create_exam": "Create Exam",
+    "edit_exam": "Edit Exam",
+    "manage_exam": "Manage Exam"
   },
   "message": {
     "found_results": "Found {{count}} results for the keyword '{{keyword}}'"

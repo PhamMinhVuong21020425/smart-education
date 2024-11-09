@@ -1,5 +1,9 @@
 extends ../layout
 
+mixin formatDate(date)
+  - const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+  .text-gray-500.italic= date.toLocaleString('en-US', options)
+
 block content
   #modal.fixed.inset-0.flex.items-center.justify-center.z-50.bg-black.bg-opacity-50(
     class=undefined === enrollmentIdDelete ? 'hidden' : ''
@@ -103,7 +107,7 @@ block content
                 option.bg-red-100.text-red-800(value='reject', selected)= EnrollStatus.REJECTED
 
     // lesson management
-    .flex.justify-between.items-center.mt-6
+    #lesson.flex.justify-between.items-center.mt-6
       h2.text-xl.font-bold.my-4 #{ t('title.list_lesson') }
       a.px-3.rounded.text-sm.tracking-wider.font-medium.border-2.border-blue-700.outline-none.bg-transparent.text-blue-700.transition-all.duration-300.py-2(
         href=`/courses/${course.id}/lessons/create`,
@@ -118,7 +122,6 @@ block content
             th.p-4.text-center.text-sm.font-semibold.text-black #{ t('lesson.detail.content') }
             th.p-4.text-center.text-sm.font-semibold.text-black #{ t('lesson.detail.file') }
             th.p-4.text-center.text-sm.font-semibold.text-black #{ t('lesson.detail.study_time') }
-            th.p-4.text-center.text-sm.font-semibold.text-black #{ t('lesson.detail.student_done') }
             th.p-4.text-center.text-sm.font-semibold.text-black #{ t('common.action') }
 
         tbody
@@ -127,26 +130,24 @@ block content
               td.p-4.text-sm
                 .flex.items-center
                   span #{ (currentLessonPage - 1) * LIMIT_RECORDS + index + 1 }
-              td.p-4.text-sm.w-10
+              td.p-4.text-sm.max-w-60
                 .flex.items-center
                   span #{ lesson.title }
               td.p-4.text-sm.max-w-60
                 .flex.items-center
                   span #{ lesson.content }
-              td.p-4.text-sm.max-w-32
-                a.flex.items-center.truncate(href=lesson.file_url)
+              td.p-4.text-sm.max-w-60
+                a.flex.items-center.truncate(
+                  href=lesson.file_url,
+                  class='hover:text-blue-600'
+                )
                   span #{ lesson.file_url }
-              td.p-4.text-sm.w-28
+              td.p-4.text-sm.max-w-28
                 .flex.items-center.justify-center
                   span.text-center #{ lesson.studyTime }
-              td.p-4.text-sm
-                .flex.flex-col.justify-center.cursor-pointer
-                  each item, i in lesson.studentLessons
-                    a(href=`/users/${item.student.id}`)
-                      span.text-green-500 #{ i + 1 }. #{ item.student.name }
               td.p-4
                 .flex.justify-center.items-center
-                  a.mr-4(href=`lessons/${lesson.id}/update`)
+                  a.mr-2(href=`lessons/${lesson.id}/update`)
                     svg.w-5.fill-blue-500(
                       xmlns='http://www.w3.org/2000/svg',
                       class='hover:fill-blue-700',
@@ -160,7 +161,7 @@ block content
                         d='M303.85 138.388c-8.284 0-15 6.716-15 15v127.347c0 21.034-17.113 38.147-38.147 38.147H68.904c-21.035 0-38.147-17.113-38.147-38.147V100.413c0-21.034 17.113-38.147 38.147-38.147h131.587c8.284 0 15-6.716 15-15s-6.716-15-15-15H68.904C31.327 32.266.757 62.837.757 100.413v180.321c0 37.576 30.571 68.147 68.147 68.147h181.798c37.576 0 68.147-30.571 68.147-68.147V153.388c.001-8.284-6.715-15-14.999-15z',
                         data-original='#000000'
                       )
-                  a.mr-4(href=`lessons/${lesson.id}/delete`)
+                  a.mr-2(href=`lessons/${lesson.id}/delete`)
                     svg.w-5.fill-red-500(
                       xmlns='http://www.w3.org/2000/svg',
                       class='hover:fill-red-700',
@@ -179,7 +180,7 @@ block content
         nav.inline-flex.rounded-md.shadow(aria-label='Pagination')
           a.px-2.py-2.rounded-l-md.border.border-gray-300.bg-white.text-sm.font-medium.text-gray-500(
             class='hover:bg-blue-100',
-            href=`?lessonPage=${currentLessonPage > 1 ? currentLessonPage - 1 : 1}`,
+            href=`?lessonPage=${currentLessonPage > 1 ? currentLessonPage - 1 : 1}#lesson`,
             class=currentLessonPage === 1 ? 'cursor-not-allowed' : ''
           )
             span.sr-only Previous
@@ -204,19 +205,19 @@ block content
             else
               a.bg-white.border-gray-300.text-gray-500.relative.inline-flex.items-center.px-4.py-2.border.text-sm.font-medium(
                 class='hover:bg-blue-100',
-                href=`?lessonPage=${page}`
+                href=`?lessonPage=${page}#lesson`
               )= page
 
           if endLessonPage < totalLessonPages
             span.relative.inline-flex.items-center.px-4.py-2.border.border-gray-300.bg-white.text-sm.font-medium.text-gray-700 ...
             a.bg-white.border-gray-300.text-gray-500.relative.inline-flex.items-center.px-4.py-2.border.text-sm.font-medium(
               class='hover:bg-blue-100',
-              href=`?lessonPage=${totalLessonPages}`
+              href=`?lessonPage=${totalLessonPages}#lesson`
             )= totalLessonPages
 
           a.px-2.py-2.rounded-r-md.border.border-gray-300.bg-white.text-sm.font-medium.text-gray-500(
             class='hover:bg-blue-100',
-            href=`?lessonPage=${currentLessonPage < totalLessonPages ? currentLessonPage + 1 : totalLessonPages}`,
+            href=`?lessonPage=${currentLessonPage < totalLessonPages ? currentLessonPage + 1 : totalLessonPages}#lesson`,
             class=currentLessonPage === totalLessonPages ? 'cursor-not-allowed' : ''
           )
             span.sr-only Next
@@ -232,8 +233,8 @@ block content
                 clip-rule='evenodd'
               )
 
-    // lesson management
-    h2.text-xl.font-bold.my-4 #{ t('exam.listGradeTitle') }
+    // Grade management
+    h2#grade.text-xl.font-bold.my-4 #{ t('exam.listGradeTitle') }
     .pt-8.w-full
       table.w-full.bg-white
         thead.bg-gray-100
@@ -244,6 +245,7 @@ block content
             th.p-4.text-center.text-sm.font-semibold.text-black #{ t('exam.grade') }
             th.p-4.text-center.text-sm.font-semibold.text-black #{ t('exam.maxGrade') }
             th.p-4.text-center.text-sm.font-semibold.text-black #{ t('exam.feedback') }
+            th.p-4.text-center.text-sm.font-semibold.text-black
 
         tbody
           each grade, index in grades
@@ -266,6 +268,8 @@ block content
               td.p-4.text-sm
                 .flex.justify-between.items-center
                   span.text-center #{ grade.feedback }
+              td.text-sm
+                .flex.justify-center.items-center
                   a.mr-4(
                     href=`/courses/${course.id}/exam/${grade.assignment.id}/result?grade=${grade.id}`
                   )
@@ -288,7 +292,7 @@ block content
         nav.inline-flex.rounded-md.shadow(aria-label='Pagination')
           a.px-2.py-2.rounded-l-md.border.border-gray-300.bg-white.text-sm.font-medium.text-gray-500(
             class='hover:bg-blue-100',
-            href=`?gradePage=${currentGradePage > 1 ? currentGradePage - 1 : 1}`,
+            href=`?gradePage=${currentGradePage > 1 ? currentGradePage - 1 : 1}#grade`,
             class=currentGradePage === 1 ? 'cursor-not-allowed' : ''
           )
             span.sr-only Previous
@@ -313,19 +317,19 @@ block content
             else
               a.bg-white.border-gray-300.text-gray-500.relative.inline-flex.items-center.px-4.py-2.border.text-sm.font-medium(
                 class='hover:bg-blue-100',
-                href=`?gradePage=${page}`
+                href=`?gradePage=${page}#grade`
               )= page
 
           if endGradePage < totalGradePages
             span.relative.inline-flex.items-center.px-4.py-2.border.border-gray-300.bg-white.text-sm.font-medium.text-gray-700 ...
             a.bg-white.border-gray-300.text-gray-500.relative.inline-flex.items-center.px-4.py-2.border.text-sm.font-medium(
               class='hover:bg-blue-100',
-              href=`?gradePage=${totalGradePages}`
+              href=`?gradePage=${totalGradePages}#grade`
             )= totalGradePages
 
           a.px-2.py-2.rounded-r-md.border.border-gray-300.bg-white.text-sm.font-medium.text-gray-500(
             class='hover:bg-blue-100',
-            href=`?gradePage=${currentGradePage < totalGradePages ? currentGradePage + 1 : totalGradePages}`,
+            href=`?gradePage=${currentGradePage < totalGradePages ? currentGradePage + 1 : totalGradePages}#grade`,
             class=currentGradePage === totalGradePages ? 'cursor-not-allowed' : ''
           )
             span.sr-only Next
@@ -340,6 +344,47 @@ block content
                 d='M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z',
                 clip-rule='evenodd'
               )
+
+    // Exam management
+    #exam.flex.justify-between.items-center.mt-6
+      h2.text-xl.font-bold.my-4 #{ t('title.exam') }
+      if exam
+        a.px-3.rounded.text-sm.tracking-wider.font-medium.border-2.border-red-500.text-red-500.py-2(
+          href=`/courses/${course.id}/exam/${exam.id}/manage`,
+          class='hover:bg-red-100'
+        ) #{ t('title.manage_exam') }
+      else
+        a.px-3.rounded.text-sm.tracking-wider.font-medium.border-2.border-teal-500.outline-none.bg-transparent.text-teal-500.py-2(
+          href=`/courses/${course.id}/exam/create`,
+          class='hover:bg-teal-100'
+        ) #{ t('title.create_exam') }
+
+    // Exam Detail
+    .mx-2
+      if exam
+        .flex.justify-start.text-xl.text-indigo-700.font-bold.mb-2
+          p #{ exam.name }
+
+        .mx-2
+          if exam.time_limit
+            .flex.items-center.gap-1.mb-2
+              strong Time Limit:
+              p #{ exam.time_limit } minutes
+
+          if exam.attempt_limit
+            .flex.items-center.gap-1.mb-2
+              strong Total attempt:
+              p #{ exam.attempt_limit }
+
+          .flex.justify-between.mb-2
+            .flex.items-center.gap-1
+              strong #{ t('exam.deadline') }:
+              +formatDate(new Date(exam.deadline))
+          .pb-2
+            strong #{ t('exam.description') }:
+            p #{ exam.description }
+      else
+        p This course has no exam yet. Please create one.
 
     // Progress
     .flex.justify-between.items-center.my-8

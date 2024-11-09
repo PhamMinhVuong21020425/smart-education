@@ -1,108 +1,157 @@
 extends ../layout
 
 block content
-  a.flex.items-center.text-blue-600(
-    class='hover:text-blue-800',
-    href=`/courses/${courseID}/exam`
-  )
-    svg.w-6.h-6.mr-2(
-      xmlns='http://www.w3.org/2000/svg',
-      viewBox='0 0 24 24',
-      fill='none',
-      stroke='currentColor',
-      stroke-width='2',
-      stroke-linecap='round',
-      stroke-linejoin='round'
+  .container.max-w-5xl.mx-auto.px-2
+    // Back button
+    a.inline-flex.items-center.text-blue-600.transition-colors(
+      class='hover:text-blue-800',
+      href=`/courses/${courseID}/exam`
     )
-      circle(cx='12', cy='12', r='10')
-      polyline(points='12 8 8 12 12 16')
-      line(x1='16', y1='12', x2='8', y2='12')
-    span #{ t('exam.backToExam') }
+      svg.w-5.h-5.mr-2(
+        xmlns='http://www.w3.org/2000/svg',
+        viewBox='0 0 24 24',
+        fill='none',
+        stroke='currentColor',
+        stroke-width='2',
+        stroke-linecap='round',
+        stroke-linejoin='round'
+      )
+        circle(cx='12', cy='12', r='10')
+        polyline(points='12 8 8 12 12 16')
+        line(x1='16', y1='12', x2='8', y2='12')
+      span.font-medium #{ t('exam.backToExam') }
 
   if gradeId
-    form.bg-white.w-full.rounded-lg.overflow-hidden.mx-auto.mt-4.p-4(
-      method='post',
-      class='shadow-[0_4px_12px_-5px_rgba(0,0,0,0.4)] font-[sans-serif]'
+    form.max-w-2xl.bg-white.overflow-hidden.mx-auto.p-8.space-y-6.font-sans(
+      method='post'
     )
-      .mb-4
-        label.block.text-gray-700.text-xl.font-bold.mb-2.text-center(
-          for='feedback'
-        ) #{ t('exam.feedback') }
-        textarea#feedback.shadow.appearance-none.border.rounded.w-full.py-2.px-3.text-gray-700.leading-tight(
-          class='focus:outline-none focus:shadow-outline',
-          name='feedback',
-          rows='4',
-          required
-        )= grade ? grade.feedback : ''
-      button.mb.px-4.mx-auto.block.text-sm.bg-blue-700.text-white.rounded.w-fit(
-        type='submit',
-        class='py-2.5 hover:bg-blue-600'
-      ) #{ t('common.submit') }
-  if detailAnswers
-    .bg-white.w-full.rounded-lg.overflow-hidden.mx-auto.mt-4(
-      class='shadow-[0_4px_12px_-5px_rgba(0,0,0,0.4)] font-[sans-serif]'
-    )
-      .p-6.w-full
-        .pb-2
-          .text-3xl.text-center.font-semibold.mb-2 #{ exam.name }
-          .flex.justify-between
-            .text-sm.text-gray-600 #{ t('exam.total') }: #{ detailAnswers.length }
-            .text-sm.text-gray-600.font-bold #{ t('exam.score') }: #{ score } / #{ detailAnswers.length }
-        p.mt-2.text-sm.text-gray-500.leading-relaxed
-          each answer, index in detailAnswers
-            .mb-6.flex.items-center.gap-2.font-bold.text-lg
-              p #{ index + 1 }. #{ answer.question.content }
-              if answer.option && answer.option.is_correct
-                svg.bi.bi-check-circle-fill(
-                  xmlns='http://www.w3.org/2000/svg',
-                  width='16',
-                  height='16',
-                  fill='#22c55e',
-                  viewBox='0 0 16 16'
-                )
-                  path(
-                    d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z'
-                  )
-              else
-                svg.bi.bi-x-circle-fill(
-                  xmlns='http://www.w3.org/2000/svg',
-                  width='16',
-                  height='16',
-                  fill='#f43f5e',
-                  viewbox='0 0 16 16'
-                )
-                  path(
-                    d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z'
-                  )
+      .space-y-4
+        label.flex.flex-col.gap-2(for='feedback')
+          span.text-lg.font-semibold.text-gray-800
+            | #{ t('exam.feedback') } for&nbsp;
+            span.text-blue-600 #{ grade.student.name }
 
-            each option, index in answer.question.options? answer.question.options : ['There are no option!']
-              .mb-4.flex.gap-2.items-center
-                input(
-                  type='radio',
-                  name=answer.question.id,
-                  value=option.id,
-                  checked=answer.option && answer.option.id === option.id
-                )
-                div #{ option.content }
-                if option && option.is_correct
-                  svg.bi.bi-check-circle-fill(
-                    xmlns='http://www.w3.org/2000/svg',
-                    width='16',
-                    height='16',
-                    fill='#22c55e',
-                    viewBox='0 0 16 16'
+          textarea#feedback.w-full.px-4.py-3.text-gray-700.rounded-lg.border.border-gray-200.transition-all(
+            class='min-h-[150px] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:bg-gray-50',
+            name='feedback',
+            placeholder='Enter your feedback here...',
+            required
+          )= grade ? grade.feedback : ''
+
+      .flex.justify-center
+        button.px-4.py-3.bg-blue-600.text-white.font-medium.rounded-lg.transition-all.transform(
+          type='submit',
+          class='hover:bg-blue-600 hover:shadow-md active:scale-95'
+        )
+          span.flex.items-center.gap-2
+            svg.w-4.h-4(
+              xmlns='http://www.w3.org/2000/svg',
+              fill='none',
+              viewBox='0 0 24 24',
+              stroke='currentColor'
+            )
+              path(
+                stroke-linecap='round',
+                stroke-linejoin='round',
+                stroke-width='2',
+                d='M5 13l4 4L19 7'
+              )
+            | #{ t('common.submit') }
+
+  if detailAnswers
+    .bg-white.overflow-hidden.mx-auto.mt-4
+      // Exam header with results
+      .p-8.border-b.border-gray-100
+        h1.text-3xl.text-center.font-bold.text-gray-900.mb-6 #{ exam.name }
+        .flex.justify-between.items-center.px-4.py-3.rounded-lg
+          .flex.items-center.gap-2
+            svg.w-5.h-5.text-gray-600(
+              xmlns='http://www.w3.org/2000/svg',
+              fill='none',
+              viewBox='0 0 24 24',
+              stroke='currentColor'
+            )
+              path(
+                stroke-linecap='round',
+                stroke-linejoin='round',
+                stroke-width='2',
+                d='M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2'
+              )
+            span.text-gray-800 #{ t('exam.total') }: #{ detailAnswers.length }
+          .flex.items-center.gap-2
+            svg.w-5.h-5.text-blue-500(
+              xmlns='http://www.w3.org/2000/svg',
+              fill='none',
+              viewBox='0 0 24 24',
+              stroke='currentColor'
+            )
+              path(
+                stroke-linecap='round',
+                stroke-linejoin='round',
+                stroke-width='2',
+                d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'
+              )
+            span.text-lg.font-bold.text-blue-600 #{ score } / #{ detailAnswers.length }
+
+      // Questions and answers
+      .p-8
+        .space-y-4
+          each answer, index in detailAnswers
+            .p-6
+              // Question header
+              .flex.items-start.gap-3.mb-4
+                .flex-shrink-0.w-8.h-8.flex.items-center.justify-center.bg-blue-100.text-blue-700.rounded-full.font-medium #{ index + 1 }
+                .flex-1
+                  .flex.items-center.gap-3
+                    h3.text-lg.font-medium.text-gray-900.text-justify #{ answer.question.content }
+                    if answer.option && answer.option.is_correct
+                      svg.mt-3.w-6.h-6.text-green-500(
+                        xmlns='http://www.w3.org/2000/svg',
+                        fill='currentColor'
+                      )
+                        path(
+                          d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z'
+                        )
+                    else
+                      svg.mt-3.w-6.h-6.text-red-500(
+                        xmlns='http://www.w3.org/2000/svg',
+                        fill='currentColor'
+                      )
+                        path(
+                          d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z'
+                        )
+
+              // Options
+              .space-y-3.ml-11
+                each option in answer.question.options? answer.question.options : ['There are no option!']
+                  .flex.items-center.gap-3.p-3(
+                    class=option.is_correct ? 'bg-green-50 rounded-lg' : answer.option && answer.option.id === option.id && !option.is_correct ? 'bg-red-50 rounded-lg' : ''
                   )
-                    path(
-                      d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z'
+                    input.w-4.h-4.text-blue-600.border-gray-300(
+                      class='focus:ring-blue-500',
+                      type='radio',
+                      name=answer.question.id,
+                      value=option.id,
+                      checked=answer.option && answer.option.id === option.id,
+                      disabled
                     )
-                else if answer.option && answer.option.id === option.id && !option.is_correct
-                  svg.bi.bi-x-circle-fill(
-                    xmlns='http://www.w3.org/2000/svg',
-                    width='16',
-                    height='16',
-                    fill='#f43f5e',
-                    viewbox='0 0 16 16'
-                  )
-                    path(
-                      d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z'
-                    )
+                    .flex.items-center.gap-2.flex-1
+                      span.text-gray-700 #{ option.content }
+                      if option.is_correct
+                        svg.w-4.h-4.text-green-500(
+                          xmlns='http://www.w3.org/2000/svg',
+                          viewBox='0 0 16 16',
+                          fill='currentColor'
+                        )
+                          path(
+                            d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z'
+                          )
+                      else if answer.option && answer.option.id === option.id && !option.is_correct
+                        svg.w-4.h-4.text-red-500(
+                          xmlns='http://www.w3.org/2000/svg',
+                          viewBox='0 0 16 16',
+                          fill='currentColor'
+                        )
+                          path(
+                            d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z'
+                          )

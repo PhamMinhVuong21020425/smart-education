@@ -1,0 +1,97 @@
+#question_create_modal.fixed.inset-0.flex.items-center.justify-center.z-50.bg-black.bg-opacity-50.transition-opacity.duration-300.ease-in-out.opacity-0.pointer-events-none
+  #modal_content.bg-white.rounded-lg.shadow-lg.w-full.max-w-4xl.flex.flex-col.transform.transition-all.duration-300.scale-95.opacity-0(
+    class='max-h-[90vh]'
+  )
+    // Header
+    .px-8.py-6.text-center
+      h1.text-3xl.font-bold.text-gray-900 Quiz Creator
+      p.mt-2.text-gray-600 Create engaging multiple choice questions
+
+    // Quiz Form
+    form.px-8.bg-white.shadow-lg.rounded-lg.p-6.space-y-6(
+      method='POST',
+      action=`/courses/${courseID}/exam/${exam.id}/questions/create`
+    )
+      // Question Section
+      .space-y-6
+        .pb-4
+          .flex.justify-between.items-center.mb-4
+            h2.text-2xl.font-semibold.text-gray-800 Question ##{ questions.length + 1 }
+
+        .space-y-4
+          // Question Text
+          .space-y-2
+            label.block.font-medium.text-gray-700(for='questionText') Question Text
+            textarea#questionText.mt-1.block.w-full.rounded-md.border-gray-300.shadow-sm.border.p-2(
+              rows='3',
+              placeholder='Enter your question',
+              class='focus:border-indigo-500 focus:ring-indigo-500',
+              name='content',
+              required
+            )
+
+          // Answer Options
+          .space-y-4
+            h3.font-medium.text-gray-700 Answer Options
+
+            .grid.grid-cols-1.gap-4
+              each val in [1, 2, 3, 4]
+                .flex.items-center.space-x-4
+                  .relative
+                    input.hidden.peer(
+                      type='checkbox',
+                      name='correctOptions',
+                      value=val,
+                      id=`option${val}`
+                    )
+                    label.w-6.h-6.rounded-full.flex.items-center.justify-center.cursor-pointer.transition.duration-150.bg-gray-100(
+                      class='peer-checked:bg-green-500 peer-checked:text-white group-hover:bg-gray-200',
+                      for=`option${val}`
+                    )
+                      //- SVG Checkmark icon
+                      svg.w-4.h-4(
+                        xmlns='http://www.w3.org/2000/svg',
+                        viewBox='0 0 24 24',
+                        fill='none',
+                        stroke='currentColor',
+                        stroke-width='2',
+                        stroke-linecap='round',
+                        stroke-linejoin='round'
+                      )
+                        path(d='M20 6L9 17l-5-5')
+
+                  // Answer text input
+                  input.flex-1.mt-1.block.w-full.rounded-md.border.p-2.shadow-sm.transition.duration-150.ease-in-out(
+                    type='text',
+                    name='options',
+                    placeholder=`Option ${val}`,
+                    required,
+                    class='focus:border-blue-500 focus:ring-blue-500 sm:text-sm'
+                  )
+
+      // Action Buttons
+      .flex.justify-end.space-x-4.mt-8
+        button.bg-gray-200.text-gray-700.px-6.py-2.rounded-md.transition-colors.duration-200(
+          class='hover:bg-gray-300',
+          type='button',
+          onclick='hideModal("question_create_modal")'
+        ) Cancel
+        button.bg-indigo-600.text-white.px-6.py-2.rounded-md.transition-colors.duration-200(
+          class='hover:bg-indigo-700',
+          type='submit'
+        ) Save Quiz
+
+script.
+  // Show selected checkmark and handle checkbox selection
+  document.querySelectorAll('input[name="correctOptions"]').forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+      const label = document.querySelector(`label[for="${this.id}"]`);
+      if (this.checked) {
+        label.classList.remove('bg-gray-100');
+        label.classList.add('bg-green-500', 'text-white');
+      } else {
+        label.classList.remove('bg-green-500', 'text-white');
+        label.classList.add('bg-gray-100');
+      }
+    });
+  });

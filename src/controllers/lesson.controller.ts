@@ -29,9 +29,7 @@ export const getLessonDetail = asyncHandler(
     }
     const lessonList = await getLessonList(userSession.id, req.courseID!);
     const lessonDetail = lessonList.find(lesson => lesson.id === req.params.id);
-    const studentLesson = lessonDetail?.studentLessons.find(
-      studentLesson => studentLesson.student.id === userSession.id
-    );
+
     const grade = await getBestGradeByCourseId(req.courseID!, userSession.id);
     res.render('lessons/index', {
       title: req.t('title.lesson_detail'),
@@ -39,7 +37,6 @@ export const getLessonDetail = asyncHandler(
       examStatus: grade?.status,
       lessonDetail,
       courseID: req.courseID,
-      studentLessonId: studentLesson?.id,
     });
   }
 );
@@ -99,7 +96,7 @@ export const lessonCreatePost = asyncHandler(
     const studyDate = req.body.studyDate;
     const study_time = dateFromTimeAndDate(studyTime, studyDate);
     await createLesson(course, title, content, file_url, study_time);
-    res.redirect(`/courses/${courseId}/manage`);
+    res.redirect(`/courses/${courseId}/manage#lesson`);
   }
 );
 
@@ -121,7 +118,7 @@ export const lessonDeletePost = asyncHandler(
     const lessonId = req.params.id;
     const courseId = req.courseID;
     await deleteLessonByLessonId(courseId!, lessonId);
-    res.redirect(`/courses/${req.courseID}/manage`);
+    res.redirect(`/courses/${req.courseID}/manage#lesson`);
   }
 );
 
@@ -178,15 +175,20 @@ export const lessonUpdatePost = asyncHandler(
       file_url,
       study_time
     );
-    res.redirect(`/courses/${courseId}/manage`);
+    res.redirect(`/courses/${courseId}/manage#lesson`);
   }
 );
 
 export const markDoneLessonPost = asyncHandler(
   async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
-    const studentLessonId = req.body.studentLessonId;
-    const response = await markDoneLesson(studentLessonId);
-    console.log(req.session.user);
+    const userSession = req.session.user;
+    if (!userSession) {
+      res.redirect('/auth/login');
+      return;
+    }
+
+    const lessonId = req.params.id;
+    const response = await markDoneLesson(lessonId, userSession);
     if (!response) return;
     res.redirect(`${response.lesson.id}`);
   }

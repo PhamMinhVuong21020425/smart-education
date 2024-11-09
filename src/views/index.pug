@@ -23,7 +23,7 @@ block content
           )
 
     if current_user && current_user.role === UserRole.STUDENT
-      .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+      .max-w-6xl.mx-auto.bg-white.p-6
         .grid.gap-6.mb-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4')
           .bg-teal-100.p-4.rounded-lg.flex.flex-col.items-center.justify-center
             span.text-3xl.font-bold.text-teal-700= totalCourses
@@ -48,13 +48,13 @@ block content
               .font-semibold= current_user ? current_user.name : 'Guest'
               .text-sm.text-gray-500= current_user ? current_user.role : ''
       .mb-6
-      .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+      .max-w-6xl.mx-auto.bg-white.p-6
         .flex.justify-between.items-center.mb-6
           h2.text-xl.font-bold #{ t('course.learning') }
           a.text-teal-500(href='/courses#learning') #{ t('common.seeAll') }
         .space-y-4
           each course in courseLearns
-            a.flex.items-center.justify-between.bg-gray-50.p-4.rounded-md(
+            a.flex.items-center.justify-between.p-4.rounded-md(
               class='hover:bg-blue-50',
               href=`/courses/${course.id}/lessons`
             )
@@ -94,17 +94,17 @@ block content
                   )
     else if current_user && current_user.role === UserRole.INSTRUCTOR
       .mb-6
-      .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+      .max-w-6xl.mx-auto.bg-white.p-6
         .flex.justify-between.items-center.mb-6
           h2.text-xl.font-bold #{ t('common.myCourses') }
           a.text-teal-500(href='/courses') #{ t('common.seeAll') }
         .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
           each course in myCourses.slice(0, 6)
             a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-              class='hover:shadow-xl hover:scale-105',
+              class='hover:shadow-lg hover:scale-105',
               href=`/courses/${course.id}`
             )
-              .bg-gray-50.rounded-lg.overflow-hidden
+              .rounded-lg.overflow-hidden
                 .flex.justify-center.items-center.h-48
                   img.h-full(
                     src=course.image_url === null ? '/images/course.png' : course.image_url,
@@ -118,17 +118,17 @@ block content
                     span= `${course.studentCount} ${t('courseDetails.students')}`
 
     .mb-6
-    .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+    .max-w-6xl.mx-auto.bg-white.p-6
       .flex.justify-between.items-center.mb-6
         h2.text-xl.font-bold #{ t('common.recommend') }
         a.text-teal-500(href='/courses#recommend') #{ t('common.seeAll') }
       .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
         each course in courseRecommends.slice(0, 6)
           a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-            class='hover:shadow-xl hover:scale-105',
+            class='hover:shadow-lg hover:scale-105',
             href=`/courses/${course.id}`
           )
-            .bg-gray-50.rounded-lg.overflow-hidden
+            .rounded-lg.overflow-hidden
               .flex.justify-center.items-center.h-48
                 img.h-full(
                   src=course.image_url === null ? '/images/course.png' : course.image_url,
@@ -142,17 +142,17 @@ block content
                   span= `${course.studentCount} ${t('courseDetails.students')}`
 
     .mb-6
-    .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+    .max-w-6xl.mx-auto.bg-white.p-6
       .flex.justify-between.items-center.mb-6
         h2.text-xl.font-bold #{ t('courseDetails.instructor') }
         a.text-teal-500(href='/users/instructors') #{ t('common.seeAll') }
       .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
         each instructor in instructors.slice(0, 6)
           a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-            class='hover:shadow-xl hover:scale-105',
+            class='hover:shadow-lg hover:scale-105',
             href=`/users/${instructor.id}`
           )
-            .bg-gray-50.rounded-lg.overflow-hidden
+            .rounded-lg.overflow-hidden
               .flex.justify-center.items-center.h-48
                 img.h-full(
                   src=instructor.avatar_url ? instructor.avatar_url : '/images/instructor.png',
@@ -167,17 +167,17 @@ block content
 
     if current_user
       .mb-6
-      .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+      .max-w-6xl.mx-auto.bg-white.p-6
         .flex.justify-between.items-center.mb-6
           h2.text-xl.font-bold #{ t('courseDetails.student') }
           a.text-teal-500(href='/users/students') #{ t('common.seeAll') }
         .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
           each student in students.slice(0, 6)
             a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-              class='hover:shadow-xl hover:scale-105',
+              class='hover:shadow-lg hover:scale-105',
               href=`/users/${student.id}`
             )
-              .bg-gray-50.rounded-lg.overflow-hidden
+              .rounded-lg.overflow-hidden
                 .flex.justify-center.items-center.h-48
                   img.h-full(
                     src=student.avatar_url ? student.avatar_url : '/images/student.png',

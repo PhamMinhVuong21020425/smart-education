@@ -1,7 +1,14 @@
-import { Router } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import * as questionController from '../controllers/question.controller';
+import { RequestForQuestion } from '../helpers/question.helper';
 
 const router: Router = Router();
+
+router.use((req: RequestForQuestion, res: Response, next: NextFunction) => {
+  req.courseID = req.baseUrl.split('/')[2];
+  req.examID = req.baseUrl.split('/')[4];
+  next();
+});
 
 router.get('/create', questionController.questionCreateGet);
 

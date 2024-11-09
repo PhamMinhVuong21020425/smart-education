@@ -1,0 +1,130 @@
+extends ../layout
+
+mixin formatDate(date)
+  - const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+  .text-gray-500.italic= date.toLocaleString('en-US', options)
+
+block content
+  include ./edit_modal.pug
+  include ../questions/create_modal.pug
+
+  .container.mx-auto.px-4
+    .flex.justify-between.items-center.mb-4
+      h1.text-3xl.font-bold= exam.name
+
+      button.text-sm.text-red-500.px-3.py-2.border-2.border-red-500.rounded(
+        type='button',
+        onclick='showModal("edit_modal")',
+        class='hover:bg-red-100'
+      ) #{ t('title.edit_exam') }
+
+    .mx-4
+      if exam.time_limit
+        .flex.items-center.gap-1.mb-2
+          strong Time:
+          p #{ exam.time_limit } minutes
+
+      if exam.attempt_limit
+        .flex.items-center.gap-1.mb-2
+          strong Total attempt:
+          p #{ exam.attempt_limit }
+
+      .flex.justify-between.mb-2
+        .flex.items-center.gap-1
+          strong #{ t('exam.deadline') }:
+          +formatDate(new Date(exam.deadline))
+      .pb-2
+        strong #{ t('exam.description') }:
+        p #{ exam.description }
+
+    // Manage questions and options here
+    .flex.justify-between.items-center.mt-6.mb-4
+      h1.text-2xl.font-bold Questions
+      button.text-sm.text-indigo-500.px-3.py-2.border-2.border-indigo-500.rounded(
+        type='button',
+        onclick='showModal("question_create_modal")',
+        class='hover:bg-indigo-100'
+      ) Add Question
+
+    if questions.length
+      .space-y-8.p-4
+        each question, index in questions
+          include ../questions/edit_modal.pug
+          include ../questions/delete_modal.pug
+
+          .bg-white.pb-4(id=`${question.id}`)
+            .flex.justify-between.items-start.mb-4
+              .flex.items-center.gap-3
+                span.flex.items-center.justify-center.w-8.h-8.bg-blue-50.text-blue-600.rounded-full.font-semibold #{ index + 1 }
+                h3.font-bold.text-lg.text-gray-800 #{ question.content }
+              .flex.gap-2
+                button.text-blue-500.transition-colors(
+                  class='hover:text-blue-600',
+                  type='button',
+                  onclick=`showModal('question_edit_modal${index}')`,
+                  aria-label='Edit question'
+                )
+                  svg.w-5.h-5(
+                    xmlns='http://www.w3.org/2000/svg',
+                    fill='none',
+                    viewBox='0 0 24 24',
+                    stroke='currentColor'
+                  )
+                    path(
+                      stroke-linecap='round',
+                      stroke-linejoin='round',
+                      stroke-width='2',
+                      d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
+                    )
+                button.text-red-500.transition-colors(
+                  class='hover:text-red-600',
+                  type='button',
+                  onclick=`showModal('question_delete_modal${index}')`,
+                  aria-label='Delete question'
+                )
+                  svg.w-5.h-5(
+                    xmlns='http://www.w3.org/2000/svg',
+                    fill='none',
+                    viewBox='0 0 24 24',
+                    stroke='currentColor'
+                  )
+                    path(
+                      stroke-linecap='round',
+                      stroke-linejoin='round',
+                      stroke-width='2',
+                      d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
+                    )
+
+            .ml-11
+              .grid.grid-cols-1.gap-4(
+                class='md:grid-cols-2 [&>*:only-child]:md:col-span-1'
+              )
+                each option, optIndex in question.options? question.options : ['There are no option!']
+                  - const contentLength = option.content ? option.content.length : 0;
+                  div(class=contentLength > 50 ? 'md:col-span-2' : '')
+                    .flex.items-center.gap-3.p-4.rounded-md.border.border-gray-200(
+                      class=option && option.is_correct ? 'bg-green-50 border-green-200' : ''
+                    )
+                      if option && option.is_correct
+                        .flex.items-center.justify-center.w-5.h-5.rounded-full.bg-green-100.border.border-green-300
+                          svg.w-3.h-3.text-green-600(
+                            xmlns='http://www.w3.org/2000/svg',
+                            viewBox='0 0 20 20',
+                            fill='currentColor'
+                          )
+                            path(
+                              fill-rule='evenodd',
+                              d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
+                              clip-rule='evenodd'
+                            )
+                      else
+                        .w-5.h-5.rounded-full.border-2.border-gray-300
+
+                      label.flex-1.text-gray-700.cursor-pointer #{ option.content }
+    else
+      .flex.justify-center.items-center.h-40.bg-gray-50.rounded-lg.border-2.border-dashed.border-gray-300
+        .text-center
+          p.text-gray-500 There are no questions available for this exam.
+          p.text-sm.text-gray-400.mt-1 Click the "Add Question" button to get started.
+
+  script(src='/javascripts/load_modal.js')
