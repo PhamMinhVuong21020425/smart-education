@@ -14,6 +14,13 @@ function saveAnswer(radio, courseId, examId) {
     .catch((error) => console.error('Error:', error));
 }
 
+function confirmSubmit() {
+  if(!confirm("Are you sure you want to submit this exam?")) {
+    return false;
+  }
+  document.getElementById('examForm').submit();
+}
+
 // Initialize timer
 document.addEventListener('DOMContentLoaded', function() {
   const timerElement = document.getElementById('timer');
