@@ -45,7 +45,10 @@ block content
                 data-start-time=Math.floor(new Date(startTime).getTime() / 1000)
               ) --:--
 
-      form#examForm.bg-white.rounded-xl.overflow-hidden(method='post')
+      form#examForm.bg-white.rounded-xl.overflow-hidden(
+        method='post',
+        onsubmit='return confirmSubmit()'
+      )
         .p-8
           // Exam metadata
           .flex.justify-between.mb-8.text-sm.text-gray-600

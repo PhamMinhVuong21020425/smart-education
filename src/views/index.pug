@@ -68,19 +68,21 @@ block content
                   .font-semibold= course.name
                   .text-sm.text-gray-500= `${course.level} • ${course.duration}`
               .flex.items-center.space-x-4
-                .w-32.bg-gray-200.rounded-full.h-2
+                .w-40.bg-gray-200.rounded-full.h-2
                   .bg-teal-500.rounded-full.h-2(
                     style=`width: ${course.progress}%`
                   )
-                span.text-sm.text-gray-500= `${course.progress}%`
+                .w-10.text-right.text-sm.text-gray-500= `${course.progress}%`
 
-                case course.status
-                  when CourseStatus.COMPLETED
-                    span.text-sm.text-green-500= course.status
-                  when CourseStatus.INPROGRESS
-                    span.text-sm.text-orange-500= course.status
-                  default
-                    span.text-sm.text-gray-500= CourseStatus.NOTSTARTED
+                .w-20.text-sm.text-left.pl-2
+                  case course.status
+                    when CourseStatus.COMPLETED
+                      span.text-green-500= course.status
+                    when CourseStatus.INPROGRESS
+                      span.text-orange-500= course.status
+                    default
+                      span.text-gray-500= CourseStatus.NOTSTARTED
+
                 svg.w-6.h-6(
                   fill='none',
                   stroke='currentColor',
