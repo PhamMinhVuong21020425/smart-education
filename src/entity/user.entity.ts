@@ -71,6 +71,9 @@ export class User {
   @Column({ nullable: true })
   isVerify: boolean;
 
+  @Column({ nullable: false, default: true })
+  isActivate: boolean;
+
   @OneToMany(() => Course, course => course.instructor)
   instructorCourses: Course[];
 

@@ -7,44 +7,44 @@ block content
         .flex.flex-col.items-center.justify-center
           .flex.items-center.space-x-4
             .w-24.h-24.rounded-full.mr-4.overflow-hidden.flex-shrink-0
-              if instructor.avatar_url
+              if student.avatar_url
                 img.w-full.h-full.object-cover(
-                  src=instructor.avatar_url,
-                  alt=t('user.detail.avatar_alt', { username: instructor.username })
+                  src=student.avatar_url,
+                  alt=t('user.detail.avatar_alt', { username: student.username })
                 )
               else
                 img.w-full.h-full.object-cover(
-                  src=instructor.role === UserRole.INSTRUCTOR ? '/images/instructor.png' : '/images/student.png',
-                  alt=t('user.detail.avatar_alt', { username: instructor.username })
+                  src=student.role === UserRole.student ? '/images/student.png' : '/images/student.png',
+                  alt=t('user.detail.avatar_alt', { username: student.username })
                 )
 
           .mt-4
-          h2.text-2xl.font-bold.mb-2.text-center #{ instructor.name }
-          p.text-sm.text-gray-500 #{ instructor.email }
+          h2.text-2xl.font-bold.mb-2.text-center #{ student.name }
+          p.text-sm.text-gray-500 #{ student.email }
 
         div
           .mt-4
             ul
               li.mt-2
                 strong #{ t('user.detail.name') }:
-                | &nbsp;#{ instructor.name }
+                | &nbsp;#{ student.name }
               li.mt-2
                 strong #{ t('user.detail.role') }:
-                | &nbsp;#{ instructor.role }
+                | &nbsp;#{ student.role }
               li.mt-2
                 strong #{ t('user.detail.birthday') }:
-                | &nbsp;#{ instructor.birthday ? new Date(instructor.birthday).toLocaleDateString("en-GB") : t('user.detail.not_available') }
+                | &nbsp;#{ student.birthday ? new Date(student.birthday).toLocaleDateString("en-GB") : t('user.detail.not_available') }
               li.mt-2
                 strong #{ t('user.detail.phone') }:
-                | &nbsp;#{ instructor.phone || t('user.detail.not_available') }
+                | &nbsp;#{ student.phone || t('user.detail.not_available') }
 
     .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.px-10.py-8
       h2.text-xl.font-bold.mb-4 #{ t('user.detail.specialization') }
-      p.text-gray-600.text-justify= instructor.specialization || t('user.detail.not_available')
+      p.text-gray-600.text-justify= student.specialization || t('user.detail.not_available')
       .mb-6
       h2.text-xl.font-bold.mb-4 #{ t('user.detail.about') }
-      p.text-gray-600.text-justify= instructor.about || t('user.detail.not_available')
+      p.text-gray-600.text-justify= student.about || t('user.detail.not_available')
       .mb-6
       .flex.justify-between.items-center.mb-6
         h2.text-xl.font-bold #{ t('user.detail.courses') }
@@ -67,12 +67,12 @@ block content
                   span= `${course.level} • ${course.duration}`
       .mb-6
       .div.text-center
-        if instructor.isActivate === false
+        if student.isActivate === false
           // Activate button
           form.inline(
-            action=`/admin/users/${instructor.id}/activate`,
+            action=`/admin/users/${student.id}/activate`,
             method='post',
-            onsubmit=`return confirmActivate('${instructor.name}')`
+            onsubmit=`return confirmActivate('${student.name}')`
           )
             button.w-32.bg-emerald-400.text-white.rounded-lg.py-2.mr-2.transition(
               class='hover:bg-emerald-500',
@@ -81,9 +81,9 @@ block content
         else
           // Deactivate button
           form.inline(
-            action=`/admin/users/${instructor.id}/deactivate`,
+            action=`/admin/users/${student.id}/deactivate`,
             method='post',
-            onsubmit=`return confirmDeactivate('${instructor.name}')`
+            onsubmit=`return confirmDeactivate('${student.name}')`
           )
             button.w-32.bg-red-500.text-white.rounded-lg.py-2.mr-2.transition(
               class='hover:bg-red-600',

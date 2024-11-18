@@ -22,9 +22,17 @@ router.get(
 
 router.get('/list-instructors', adminController.showInstructors);
 
+router.get('/list-students', adminController.showStudents);
+
 router.get('/list-courses', adminController.showCourses);
 
 router.get('/instructor-detail/:id', adminController.getInstructorDetails);
+
+router.get('/student-detail/:id', adminController.getStudentDetails);
+
+router.post('/users/:id/activate', adminController.activateUser);
+
+router.post('/users/:id/deactivate', adminController.deactivateUser);
 
 router.get('/instructors/:id/edit', adminController.instructorUpdateGet);
 

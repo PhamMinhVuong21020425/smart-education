@@ -3,10 +3,13 @@
     "instructor_approved": "Giảng viên đã được phê duyệt thành công!",
     "instructor_rejected": "Giảng viên đã bị từ chối thành công!",
     "instructor_updated": "Thông tin giảng viên đã được cập nhật thành công!",
-    "instructor_deleted": "Giảng viên đã được xóa thành công!"
+    "instructor_deleted": "Giảng viên đã được xóa thành công!",
+    "user_activated": "Người dùng đã được kích hoạt thành công!",
+    "user_deactivated": "Người dùng đã được vô hiệu hóa thành công!"
   },
   "error": {
     "instructor_not_found": "Không tìm thấy giảng viên",
+    "student_not_found": "Không tìm thấy học viên",
     "cannot_delete_instructor_with_enrollments": "Không thể xóa giảng viên vì có khóa học có người đăng ký"
   },
   "dashboard": {
@@ -20,6 +23,7 @@
     "statistics": "Thống Kê",
     "approve_instructor": "Duyệt Giảng Viên",
     "list_instructors": "Danh Sách Giảng Viên",
+    "list_students": "Danh Sách Học Viên",
     "list_courses": "Danh Sách Khóa Học"
   },
   "logout": "Đăng xuất",
@@ -57,7 +61,9 @@
       "courses": "Khóa học"
     },
     "edit_button": "Cập nhật giảng viên",
-    "delete_button": "Xóa giảng viên"
+    "delete_button": "Xóa giảng viên",
+    "activate": "Kích hoạt",
+    "deactivate": "Vô hiệu hóa"
   },
   "course": {
     "image_alt": "Hình ảnh khóa học"
@@ -72,6 +78,14 @@
     "update_button": "Cập nhật",
     "delete_button": "Xóa",
     "confirm_delete": "Bạn có chắc chắn muốn xóa giảng viên này không? Hành động này không thể hoàn tác."
+  },
+  "student": {
+    "list_title": "Học Viên",
+    "search_placeholder": "Tìm kiếm học viên...",
+    "search_button": "Tìm kiếm",
+    "no_description": "Không có mô tả",
+    "label": "Học viên",
+    "courses": "khóa học"
   },
   "pending_instructors": {
     "title": "Giảng Viên Đang Chờ Phê Duyệt",

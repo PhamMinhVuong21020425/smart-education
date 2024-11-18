@@ -56,6 +56,15 @@ export const registerPost = asyncHandler(
       });
     }
 
+    const emailExists = await findUserByEmail(dto.email);
+    if (emailExists) {
+      return res.render('auth/register', {
+        user: dto,
+        attribute: req.body,
+        error_message: i18next.t('email_exists'),
+      });
+    }
+
     // Tạo đối tượng User mới
     const user = new User();
     user.name = dto.name;
@@ -191,6 +200,14 @@ export const loginPost = asyncHandler(
         return res.redirect(`/auth/verify/${encodeURIComponent(user.email)}`);
       }
 
+      if (!user.isActivate) {
+        return res.render('auth/login', {
+          title: i18next.t('login.title'),
+          attribute: req.body,
+          error_message: i18next.t('login.errors.not_activate'),
+        });
+      }
+
       if (user.role === UserRole.PENDING_APPROVAL) {
         return res.render('auth/login', {
           title: i18next.t('login.title'),
@@ -233,6 +250,14 @@ export const googleCallback = asyncHandler(
     }
 
     const user = req.user as User;
+
+    if (!user.isActivate) {
+      return res.render('auth/login', {
+        title: i18next.t('login.title'),
+        attribute: req.body,
+        error_message: i18next.t('login.errors.not_activate'),
+      });
+    }
 
     if (user.role === UserRole.PENDING_APPROVAL) {
       return res.render('auth/login', {
