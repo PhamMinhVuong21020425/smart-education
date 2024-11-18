@@ -8,7 +8,10 @@ mixin navLink(href, text)
 
 nav.relative.bg-white.border-gray-200.mb-4.z-10(class='dark:bg-gray-900')
   .max-w-screen-xl.flex.flex-wrap.items-center.justify-between.mx-auto.p-4
-    a.flex.items-center.space-x-3(href='/', class='rtl:space-x-reverse')
+    a.flex.items-center.space-x-3(
+      href=current_user && current_user.role === UserRole.ADMIN ? '/admin' : '/',
+      class='rtl:space-x-reverse'
+    )
       img.h-8(src='/favicon.ico', alt='SmartEdu Logo')
       span.self-center.text-2xl.font-semibold.whitespace-nowrap(class='dark:text-white') SmartEdu
 
@@ -104,7 +107,7 @@ nav.relative.bg-white.border-gray-200.mb-4.z-10(class='dark:bg-gray-900')
               else
                 img#userAvatar.w-full.h-full.object-cover.rounded-full.border-2(
                   class=current_user.role === UserRole.STUDENT ? 'p-0.5 border-orange-500' : 'p-0.5 border-teal-500',
-                  src=current_user.role === UserRole.INSTRUCTOR ? '/images/default_avatar.png' : '/images/student.png',
+                  src=current_user.role === UserRole.INSTRUCTOR ? '/images/instructor.png' : '/images/student.png',
                   alt=current_user.username,
                   onclick='toggleUserMenu()'
                 )
@@ -125,7 +128,7 @@ nav.relative.bg-white.border-gray-200.mb-4.z-10(class='dark:bg-gray-900')
                       else
                         img#userAvatar.w-full.h-full.object-cover.rounded-full.border-2(
                           class=current_user.role === UserRole.STUDENT ? 'p-0.5 border-orange-500' : 'p-0.5 border-teal-500',
-                          src=current_user.role === UserRole.INSTRUCTOR ? '/images/default_avatar.png' : '/images/student.png',
+                          src=current_user.role === UserRole.INSTRUCTOR ? '/images/instructor.png' : '/images/student.png',
                           alt=current_user.username,
                           onclick='toggleUserMenu()'
                         )

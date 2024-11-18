@@ -4,7 +4,7 @@ block content
   .mb-6
     .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.px-10.py-8
       .flex.justify-between.items-center.mb-6
-        h2.text-xl.font-bold #{ t('instructor.list_title') }
+        h2.text-xl.font-bold #{ t('student.list_title') }
 
       if error_message
         p.error-message.text-red-500.text-center.mb-4= error_message
@@ -13,52 +13,52 @@ block content
         p.success-message.text-green-500.text-center.mb-4= success_message
 
       .flex.justify-end
-        form.flex.items-center(action='/admin/list-instructors', method='get')
+        form.flex.items-center(action='/admin/list-students', method='get')
           input.border.rounded-lg.p-2.mr-2(
             type='text',
             name='search',
             value=searchQuery,
-            placeholder=t('instructor.search_placeholder')
+            placeholder=t('student.search_placeholder')
           )
           button.bg-teal-500.text-white.rounded-lg.px-4.py-2(
             class='hover:bg-teal-400',
             type='submit'
-          ) #{ t('instructor.search_button') }
+          ) #{ t('student.search_button') }
 
       .mb-6
-      // Danh sách instructors
+      // Danh sách students
       ul.list-none.p-0
-        each instructor in instructors
+        each student in students
           li.mb-4
             .flex.items-center.justify-between
               a.block.rounded-lg.p-4.transition-all.duration-300.ease-in-out.cursor-pointer.flex-grow(
-                class='hover:bg-blue-50',
-                href=`/admin/instructor-detail/${instructor.id}`
+                class='hover:bg-emerald-50',
+                href=`/admin/student-detail/${student.id}`
               )
                 .flex.items-center
                   .w-24.h-24.rounded-full.mr-4.overflow-hidden
-                    if instructor.avatar_url
+                    if student.avatar_url
                       img.w-full.h-full.object-cover(
-                        src=instructor.avatar_url,
-                        alt=instructor.name
+                        src=student.avatar_url,
+                        alt=student.name
                       )
                     else
                       img.w-full.h-full.object-cover(
-                        src='/images/instructor.png',
-                        alt=instructor.name
+                        src='/images/student.png',
+                        alt=student.name
                       )
                   .flex-1
-                    h3.font-semibold.mb-2= instructor.name
-                    p.text-sm.text-gray-600.mb-4= instructor.about || t('instructor.no_description')
+                    h3.font-semibold.mb-2= student.name
+                    p.text-sm.text-gray-600.mb-4= student.about || t('student.no_description')
                     .text-sm.text-gray-500
-                      span #{ t('instructor.label') } • #{ instructor.numberOfCourse } #{ t('instructor.courses') }
+                      span #{ t('student.label') } • #{ student.numberOfCourse } #{ t('student.courses') }
               .mx-6.w-32.flex.items-center.justify-center
-                if instructor.isActivate === false
+                if student.isActivate === false
                   // Activate button
                   form.inline(
-                    action=`/admin/users/${instructor.id}/activate`,
+                    action=`/admin/users/${student.id}/activate`,
                     method='post',
-                    onsubmit=`return confirmActivate('${instructor.name}')`
+                    onsubmit=`return confirmActivate('${student.name}')`
                   )
                     button.w-32.bg-emerald-400.text-white.rounded-lg.py-2.mr-2.transition(
                       class='hover:bg-emerald-500',
@@ -67,9 +67,9 @@ block content
                 else
                   // Deactivate button
                   form.inline(
-                    action=`/admin/users/${instructor.id}/deactivate`,
+                    action=`/admin/users/${student.id}/deactivate`,
                     method='post',
-                    onsubmit=`return confirmDeactivate('${instructor.name}')`
+                    onsubmit=`return confirmDeactivate('${student.name}')`
                   )
                     button.w-32.bg-red-500.text-white.rounded-lg.py-2.mr-2.transition(
                       class='hover:bg-red-600',

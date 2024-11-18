@@ -6,18 +6,18 @@ html(lang='en')
     title= t('dashboard.title')
     link(rel='stylesheet', href='/stylesheets/global.css')
     link(rel='stylesheet', href='/stylesheets/tailwind.min.css')
-  body.bg-gray-100.h-screen.flex
+  body.bg-gray-100.h-full.flex.min-h-screen
     //- Sidebar
     aside.w-64.bg-white.p-4.shadow-lg
-      .flex.items-center.justify-center.mb-8
+      a.flex.items-center.justify-center.mb-8(href='/')
         img.h-8(src='/favicon.ico', alt=t('logo.alt'))
-        span.self-center.text-2xl.font-semibold.whitespace-nowrap(
+        span.ml-2.self-center.text-2xl.font-semibold.whitespace-nowrap(
           class='dark:text-white'
         )= t('logo.name')
       nav
         ul
           li.mb-4
-            a.flex.items-center.hover-text-teal-800(href='/admin')
+            a.flex.items-center(class='hover:text-teal-600', href='/admin')
               svg.w-5.h-5.mr-2(
                 xmlns='http://www.w3.org/2000/svg',
                 fill='none',
@@ -32,7 +32,8 @@ html(lang='en')
                 )
               | #{ t('sidebar.statistics') }
           li.mb-4
-            a.flex.items-center.hover-text-teal-800(
+            a.flex.items-center(
+              class='hover:text-teal-600',
               href='/admin/pending-instructors'
             )
               svg.w-5.h-5.mr-2(
@@ -49,7 +50,8 @@ html(lang='en')
                 )
               | #{ t('sidebar.approve_instructor') }
           li.mb-4
-            a.flex.items-center.hover-text-teal-800(
+            a.flex.items-center(
+              class='hover:text-teal-600',
               href='/admin/list-instructors'
             )
               svg.w-5.h-5.mr-2(
@@ -66,7 +68,25 @@ html(lang='en')
                 )
               | #{ t('sidebar.list_instructors') }
           li.mb-4
-            a.flex.items-center.hover-text-teal-800(href='/admin/list-courses')
+            a.flex.items-center(
+              class='hover:text-teal-600',
+              href='/admin/list-students'
+            )
+              svg.w-5.h-5.mr-2(
+                xmlns='http://www.w3.org/2000/svg',
+                fill='none',
+                viewBox='0 0 24 24',
+                stroke='currentColor'
+              )
+                path(
+                  stroke-linecap='round',
+                  stroke-linejoin='round',
+                  stroke-width='2',
+                  d='M12 8v8m4-4H8'
+                )
+              | #{ t('sidebar.list_students') }
+          li.mb-4
+            a.flex.items-center(class='hover:text-teal-600', href='/admin/list-courses')
               svg.w-5.h-5.mr-2(
                 xmlns='http://www.w3.org/2000/svg',
                 fill='none',
@@ -120,13 +140,13 @@ html(lang='en')
             .flex.flex-col.items-start.p-2
               .flex.items-center
                 img.rounded-full.mr-2.w-8.h-8(
-                  src='/images/user.png',
+                  src='/icons/admin.svg',
                   alt='avatar'
                 )
                 if user
                   span.font-semibold= user.name
                 else
-                  span.font-semibold Username
+                  span.font-semibold Admin
                 svg.ml-1.w-4.h-4(
                   xmlns='http://www.w3.org/2000/svg',
                   fill='none',
