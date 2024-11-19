@@ -6,6 +6,10 @@
 - Nguyễn Xuân Hòa - 21020072
 - Phạm Minh Vương - 21020425
 
+## Link báo cáo
+
+[Báo cáo thực hành phát triển phần mềm](https://docs.google.com/document/d/1tuQTjr2iv6Fv_T_O1JT2yrZwbaa1-ehMyewQhRRkIV4/edit?usp=sharing)
+
 ## Các chức năng chính
 
 ### Chức năng cho Người dùng chưa đăng ký (Guest):
