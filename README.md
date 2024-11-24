@@ -141,3 +141,19 @@ Show all migrations and whether they've been run or not.
 [X] = Migration has been ran
 
 [ ] = Migration is pending/unapplied
+
+### `npm run seed`
+
+Insert seed data for database.
+
+### `npm run test`
+
+Run the test suite once.
+
+### `npm run test:watch`
+
+Run the test suite in watch mode.
+
+### `npm run test:cov`
+
+Run the test suite with coverage reporting enabled.

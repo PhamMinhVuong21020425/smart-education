@@ -1,6 +1,6 @@
 import express from 'express';
 import upload from '../config/multer-config'; // Cấu hình multer
-import uploadImageToCloudinary from '../services/cloudinaryUpload'; // Hàm upload ảnh
+import uploadImageToCloudinary from '../utils/cloudinaryUpload'; // Hàm upload ảnh
 import fs from 'fs';
 
 const router = express.Router();
