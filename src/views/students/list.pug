@@ -78,7 +78,7 @@ block content
 
       // Pagination
       .mt-4.flex.justify-center
-        nav.inline-flex.rounded-md.shadow(aria-label='Pagination')
+        nav.inline-flex.rounded-md(aria-label='Pagination')
           a.px-2.py-2.rounded-l-md.border.border-gray-300.bg-white.text-sm.font-medium.text-gray-500(
             class='hover:bg-blue-100',
             href=`?page=${currentPage > 1 ? currentPage - 1 : 1}${courseFilter ? `&course=${courseFilter}` : ''}${statusFilter ? `&status=${statusFilter}` : ''}`,
@@ -139,8 +139,8 @@ block content
       h2.text-xl.font-bold List Students
     .grid.grid-cols-1.gap-4.p-4(class='md:grid-cols-2 lg:grid-cols-3')
       each student in students
-        a.block.bg-white.rounded-lg.shadow-md.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-          class='hover:shadow-xl hover:scale-105',
+        a.block.bg-white.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
+          class='hover:shadow-md hover:scale-105',
           href=`/users/${student.id}`
         )
           .flex.items-center.mb-4
