@@ -17,7 +17,10 @@ import { getBestGradeByCourseId } from './exam.service';
 import { getQuestionsByExamId } from './question.service';
 import { getUserById } from './user.service';
 import { getLessonById } from './lesson.service';
-import { CourseWithStudentCount } from '../helpers/course.helper';
+import {
+  CourseWithEnrollStatus,
+  CourseWithStudentCount,
+} from '../helpers/course.helper';
 
 const courseRepository = AppDataSource.getRepository(Course);
 const enrollmentRepository = AppDataSource.getRepository(Enrollment);
@@ -57,9 +60,12 @@ export const getCourseList = async () => {
   return getCoursesWithStudentCount(allCourses);
 };
 
-export const getUserCourseList = async (user: User) => {
+export const getUserCourseList = async (
+  user: User
+): Promise<CourseWithEnrollStatus[]> => {
   if (user.role === UserRole.INSTRUCTOR) {
     const courses = await courseRepository.find({
+      order: { name: 'ASC' },
       where: [
         { instructor: { id: user.id } },
         { subInstructor: { id: user.id } },
@@ -84,7 +90,7 @@ export const getUserCourseList = async (user: User) => {
         ...enrollment.course,
         enrollStatus: enrollment.status,
         studentCount: enrollment.course.enrollments.length,
-      };
+      } as CourseWithEnrollStatus;
     });
   }
 };
@@ -94,15 +100,6 @@ export const getCourseById = async (id: string) => {
     where: { id },
     relations: ['instructor', 'subInstructor'],
   });
-};
-
-export const getCoursesByInstructorId = async (
-  instructorId: string
-): Promise<Course[]> => {
-  return await courseRepository
-    .createQueryBuilder('course')
-    .where('course.instructor_id = :instructorId', { instructorId })
-    .getMany();
 };
 
 export const getCourseDetails = async (
@@ -130,7 +127,7 @@ export const getStudentCountByCourseId = async (
 
 export const getEnrollment = async (
   course: Course,
-  student: User | undefined
+  student: User | null | undefined
 ): Promise<Enrollment | null> => {
   if (!student) {
     return null;
@@ -165,7 +162,10 @@ export const enrollCourse = async (
 
   const mailOptions = {
     ...mailOptionsTemplate,
-    to: [course.instructor.email, course.subInstructor?.email],
+    to: [
+      course.instructor.email,
+      course.subInstructor ? course.subInstructor.email : '',
+    ],
     subject: '[Smart Education] New Request Enrollment Course',
     html: htmlContent,
   };
@@ -384,8 +384,12 @@ export const updateCourse = async (
   course.image_url = att.image_url || course.image_url;
 
   const subInstructorId = att.subInstructor;
-  const subInstructor = await getUserById(subInstructorId);
-  if (subInstructor) course.subInstructor = subInstructor;
+  if (subInstructorId === '') {
+    course.subInstructor = null;
+  } else {
+    const subInstructor = await getUserById(subInstructorId);
+    if (subInstructor) course.subInstructor = subInstructor;
+  }
 
   const lessonIdsArray = att.lessonIds.split(', ');
   const lessonPromises = lessonIdsArray.map((id: string) => getLessonById(id));
@@ -410,12 +414,6 @@ export const findCoursesByInstructorId = async (instructorId: string) => {
 
   return await courseRepository.find({
     where: { instructor },
-    relations: ['enrollments'],
+    relations: ['enrollments', 'lessons', 'assignment'],
   });
-};
-
-export const deleteCoursesByInstructorId = async (
-  instructorId: string
-): Promise<void> => {
-  await courseRepository.delete({ instructor: { id: instructorId } });
 };

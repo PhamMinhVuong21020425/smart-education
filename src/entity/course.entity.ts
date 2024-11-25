@@ -45,7 +45,7 @@ export class Course {
 
   @ManyToOne(() => User, user => user.subInstructorCourses)
   @JoinColumn({ name: 'sub_instructor_id' })
-  subInstructor: User;
+  subInstructor: User | null;
 
   @OneToMany(() => Enrollment, enrollment => enrollment.course)
   enrollments: Enrollment[];
@@ -58,7 +58,9 @@ export class Course {
   })
   lessons: Lesson[];
 
-  @OneToOne(() => Assignment, assignment => assignment.course)
+  @OneToOne(() => Assignment, assignment => assignment.course, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'assignment_id' })
   assignment: Assignment;
 

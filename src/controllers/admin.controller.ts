@@ -1,12 +1,13 @@
+import fs from 'fs';
+import i18next from 'i18next';
+import cloudinary from '../config/cloudinary-config';
 import { Request, Response, NextFunction } from 'express';
 import asyncHandler from 'express-async-handler';
+
+import { UserRole } from '../enums';
 import * as userService from '../services/user.service';
 import * as adminService from '../services/admin.service';
 import * as courseService from '../services/course.service';
-import i18next from 'i18next';
-import cloudinary from '../config/cloudinary-config';
-import fs from 'fs';
-import { UserRole } from '../enums';
 
 export const getDashboard = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -165,48 +166,6 @@ export const instructorUpdatePost = asyncHandler(
 
     req.flash('success', i18next.t('success.instructor_updated'));
     res.redirect(`/admin/instructor-detail/${req.params.id}`);
-  }
-);
-
-export const deleteInstructor = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const instructorId = req.params.id;
-
-    // Tìm giảng viên theo ID
-    const instructor = await userService.getUserById(instructorId);
-    if (!instructor) {
-      req.flash('error', i18next.t('error.instructor_not_found'));
-      return res.redirect('/admin/list-instructors');
-    }
-
-    // Tìm các khóa học của giảng viên
-    const courses = await courseService.findCoursesByInstructorId(instructorId);
-
-    if (courses.length > 0) {
-      // Kiểm tra từng khóa học để quyết định xem có người đăng ký không
-      let hasEnrollments = false;
-      for (const course of courses) {
-        if (course.enrollments.length > 0) {
-          hasEnrollments = true;
-          break;
-        }
-      }
-
-      if (hasEnrollments) {
-        req.flash(
-          'error',
-          i18next.t('error.cannot_delete_instructor_with_enrollments')
-        );
-        return res.redirect('/admin/list-instructors');
-      } else {
-        // Xóa tất cả các khóa học của giảng viên nếu không có người đăng ký
-        await courseService.deleteCoursesByInstructorId(instructorId);
-      }
-    }
-    await userService.deleteById(instructorId);
-
-    req.flash('success', i18next.t('success.instructor_deleted'));
-    res.redirect('/admin/list-instructors');
   }
 );
 

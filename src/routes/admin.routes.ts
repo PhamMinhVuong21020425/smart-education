@@ -42,6 +42,4 @@ router.post(
   adminController.instructorUpdatePost
 );
 
-router.post('/instructors/:id/delete', adminController.deleteInstructor);
-
 export default router;
