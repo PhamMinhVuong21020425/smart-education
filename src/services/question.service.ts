@@ -39,7 +39,6 @@ export const getQuestionsByExamId = async (examId: string) => {
       created_at: 'ASC',
     },
   });
-  if (!questions) return [];
   return questions;
 };
 

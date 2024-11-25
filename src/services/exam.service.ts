@@ -13,6 +13,7 @@ import { getUserById } from './user.service';
 const examRepository = AppDataSource.getRepository(Assignment);
 const gradeRepository = AppDataSource.getRepository(Grade);
 const answerRepository = AppDataSource.getRepository(Answer);
+const courseRepository = AppDataSource.getRepository(Course);
 
 export const getExamById = async (examId: string) => {
   const exam = await examRepository.findOne({
@@ -341,7 +342,7 @@ export const createExam = async (
   courseId: string
 ) => {
   const { name, description, deadline, timeLimit, attemptLimit } = attribute;
-  const course = await AppDataSource.getRepository(Course).findOne({
+  const course = await courseRepository.findOne({
     where: {
       id: courseId,
     },
@@ -355,7 +356,12 @@ export const createExam = async (
     attempt_limit: Number(attemptLimit),
     course,
   });
-  return examRepository.save(exam);
+
+  const savedExam = await examRepository.save(exam);
+  course.assignment = savedExam;
+  await courseRepository.save(course);
+
+  return savedExam;
 };
 
 export const updateExam = async (
