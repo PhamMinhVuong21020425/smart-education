@@ -1,12 +1,14 @@
 .flex.space-x-4
-  select#levelFilter.border-2.border-black.rounded.px-2.py-1(
+  select#levelFilter(
+    class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
     onchange='filterMyCourses()'
   )
     option(value='') #{ t('course.allLevels') }
     each value, key in CourseLevel
       option(value=value, selected=levelFilter === value ? true : false)= key
 
-  select#statusFilter.border-2.border-black.rounded.px-2.py-1(
+  select#statusFilter(
+    class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
     onchange='filterMyCourses()',
     class=current_user.role === UserRole.INSTRUCTOR ? 'hidden' : ''
   )
