@@ -8,14 +8,17 @@
       "markAsDone": "Mark as done",
       "unmarkAsDone": "Unmark done",
       "title": "Title",
-      "file": "File",
+      "file": "Document file",
       "study_time": "Study time",
+      "study_date": "Study date",
       "student_done": "Student done"
     },
     "create": "Create lesson",
     "edit": "Edit lesson",
     "delete": "Delete lesson",
     "backToCourseManagement": "Back to course management",
+    "deleteConfirmTitle": "Delete confirm",
+    "canNotDeleteTitle": "Can not delete",
     "deleteConfirmMessage": "Are you want to delete this lesson?",
     "canNotDeleteMessage": "students enrolled. You need to delete all students before deleting this lesson."
   }

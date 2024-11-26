@@ -16,7 +16,10 @@ mixin detail(lessonDetail, courseDetail, grade)
       p= lessonDetail.content
     .py-4
       h3.font-bold.text-lg.mb-2 #{ t('lesson.detail.reference') }
-      a.text-blue-700(href=`${lessonDetail.file_url}`)= lessonDetail.file_url
+      a.text-blue-700(
+        href=`/uploads/${lessonDetail.file_url.split('\\')[3]}`,
+        target='_blank'
+      )= lessonDetail.file_url.split('$$')[1]
     .flex.justify-center.mt-2
       if lessonDetail.done
         form(method='post')

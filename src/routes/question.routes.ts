@@ -1,6 +1,7 @@
 import { Router, Response, NextFunction } from 'express';
 import * as questionController from '../controllers/question.controller';
 import { RequestForQuestion } from '../helpers/question.helper';
+import { requireInstructor } from '../middleware/require-instructor.middleware';
 
 const router: Router = Router();
 
@@ -9,6 +10,8 @@ router.use((req: RequestForQuestion, res: Response, next: NextFunction) => {
   req.examID = req.baseUrl.split('/')[4];
   next();
 });
+
+router.use(requireInstructor);
 
 router.get('/create', questionController.questionCreateGet);
 

@@ -5,7 +5,7 @@ block content
     // Back button
     a.inline-flex.items-center.text-blue-600.transition-colors(
       class='hover:text-blue-800',
-      href=`/courses/${courseID}/exam`
+      href=`/courses/${courseID}/manage?gradePage=${currentGradePage}#grade`
     )
       svg.w-5.h-5.mr-2(
         xmlns='http://www.w3.org/2000/svg',
@@ -19,7 +19,7 @@ block content
         circle(cx='12', cy='12', r='10')
         polyline(points='12 8 8 12 12 16')
         line(x1='16', y1='12', x2='8', y2='12')
-      span.font-medium #{ t('exam.backToExam') }
+      span.font-medium #{ t('lesson.backToCourseManagement') }
 
   if gradeId
     form.max-w-2xl.bg-white.overflow-hidden.mx-auto.p-8.space-y-6.font-sans(

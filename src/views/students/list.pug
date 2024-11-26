@@ -8,7 +8,8 @@ block content
 
       // Filters
       .mb-4.flex.space-x-4
-        select#courseFilter.border.rounded-sm.px-2.py-1(
+        select#courseFilter.inline-flex.justify-center.border.rounded-md.px-4.py-2.bg-white.text-sm.font-semibold.text-gray-900.shadow-sm.ring-1.ring-inset.ring-gray-300(
+          class='gap-x-1.5 hover:bg-gray-50',
           onchange='applyFilters()'
         )
           option(value='') All Courses
@@ -18,7 +19,8 @@ block content
               selected=courseFilter === course.id ? true : false
             )= course.name
 
-        select#statusFilter.border.rounded-sm.px-2.py-1(
+        select#statusFilter.inline-flex.justify-center.border.rounded-md.px-4.py-2.bg-white.text-sm.font-semibold.text-gray-900.shadow-sm.ring-1.ring-inset.ring-gray-300(
+          class='gap-x-1.5 hover:bg-gray-50',
           onchange='applyFilters()'
         )
           option(value='') All Status

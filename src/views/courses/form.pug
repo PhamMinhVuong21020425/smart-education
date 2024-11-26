@@ -90,9 +90,14 @@ block content
           label.block.text-gray-700.text-sm.font-bold.mb-2(for='subInstructor') Sub-Instructor
           select#subInstructor.shadow.appearance-none.border.rounded.w-full.py-2.px-3.text-gray-700.leading-tight(
             class='focus:outline-none focus:shadow-outline',
+            disabled=course && course.subInstructor && course.subInstructor.id === current_user.id,
             name='subInstructor'
           )
             option(value='') Select a sub-instructor (optional)
+
+            if course && course.subInstructor && course.subInstructor.id === current_user.id
+              option(value=current_user.id, selected)= current_user.name
+
             each subInstructor in subInstructors
               if course && course.subInstructor && course.subInstructor.id === subInstructor.id
                 option(value=subInstructor.id, selected)= subInstructor.name

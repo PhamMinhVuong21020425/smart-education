@@ -1,3 +1,5 @@
+import fs from 'fs';
+import i18next from 'i18next';
 import { NextFunction, Response, Request } from 'express';
 import asyncHandler from 'express-async-handler';
 import {
@@ -12,9 +14,6 @@ import {
 import { RequestWithCourseID } from '../helpers/lesson.helper';
 import { getCourseById } from '../services/course.service';
 import { getBestGradeByCourseId } from '../services/exam.service';
-import cloudinary from '../config/cloudinary-config';
-import fs from 'fs';
-import i18next from 'i18next';
 import {
   dateFromTimeAndDate,
   timeAndDateFromDateObject,
@@ -81,14 +80,7 @@ export const lessonCreatePost = asyncHandler(
       return;
     }
 
-    let file_url = '';
-    if (req.file) {
-      const result = await cloudinary.v2.uploader.upload(req.file.path, {
-        folder: 'files',
-      });
-      file_url = result.secure_url;
-      fs.unlinkSync(req.file.path);
-    }
+    const file_url = req.file ? req.file.path : '';
 
     const title = req.body.title;
     const content = req.body.content;
@@ -104,7 +96,9 @@ export const lessonDeleteGet = asyncHandler(
   async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
     const lessonId = req.params.id;
     const studentLesson = await getStudentLessonByLessonId(lessonId);
-    const lesson = await getLessonById(lessonId);
+    const lessonDetail = await getLessonById(lessonId);
+    const { time, date } = timeAndDateFromDateObject(lessonDetail!.study_time);
+    const lesson = { ...lessonDetail, time, date };
     res.render('lessons/delete', {
       courseID: req.courseID,
       studentLesson,
@@ -118,12 +112,17 @@ export const lessonDeletePost = asyncHandler(
     const lessonId = req.params.id;
     const courseId = req.courseID;
     await deleteLessonByLessonId(courseId!, lessonId);
+    const prevFilePath = req.body.prevFilePath;
+    if (fs.existsSync(prevFilePath)) {
+      fs.unlinkSync(prevFilePath);
+    }
     res.redirect(`/courses/${req.courseID}/manage#lesson`);
   }
 );
 
 export const lessonUpdateGet = asyncHandler(
   async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    const currentLessonPage = parseInt(req.query.lessonPage as string) || 1;
     const lessonDetail = await getLessonById(req.params.id);
     if (!lessonDetail) {
       req.flash('error', i18next.t('error.lessonNotFound'));
@@ -136,12 +135,14 @@ export const lessonUpdateGet = asyncHandler(
       title: req.t('lesson.edit'),
       courseID: req.courseID,
       lesson,
+      currentLessonPage,
     });
   }
 );
 
 export const lessonUpdatePost = asyncHandler(
   async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    const currentLessonPage = parseInt(req.query.lessonPage as string) || 1;
     const courseId = req.courseID;
     const lessonId = req.params.id;
 
@@ -152,13 +153,13 @@ export const lessonUpdatePost = asyncHandler(
       return;
     }
 
-    let file_url = '';
+    const prevFilePath = req.body.prevFilePath;
+    let file_url = prevFilePath;
     if (req.file) {
-      const result = await cloudinary.v2.uploader.upload(req.file.path, {
-        folder: 'files',
-      });
-      file_url = result.secure_url;
-      fs.unlinkSync(req.file.path);
+      file_url = req.file.path;
+      if (fs.existsSync(prevFilePath)) {
+        fs.unlinkSync(prevFilePath);
+      }
     }
 
     const title = req.body.title;
@@ -175,7 +176,9 @@ export const lessonUpdatePost = asyncHandler(
       file_url,
       study_time
     );
-    res.redirect(`/courses/${courseId}/manage#lesson`);
+    res.redirect(
+      `/courses/${courseId}/manage?lessonPage=${currentLessonPage}#lesson`
+    );
   }
 );
 
