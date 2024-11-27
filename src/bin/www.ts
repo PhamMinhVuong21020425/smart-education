@@ -21,7 +21,42 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-const server = http.createServer(app);
+// const server = http.createServer(app);
+const server = require('http').Server(app)
+// const io = require('socket.io')(server)
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+// socket.io
+io.on('connection', (socket: {
+  to: any; on: (arg0: string, arg1: (roomId: any, userId: any) => void) => void; join: (arg0: any) => void; broadcast: { emit: (arg0: string, arg1: any) => void; };
+}) => {
+  // When someone attempts to join the room
+  socket.on('join-room', (roomId, userId) => {
+    socket.join(roomId)  // Join the room
+    // Tell everyone else in the room that we joined
+    socket.to(roomId).emit('user-connected', userId);
+
+    // Communicate the disconnection
+    socket.on('disconnect', () => {
+      socket.to(roomId).emit('user-disconnected', userId)
+    })
+
+    socket.on('screen-share-started', (roomId, userId) => {
+      // Broadcast to other users in the room
+      socket.to(roomId).emit('user-screen-sharing', userId);
+    });
+
+    socket.on('screen-share-ended', (roomId, userId) => {
+      // Notify other users screen share has ended
+      socket.to(roomId).emit('user-screen-share-ended', userId);
+    });
+  })
+})
 
 /**
  * Listen on provided port, on all network interfaces.

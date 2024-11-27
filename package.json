@@ -30,6 +30,7 @@
     "cookie-parser": "~1.4.6",
     "debug": "~4.3.5",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "express": "~4.19.2",
     "express-async-handler": "^1.2.0",
     "express-flash": "^0.0.2",
@@ -47,10 +48,13 @@
     "nodemailer": "^6.9.14",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "peer": "^1.0.2",
     "pug": "^3.0.3",
     "react": "^18.3.1",
     "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.20"
+    "socket.io": "^4.8.1",
+    "typeorm": "^0.3.20",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@eslint/compat": "^1.1.1",

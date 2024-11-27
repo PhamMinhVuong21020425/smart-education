@@ -8,6 +8,7 @@ import examRouter from './exam.routes';
 import questionRouter from './question.routes';
 import searchRouter from './search.routes';
 import adminRouter from './admin.routes';
+import roomRouter from './room.routes';
 import upload from '../config/multer-config';
 
 import {
@@ -26,6 +27,7 @@ router.use('/courses/:courseId/exam', examRouter);
 router.use('/courses/:courseId/exam/:examId/questions', questionRouter);
 router.use('/', searchRouter);
 router.use('/', homeRouter);
+router.use('/room', roomRouter);
 router.use('/admin', adminRouter);
 router.get('/profile', getUserProfile);
 router.get('/profile/update', userUpdateProfileGet);

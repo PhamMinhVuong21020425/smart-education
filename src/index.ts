@@ -89,6 +89,24 @@ i18next
 
 // create and setup express app
 const app = express();
+// const server = require('http').Server(app)
+// const io = require('socket.io')(server)
+
+// // socket.io
+// io.on('connection', (socket: { on: (arg0: string, arg1: (roomId: any, userId: any) => void) => void; join: (arg0: any) => void; broadcast: { emit: (arg0: string, arg1: any) => void; }; }) => {
+//   // When someone attempts to join the room
+//   socket.on('join-room', (roomId, userId) => {
+//     socket.join(roomId)  // Join the room
+//     socket.broadcast.emit('user-connected', userId) // Tell everyone else in the room that we joined
+
+//     // Communicate the disconnection
+//     socket.on('disconnect', () => {
+//       socket.broadcast.emit('user-disconnected', userId)
+//     })
+//   })
+// })
+
+// server.listen(3001)
 
 // i18next middleware
 app.use(
