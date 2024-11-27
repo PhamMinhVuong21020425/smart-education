@@ -156,6 +156,7 @@ export const resultExam = asyncHandler(
   async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
     const userSession = req.session.user!;
     const gradeId = req.query.grade as string;
+    const currentGradePage = parseInt(req.query.gradePage as string) || 1;
     if (gradeId) {
       const result = await getResultOfExamByGradeId(gradeId);
       const detailAnswers = result?.answers;
@@ -170,6 +171,7 @@ export const resultExam = asyncHandler(
         grade,
         courseID: req.courseID,
         gradeId,
+        currentGradePage,
       });
     } else {
       const exam = await getExamById(req.params.id);
@@ -197,10 +199,13 @@ export const resultExam = asyncHandler(
 
 export const addFeedBackPost = asyncHandler(
   async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
+    const currentGradePage = parseInt(req.query.gradePage as string) || 1;
     const gradeId = req.query.grade as string;
     const courseId = req.courseID;
     const feedback = req.body.feedback;
     await updateGradeById(gradeId, feedback);
-    res.redirect(`/courses/${courseId}/manage#grade`);
+    res.redirect(
+      `/courses/${courseId}/manage?gradePage=${currentGradePage}#grade`
+    );
   }
 );

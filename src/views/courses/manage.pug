@@ -138,16 +138,19 @@ block content
                   span #{ lesson.content }
               td.p-4.text-sm.max-w-60
                 a.flex.items-center.truncate(
-                  href=lesson.file_url,
+                  href=`/uploads/${lesson.file_url.split('\\')[3]}`,
+                  target='_blank',
                   class='hover:text-blue-600'
                 )
-                  span #{ lesson.file_url }
+                  span #{ lesson.file_url.split('$$')[1] }
               td.p-4.text-sm.max-w-28
                 .flex.items-center.justify-center
                   span.text-center #{ lesson.studyTime }
               td.p-4
                 .flex.justify-center.items-center
-                  a.mr-2(href=`lessons/${lesson.id}/update`)
+                  a.mr-2(
+                    href=`lessons/${lesson.id}/update?lessonPage=${currentLessonPage}`
+                  )
                     svg.w-5.fill-blue-500(
                       xmlns='http://www.w3.org/2000/svg',
                       class='hover:fill-blue-700',
@@ -271,7 +274,7 @@ block content
               td.text-sm
                 .flex.justify-center.items-center
                   a.mr-4(
-                    href=`/courses/${course.id}/exam/${grade.assignment.id}/result?grade=${grade.id}`
+                    href=`/courses/${course.id}/exam/${grade.assignment.id}/result?grade=${grade.id}&gradePage=${currentGradePage}`
                   )
                     svg.w-5.fill-blue-500(
                       xmlns='http://www.w3.org/2000/svg',
