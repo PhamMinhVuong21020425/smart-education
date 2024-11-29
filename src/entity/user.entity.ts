@@ -5,6 +5,7 @@ import { Enrollment } from './enrollment.entity';
 import { StudentLesson } from './student_lesson.entity';
 import { Answer } from './answer.entity';
 import { Grade } from './grade.entity';
+import { Comment } from './comment.entity';
 import { UserRole } from '../enums/UserRole';
 import { Specialization } from '../enums/Specialization';
 import { AuthType } from '../enums/AuthType';
@@ -91,6 +92,9 @@ export class User {
 
   @OneToMany(() => Grade, grade => grade.student)
   grades: Grade[];
+
+  @OneToMany(() => Comment, comment => comment.user)
+  comments: Comment[];
 
   constructor(partial?: Partial<User>) {
     Object.assign(this, partial);

@@ -19,7 +19,8 @@
     "exam": "Final Exam",
     "create_exam": "Create Exam",
     "edit_exam": "Edit Exam",
-    "manage_exam": "Manage Exam"
+    "manage_exam": "Manage Exam",
+    "forum": "Forum Course"
   },
   "message": {
     "found_results": "Found {{count}} results for the keyword '{{keyword}}'"

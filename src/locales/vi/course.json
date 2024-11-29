@@ -1,15 +1,17 @@
 {
   "course": {
-    "courseInfo": "Thông tin khóa học",
+    "overview": "Tổng quan khóa học",
     "courses": "khóa học",
     "newCourse": "Tạo khóa học",
     "editCourse": "Chỉnh sửa khóa học",
+    "addDiscussion": "Thêm thảo luận",
     "studentList": "Danh sách học viên",
     "allLevels": "Tất cả cấp độ",
     "allStatus": "Tất cả trạng thái",
     "learning": "Tiếp tục học",
     "progress": "Tiến độ học tập",
     "detail": {
+      "forum": "Diễn đàn khóa học",
       "about": "Về khóa học này",
       "taughtBy": "Dạy bởi",
       "instructor": "Giảng viên",

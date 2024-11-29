@@ -1,15 +1,17 @@
 {
   "course": {
-    "courseInfo": "Course Info",
+    "overview": "Course overview",
     "courses": "courses",
     "newCourse": "Add New Course",
     "editCourse": "Edit Course",
+    "addDiscussion": "Add Discussion",
     "studentList": "Student List",
     "allLevels": "All Levels",
     "allStatus": "All Status",
     "learning": "Continue Learning",
     "progress": "Learning Progress",
     "detail": {
+      "forum": "Forum Course",
       "about": "About this Course",
       "taughtBy": "Taught by",
       "instructor": "Instructor",

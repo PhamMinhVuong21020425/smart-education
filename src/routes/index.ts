@@ -9,6 +9,7 @@ import questionRouter from './question.routes';
 import searchRouter from './search.routes';
 import adminRouter from './admin.routes';
 import roomRouter from './room.routes';
+import forumRouter from './forum.routes';
 import upload from '../config/multer-config';
 
 import {
@@ -22,6 +23,7 @@ const router: Router = Router();
 router.use('/auth', authRouter);
 router.use('/users', userRouter);
 router.use('/courses', courseRouter);
+router.use('/courses/:courseId/forums', forumRouter);
 router.use('/courses/:courseId/lessons', lessonRouter);
 router.use('/courses/:courseId/exam', examRouter);
 router.use('/courses/:courseId/exam/:examId/questions', questionRouter);

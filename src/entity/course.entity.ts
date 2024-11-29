@@ -14,6 +14,7 @@ import { Enrollment } from './enrollment.entity';
 import { Lesson } from './lesson.entity';
 import { Assignment } from './assignment.entity';
 import { CourseLevel } from '../enums/CourseLevel';
+import { Forum } from './forum.entity';
 
 @Entity('courses')
 export class Course {
@@ -49,6 +50,9 @@ export class Course {
 
   @OneToMany(() => Enrollment, enrollment => enrollment.course)
   enrollments: Enrollment[];
+
+  @OneToMany(() => Forum, forum => forum.course)
+  forums: Forum[];
 
   @ManyToMany(() => Lesson, lesson => lesson.courses)
   @JoinTable({
