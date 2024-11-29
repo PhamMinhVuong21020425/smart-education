@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   body
-    .max-w-2xl.mx-auto.bg-white.shadow-lg.rounded-lg.p-6
+    .max-w-2xl.mx-auto.bg-white.shadow-md.rounded-lg.p-6
       .grid.grid-cols-2.gap-4
         .flex.flex-col.items-center.justify-center
           .flex.items-center.space-x-4
@@ -42,7 +42,7 @@ block content
                 | &nbsp;#{ user.specialization ? user.specialization : 'N/A' }
 
     .mb-6
-    .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+    .max-w-6xl.mx-auto.bg-white.rounded-lg.p-6
       h2.text-xl.font-bold.mb-4 #{ t('user.detail.about') }
       p.text-gray-600.text-justify= user.about || 'N/A'
       .mb-6
@@ -50,8 +50,8 @@ block content
         h2.text-xl.font-bold #{ t('user.detail.courses') }
       .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
         each course in userCourses
-          a.block.bg-white.shadow-md.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-            class='hover:shadow-xl hover:scale-105',
+          a.block.bg-white.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
+            class='hover:shadow-lg hover:scale-105',
             href=`/courses/${course.id}`
           )
             .rounded-lg.overflow-hidden

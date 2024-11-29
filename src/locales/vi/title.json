@@ -19,7 +19,8 @@
     "exam": "Kiểm tra cuối khóa",
     "create_exam": "Tạo bài kiểm tra",
     "edit_exam": "Chỉnh sửa bài kiểm tra",
-    "manage_exam": "Quản lý bài kiểm tra"
+    "manage_exam": "Quản lý bài kiểm tra",
+    "forum": "Diễn đàn khóa học"
   },
   "message": {
     "found_results": "Tìm thấy {{count}} kết quả với từ khóa '{{keyword}}'"

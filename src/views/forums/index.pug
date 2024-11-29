@@ -1,0 +1,61 @@
+extends ../layout
+
+mixin formatDate(date)
+  - const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+  .text-sm.text-gray-600.mb-2 Posted at #{ date.toLocaleString('en-US', options) }
+
+block content
+  if current_user
+    include ./form.pug
+
+    .max-w-6xl.mx-auto.bg-white.p-6
+      // Course Title
+      .flex.justify-between.items-center
+        h1.text-4xl.font-bold.mb-4= course.name
+          sup.ml-4
+            case course.level
+              when CourseLevel.BEGINNER
+                span.text-xs.bg-green-200.text-green-800.px-2.py-1.rounded-sm.font-bold #{ t('courseLevels.beginner') }
+              when CourseLevel.INTERMEDIATE
+                span.text-xs.bg-amber-200.text-amber-800.px-2.py-1.rounded-sm.font-bold #{ t('courseLevels.intermediate') }
+              when CourseLevel.ADVANCED
+                span.text-xs.bg-red-200.text-red-800.px-2.py-1.rounded-sm.font-bold #{ t('courseLevels.advanced') }
+              when CourseLevel.EXPERT
+                span.text-xs.bg-purple-200.text-purple-800.px-2.py-1.rounded-sm.font-bold #{ t('courseLevels.expert') }
+        if current_user.role !== UserRole.STUDENT
+          button.text-sm.text-red-500.px-3.py-2.border-2.border-red-500.rounded(
+            onclick='showModal("forum_modal")',
+            class='hover:bg-red-100'
+          ) #{ t('course.addDiscussion') }
+
+      // Course Description
+      p.text-gray-700.ml-2.mb-6= course.description
+
+      // Forum Course
+      h2#studentlist.text-xl.font-bold.mb-4 #{ t('course.detail.forum') }
+      if forums.length > 0
+        each forum in forums
+          a.block.py-4.px-4.rounded-lg.transition-all.mb-6(
+            class='hover:bg-blue-100',
+            href=`/courses/${course.id}/forums/${forum.id}`
+          )
+            .flex.items-center.justify-beetween.space-x-4
+              img.w-12.h-12(src='/images/forum.png', alt='forum')
+              div
+                h3.font-semibold.text-gray-900 #{ forum.title }
+                +formatDate(forum.created_at)
+                p.font-poppins.text-gray-700.text-sm #{ forum.content }
+      else
+        .border.border-dashed.border-gray-300.rounded-lg.p-4
+          .flex.flex-col.items-center.justify-center.border.border-dashed.border-gray-300.rounded-lg.p-16.bg-gray-50
+            .mb-4
+              img.w-24.h-24(src='/images/forum.png', alt='icon')
+
+            h3.text-lg.text-gray-800.font-bold There are no discussions to show in this section
+            if current_user.role !== UserRole.STUDENT
+              button.text-indigo-600.mt-1(
+                class='hover:underline',
+                onclick='showModal("forum_modal")'
+              ) Click here to add a discussion
+
+  script(src='/javascripts/load_modal.js')

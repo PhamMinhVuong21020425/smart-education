@@ -45,6 +45,18 @@ block content
     // Course Description
     p.text-gray-700.ml-2.mb-6= course.description
 
+    // Forum Course
+    h2#studentlist.text-xl.font-bold.mb-4 #{ t('course.detail.forum') }
+    a.block.py-4.px-4.rounded-lg.transition-all.mb-6(
+      class='hover:bg-blue-100',
+      href=`/courses/${course.id}/forums`
+    )
+      .flex.items-center.justify-beetween.space-x-4
+        img.w-12.h-12(src='/images/forum.png', alt='forum')
+        div
+          h3.font-semibold.mb-1.text-gray-900 #{ t('course.detail.forum') }
+          p.text-gray-600.text-sm This is forum for students to discuss about the course.
+
     // Student List
     h2#studentlist.text-xl.font-bold.mb-4 #{ t('course.studentList') }
     ul.grid.gap-4(class='lg:grid-cols-2')

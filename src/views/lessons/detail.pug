@@ -55,6 +55,18 @@ mixin detail(lessonDetail, courseDetail, grade)
               span.text-xs.bg-red-200.text-red-800.px-2.py-1.rounded-sm.font-bold #{ t('courseLevels.advanced') }
             when CourseLevel.EXPERT
               span.text-xs.bg-purple-200.text-purple-800.px-2.py-1.rounded-sm.font-bold #{ t('courseLevels.expert') }
+    //- .py-4
+    //-   h3.font-bold.text-lg.mb-2 #{ t('course.detail.forum') }
+    //-   p This is forum for students to discuss about the course.
+    a.block.py-4.px-4.bg-gray-100.rounded-lg.transition-all(
+      class='hover:bg-blue-100',
+      href=`/courses/${courseDetail.id}/forums`
+    )
+      .flex.items-center.justify-beetween.space-x-4
+        img.w-12.h-12(src='/images/forum.png', alt='forum')
+        div
+          h3.font-bold.text-lg.mb-1.text-gray-900 #{ t('course.detail.forum') }
+          p.text-gray-600.text-sm This is a forum for students to discuss about the course.
     .py-4
       h3.font-bold.text-lg.mb-2 #{ t('course.detail.about') }
       p= courseDetail.description

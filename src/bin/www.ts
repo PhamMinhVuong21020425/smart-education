@@ -7,6 +7,7 @@
 import app from '../index';
 import debugLogger from 'debug';
 import http from 'http';
+import { Server, Socket } from 'socket.io';
 
 const debug = debugLogger('smart-education:server');
 
@@ -21,48 +22,50 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-// const server = http.createServer(app);
-const server = require('http').Server(app)
-// const io = require('socket.io')(server)
-const io = require("socket.io")(server, {
+const server = http.createServer(app);
+const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
 });
 
 // socket.io
-io.on('connection', (socket: {
-  to: any; on: (arg0: string, arg1: (roomId: any, userId: any) => void) => void; join: (arg0: any) => void; broadcast: { emit: (arg0: string, arg1: any) => void; };
-}) => {
+
+io.on('connection', (socket: Socket) => {
   // When someone attempts to join the room
-  socket.on('join-room', (roomId, userId) => {
-    socket.join(roomId)  // Join the room
+  socket.on('join-room', (roomId: string, userId: string) => {
+    socket.join(roomId); // Join the room
+
     // Tell everyone else in the room that we joined
     socket.to(roomId).emit('user-connected', userId);
 
     // Communicate the disconnection
     socket.on('disconnect', () => {
-      socket.to(roomId).emit('user-disconnected', userId)
-    })
+      socket.to(roomId).emit('user-disconnected', userId);
+    });
 
-    socket.on('screen-share-started', (roomId, userId) => {
+    socket.on('screen-share-started', (roomId: string, userId: string) => {
       // Broadcast to other users in the room
       socket.to(roomId).emit('user-screen-sharing', userId);
     });
 
-    socket.on('screen-share-ended', (roomId, userId) => {
+    socket.on('screen-share-ended', (roomId: string, userId: string) => {
       // Notify other users screen share has ended
       socket.to(roomId).emit('user-screen-share-ended', userId);
     });
-  })
-})
+  });
+});
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, () => {
+  console.log(
+    `\x1b[33m> Server is running on \x1b[34mhttp://localhost:${port}\x1b[0m`
+  );
+});
 server.on('error', onError);
 server.on('listening', onListening);
 

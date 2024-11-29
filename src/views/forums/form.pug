@@ -1,0 +1,69 @@
+#forum_modal.fixed.inset-0.flex.items-center.justify-center.z-50.bg-black.bg-opacity-50.transition-opacity.duration-300.ease-in-out.opacity-0.pointer-events-none
+  #modal_content.bg-white.rounded-lg.shadow-lg.w-full.max-w-4xl.flex.flex-col.transform.transition-all.duration-300.scale-95.opacity-0(
+    class='max-h-[90vh]'
+  )
+    // Header section (fixed)
+    .px-8.py-6.border-b
+      h2.text-2xl.font-bold= forum ? 'Edit Discussion' : 'Add New Discussion'
+
+    // Scrollable content
+    .px-8.py-6.flex-1.overflow-y-auto.p-6.scrollbar-hide(
+      style=`
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      `
+    )
+      form#forum_form.space-y-6(
+        method='POST',
+        action=forum ? `/courses/${course.id}/forums/${forum.id}/update` : `/courses/${course.id}/forums/create`
+      )
+        // Name Field
+        .space-y-2
+          label.block.font-medium.text-gray-900(for='title') Topic Title
+          input#title.mt-1.block.w-full.rounded-md.border.p-2.shadow-sm.transition.duration-150.ease-in-out(
+            type='text',
+            name='title',
+            required,
+            placeholder='Enter discussion title',
+            value=forum === undefined ? '' : forum.title,
+            class='focus:border-blue-500 focus:ring-blue-500 sm:text-sm'
+          )
+
+        // Description Field
+        .space-y-2
+          label.block.font-medium.text-gray-900(for='content') Content
+          textarea#content.mt-1.block.w-full.rounded-md.border.p-2.shadow-sm.transition.duration-150.ease-in-out(
+            name='content',
+            rows='4',
+            placeholder='Provide a detailed description of the discussion',
+            class='focus:border-blue-500 focus:ring-blue-500 sm:text-sm'
+          ) #{ forum===undefined ? '' : forum.content }
+
+        // Visibility Field
+        .space-y-2
+          label.block.font-medium.text-gray-900(for='visibility') Visibility
+          select#visibility.inline-flex.w-full.justify-center.rounded-md.p-2.text-sm.text-gray-900.shadow-sm.ring-1.ring-inset.ring-gray-300(
+            name='visibility',
+            required,
+            class='focus:border-blue-500 focus:ring-blue-500 sm:text-sm'
+          )
+            option(value='public') Public
+            option(value='private', selected=forum && forum.hidden) Private
+
+    // Footer section (fixed)
+    .px-8.py-6.border-t
+      .flex.justify-end.items-center.space-x-2
+        button.inline-block.font-bold.text-sm.text-white.bg-red-500.py-2.px-4.rounded(
+          class='hover:bg-red-600',
+          type='button',
+          onclick='hideModal("forum_modal")'
+        ) Cancel
+
+        button.inline-block.bg-green-500.text-sm.text-white.font-bold.py-2.px-4.rounded(
+          class='hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed',
+          type='submit',
+          form='forum_form'
+        )= forum ? 'Save' : 'Create'
