@@ -1,7 +1,13 @@
 const socket = io('/')
 const videoGrid = document.getElementById('video-grid')
 
-const myPeer = new Peer()
+const myPeer = new Peer({
+    config: {
+        'iceServers': [
+            { url: 'stun:stun.l.google.com:19302' }
+        ]
+    }
+})
 const myVideo = document.createElement('video')
 myVideo.muted = true
 
@@ -14,6 +20,7 @@ navigator.mediaDevices.getUserMedia({
     audio: true
 }).then(stream => {
     localStream = stream; // Store the stream globally
+    addMainVideoStream(myVideo, stream) // Add our video stream to main screen
     addVideoStream(myVideo, stream, myPeer.id)
 
     myPeer.on('call', call => {
@@ -36,6 +43,7 @@ navigator.mediaDevices.getUserMedia({
 
 myPeer.on('open', id => { // When we first open the app, have us join a room
     socket.emit('join-room', ROOM_ID, id)
+    console.log('Peer connected with ID:', id);
 })
 
 function connectToNewUser(userId, stream) { // This runs when someone joins our room
@@ -59,14 +67,34 @@ function removeVideo(userId) {
     console.log('Removed video:', userId);
     console.log(videoGrid);
 }
-
+function addMainVideoStream(video, stream) {
+    const mainVideo = document.getElementById('main-video');
+    mainVideo.srcObject = stream;
+    mainVideo.muted = true;
+    mainVideo.addEventListener('loadedmetadata', () => { // Play the video as it loads
+        mainVideo.play()
+    })
+}
 
 function addVideoStream(video, stream, userId) {
     video.srcObject = stream
     video.id = userId;
     // video.style.transform = 'scaleX(-1)' // Flip the video horizontally
+    console.log('Adding video:', userId);
     video.addEventListener('loadedmetadata', () => { // Play the video as it loads
         video.play()
+
+        video.addEventListener('click', () => {
+            console.log('Video clicked');
+            console.log('Source object:', video.srcObject);
+
+            const mainScreen = document.querySelector('.main-screen video');
+            if (mainScreen) {
+                mainScreen.srcObject = video.srcObject;
+            } else {
+                console.error('Main screen video not found');
+            }
+        })
     })
     videoGrid.append(video) // Append video element to videoGrid
 }
@@ -90,9 +118,13 @@ function toggleMute() {
 
     // Update UI
     const muteButton = document.getElementById('muteButton');
-    if (muteButton) {
-        muteButton.textContent = audioTracks[0].enabled ? 'Mute' : 'Unmute';
-        muteButton.classList.toggle('muted');
+    muteButton.classList.toggle('muted');
+
+    const icon = muteButton.querySelector('i');
+    if (muteButton.classList.contains('muted')) {
+        icon.classList.replace('fa-microphone', 'fa-microphone-slash');
+    } else {
+        icon.classList.replace('fa-microphone-slash', 'fa-microphone');
     }
 
     console.log(audioTracks[0].enabled ? 'Audio unmuted' : 'Audio muted');
@@ -117,9 +149,13 @@ function toggleCamera() {
 
     // Update UI
     const cameraButton = document.getElementById('cameraButton');
-    if (cameraButton) {
-        cameraButton.textContent = videoTracks[0].enabled ? 'Turn Off Camera' : 'Turn On Camera';
-        cameraButton.classList.toggle('camera-off');
+    cameraButton.classList.toggle('camera-off');
+
+    const icon = cameraButton.querySelector('i');
+    if (cameraButton.classList.contains('camera-off')) {
+        icon.classList.replace('fa-video', 'fa-video-slash');
+    } else {
+        icon.classList.replace('fa-video-slash', 'fa-video');
     }
 
     console.log(videoTracks[0].enabled ? 'Camera enabled' : 'Camera disabled');
@@ -146,12 +182,6 @@ function toggleScreenShare() {
                 // Store screen stream globally
                 screenStream = newScreenStream;
                 const screenVideoTrack = newScreenStream.getVideoTracks()[0];
-                // Sử dụng canvas để lật video chia sẻ màn hình
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                const video = document.createElement('video');
-                video.srcObject = new MediaStream([screenVideoTrack]);
-                video.play();
 
                 // Create a new stream with screen share track
                 const combinedStream = new MediaStream();
@@ -194,10 +224,7 @@ function toggleScreenShare() {
 
                 // Update UI
                 const screenShareButton = document.getElementById('screenShareButton');
-                if (screenShareButton) {
-                    screenShareButton.textContent = 'Stop Screen Share';
-                    screenShareButton.classList.add('sharing');
-                }
+                screenShareButton.classList.toggle('sharing');
 
                 console.log('Screen sharing started');
             })
@@ -245,10 +272,7 @@ function stopScreenShare() {
 
     // Update UI
     const screenShareButton = document.getElementById('screenShareButton');
-    if (screenShareButton) {
-        screenShareButton.textContent = 'Share Screen';
-        screenShareButton.classList.remove('sharing');
-    }
+    screenShareButton.classList.remove('sharing');
 
     console.log('Screen sharing stopped');
 }
