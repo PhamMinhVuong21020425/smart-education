@@ -9,7 +9,13 @@ export const forumList = asyncHandler(
   async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
     const course = await getCourseById(req.courseID!);
     const forums = await forumService.getForumsByCourseId(req.courseID!);
-    res.render('forums/index', { title: req.t('title.forum'), course, forums });
+    const publicForums = forums.filter(forum => forum.hidden === false);
+    res.render('forums/index', {
+      title: req.t('title.forum'),
+      course,
+      forums,
+      publicForums,
+    });
   }
 );
 
@@ -32,13 +38,6 @@ export const forumCreatePost = asyncHandler(
     const course = await getCourseById(req.courseID!);
     if (!course) return;
     await forumService.createForum(course, req.body);
-    res.redirect(`/courses/${req.courseID}/forums`);
-  }
-);
-
-export const forumDeletePost = asyncHandler(
-  async (req: RequestWithCourseID, res: Response, next: NextFunction) => {
-    await forumService.deleteForum(req.params.id);
     res.redirect(`/courses/${req.courseID}/forums`);
   }
 );

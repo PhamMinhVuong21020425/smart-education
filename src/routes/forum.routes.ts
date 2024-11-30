@@ -15,8 +15,6 @@ router.use(requireUser);
 
 router.post('/create', requireInstructor, forumController.forumCreatePost);
 
-router.post('/:id/delete', requireInstructor, forumController.forumDeletePost);
-
 router.post('/:id/update', requireInstructor, forumController.forumUpdatePost);
 
 router.post('/:id/comments/create', forumController.commentCreatePost);
