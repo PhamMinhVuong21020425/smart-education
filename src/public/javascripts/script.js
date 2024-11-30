@@ -311,5 +311,5 @@ function endCall() {
 
     // Optional: Redirect or show a call ended message
     console.log('Call ended and cleaned up');
-    window.location.href = '/'; // Optionally redirect to home or lobby
+    window.history.back();
 }
