@@ -6,6 +6,8 @@ const router = Router();
 // Redirect to a new room
 router.get('/', roomController.getNewRoom);
 
+router.post('/', roomController.postRoom);
+
 // Render a specific room
 router.get('/:room', roomController.getRoom);
 

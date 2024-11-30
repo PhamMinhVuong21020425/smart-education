@@ -45,6 +45,19 @@ block content
     // Course Description
     p.text-gray-700.ml-2.mb-6= course.description
 
+    // Meeting Room
+    h2#meetingroom.text-xl.font-bold.mb-4 #{ t('course.detail.meetingRoom') }
+
+    form#FormRoom.hidden(method='POST', action='/room')
+      input(name='courseId', value=course.id)
+
+    .rounded-lg.mb-6(class='hover:bg-blue-100')
+      button.flex.items-center.p-4(type='submit', form='FormRoom')
+        img.w-16.h-16(src='/images/meeting-room.png', alt='meeting-room')
+        .px-4
+          h3.font-semibold.text-left.mb-1.text-gray-900 #{ t('course.detail.meetingRoom') }
+          p.text-gray-600.text-sm This is a meeting room for students to discuss about the course.
+
     // Forum Course
     h2#studentlist.text-xl.font-bold.mb-4 #{ t('course.detail.forum') }
     a.block.py-4.px-4.rounded-lg.transition-all.mb-6(
