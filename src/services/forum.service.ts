@@ -71,12 +71,6 @@ export const updateForum = async (
   return forumRepository.save(forum);
 };
 
-export const deleteForum = async (forumId: string) => {
-  const forum = await getForumById(forumId);
-  if (!forum) return;
-  return forumRepository.remove(forum);
-};
-
 export const createComment = async (
   user: User,
   forumId: string,

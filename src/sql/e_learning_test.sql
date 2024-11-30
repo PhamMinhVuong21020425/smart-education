@@ -737,6 +737,59 @@ INSERT INTO `users` (`id`, `email`, `hash_password`, `username`, `role`, `name`,
 ('ad11ffa9-f4b0-4e8b-bbf0-e0f16c3854ce', 'zuanki@gmail.com', '$2b$10$dzOiO8hEwb/gjc4uPgaMWudDud43ta32ObURJP/WuWALjrk/CKYa2', 'hoanx', 'Instructor', 'Nguyen Xuan Hoa', '2003-07-31', 'https://res.cloudinary.com/deo4yrltl/image/upload/v1728872310/avatars/tixe0fsihuvvntrgsfny.png', '0123456789', 'AI Engineer', '', NULL, 'local', '792367', '2024-11-04 15:17:12', 1, 1),
 ('b6281679-02c0-4543-a7fb-210429105267', 'harry@gmail.com', '$2b$10$4vkwdob2tienYniKNc3AiOQbf7.evvwc7H9LH4StoNVAkGy3r5ulK', 'Tom', 'Student', 'My Tom', NULL, NULL, NULL, NULL, '', NULL, 'local', NULL, NULL, NULL, 1);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `forums`
+--
+
+CREATE TABLE `forums` (
+  `id` varchar(36) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `content` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `hidden` tinyint(4) NOT NULL,
+  `course_id` varchar(36) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `forums`
+--
+
+INSERT INTO `forums` (`id`, `title`, `content`, `created_at`, `hidden`, `course_id`) VALUES
+('cb829160-569d-4f76-b65a-01ee373fc574', 'My forum', 'Notifications for students', '2024-11-29 01:54:34', 0, 'c7d1e4f1-223b-4cdd-9f0e-0123456789ab'),
+('ec75341a-b565-47f8-9c56-6215013a2735', 'New discussion', 'Đăng ký chấm điểm bài tập lớn', '2024-11-29 11:31:46', 0, 'c7d1e4f1-223b-4cdd-9f0e-0123456789ab');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `comments`
+--
+
+CREATE TABLE `comments` (
+  `id` varchar(36) NOT NULL,
+  `content` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `user_id` varchar(36) NOT NULL,
+  `forum_id` varchar(36) NOT NULL,
+  `parent_comment_id` varchar(36) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `comments`
+--
+
+INSERT INTO `comments` (`id`, `content`, `created_at`, `user_id`, `forum_id`, `parent_comment_id`) VALUES
+('04d01783-8462-4e27-9cc0-b57a8f10d47c', 'Pham Minh Vuong', '2024-11-29 16:52:14', '8f2e6682-dc87-484f-929b-abac2e193963', 'cb829160-569d-4f76-b65a-01ee373fc574', 'e7336e09-90d5-4091-88ad-8befb7192f14'),
+('56f6db80-e25c-4975-a751-f434f8446415', 'Reply comment', '2024-11-29 16:11:59', '123878ff-cd3d-4c94-aee3-cab0e0f6b27e', 'cb829160-569d-4f76-b65a-01ee373fc574', '9a4f9203-7618-438d-9d89-152073b76bad'),
+('5e650f71-1013-4e71-8c65-acdbf1fe8d6b', 'vuongpm@gmail.com', '2024-11-29 19:28:13', '8f2e6682-dc87-484f-929b-abac2e193963', 'cb829160-569d-4f76-b65a-01ee373fc574', 'e7336e09-90d5-4091-88ad-8befb7192f14'),
+('84b00810-b7f7-4a98-9b7c-3336cccbaedb', 'Notification comment', '2024-11-29 17:32:44', '8f2e6682-dc87-484f-929b-abac2e193963', 'cb829160-569d-4f76-b65a-01ee373fc574', NULL),
+('9a4f9203-7618-438d-9d89-152073b76bad', 'My comment', '2024-11-29 12:54:15', '123878ff-cd3d-4c94-aee3-cab0e0f6b27e', 'cb829160-569d-4f76-b65a-01ee373fc574', NULL),
+('d491a73a-cced-4a6c-bb31-cb346eaf3816', 'Oke good', '2024-11-29 16:49:11', '123878ff-cd3d-4c94-aee3-cab0e0f6b27e', 'cb829160-569d-4f76-b65a-01ee373fc574', 'e7336e09-90d5-4091-88ad-8befb7192f14'),
+('e7336e09-90d5-4091-88ad-8befb7192f14', 'New comment', '2024-11-29 16:03:47', '123878ff-cd3d-4c94-aee3-cab0e0f6b27e', 'cb829160-569d-4f76-b65a-01ee373fc574', NULL);
+
+-- --------------------------------------------------------
+
 --
 -- Indexes for dumped tables
 --
@@ -839,6 +892,22 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `IDX_fe0bb3f6520ee0469504521e71` (`username`);
 
 --
+-- Indexes for table `forums`
+--
+ALTER TABLE `forums`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_a5d077d153111a52670f747cf4f` (`course_id`);
+
+--
+-- Indexes for table `comments`
+--
+ALTER TABLE `comments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_4309ad990ed370dcf2f94e7df0a` (`forum_id`),
+  ADD KEY `FK_4c675567d2a58f0b07cef09c13d` (`user_id`),
+  ADD KEY `FK_93ce08bdbea73c0c7ee673ec35a` (`parent_comment_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -914,6 +983,20 @@ ALTER TABLE `student_lesson`
   ADD CONSTRAINT `FK_1b1e669a97eabf06df2012766b9` FOREIGN KEY (`lesson_id`) REFERENCES `lessons` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `FK_ee05e947a4876f2cb6f20e5ad37` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
+
+--
+-- Constraints for table `forums`
+--
+ALTER TABLE `forums`
+  ADD CONSTRAINT `FK_a5d077d153111a52670f747cf4f` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `comments`
+--
+ALTER TABLE `comments`
+  ADD CONSTRAINT `FK_4309ad990ed370dcf2f94e7df0a` FOREIGN KEY (`forum_id`) REFERENCES `forums` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_4c675567d2a58f0b07cef09c13d` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_93ce08bdbea73c0c7ee673ec35a` FOREIGN KEY (`parent_comment_id`) REFERENCES `comments` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
