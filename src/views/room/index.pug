@@ -22,14 +22,16 @@ html(lang='en')
     script(defer, src='/javascripts/script.js')
   body
     .meeting-container.flex.-m-10.-my-5.h-screen
-      .main-container.flex-grow.flex.flex-col
+      .main-container.flex-grow.flex.flex-col.h-screen.overflow-y-auto
         .main-screen.flex-grow.bg-black.flex.justify-center.items-center.text-white.relative
-          video#main-video.max-w-full.max-h-full.object-contain
+          video#main-video.max-h-fit.max-w-4xl.object-contain
         .call-controls.flex.justify-center.gap-5.p-3.bg-black
           button#muteButton.control-button(onclick='toggleMute()')
             i.fas.fa-microphone
           button#cameraButton.control-button(onclick='toggleCamera()')
             i.fas.fa-video
+          button#flipButton.control-button(onclick='toggleFlip()')
+            i.fas.fa-sync
           button#screenShareButton.control-button(
             onclick='toggleScreenShare()'
           )

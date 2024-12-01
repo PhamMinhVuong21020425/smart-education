@@ -1,13 +1,7 @@
 const socket = io('/')
 const videoGrid = document.getElementById('video-grid')
 
-const myPeer = new Peer({
-    config: {
-        'iceServers': [
-            { url: 'stun:stun.l.google.com:19302' }
-        ]
-    }
-})
+const myPeer = new Peer()
 const myVideo = document.createElement('video')
 myVideo.muted = true
 
@@ -36,6 +30,7 @@ navigator.mediaDevices.getUserMedia({
     })
 
     socket.on('user-disconnected', (userId) => {
+        addMainVideoStream(myVideo, stream) // Add our video stream to main screen
         console.log('User disconnected:', userId);
         removeVideo(userId);
     });
@@ -74,25 +69,27 @@ function addMainVideoStream(video, stream) {
     mainVideo.addEventListener('loadedmetadata', () => { // Play the video as it loads
         mainVideo.play()
     })
+    console.log('Adding main video');
 }
 
 function addVideoStream(video, stream, userId) {
     video.srcObject = stream
     video.id = userId;
-    // video.style.transform = 'scaleX(-1)' // Flip the video horizontally
     console.log('Adding video:', userId);
     video.addEventListener('loadedmetadata', () => { // Play the video as it loads
         video.play()
 
         video.addEventListener('click', () => {
             console.log('Video clicked');
-            console.log('Source object:', video.srcObject);
 
             const mainScreen = document.querySelector('.main-screen video');
             if (mainScreen) {
                 mainScreen.srcObject = video.srcObject;
             } else {
                 console.error('Main screen video not found');
+            }
+            if (mainScreen.classList.contains('my-screen-share')) {
+                mainScreen.classList.remove('my-screen-share');
             }
         })
     })
@@ -161,6 +158,15 @@ function toggleCamera() {
     console.log(videoTracks[0].enabled ? 'Camera enabled' : 'Camera disabled');
 }
 
+function toggleFlip() {
+    const mainVideo = document.getElementById('main-video');
+    if (mainVideo.style.transform === 'scaleX(-1)') {
+        mainVideo.style.transform = 'scaleX(1)';
+    } else {
+        mainVideo.style.transform = 'scaleX(-1)';
+    }
+}
+
 let screenStream = null; // Store screen stream globally
 
 function toggleScreenShare() {
@@ -217,6 +223,26 @@ function toggleScreenShare() {
                     localVideoElement.srcObject = combinedStream;
                 }
 
+                // Add screen share video element
+                const screenVideoElement = document.createElement('video');
+                screenVideoElement.srcObject = screenStream;
+                screenVideoElement.autoplay = true;
+                screenVideoElement.muted = true;
+                screenVideoElement.classList.add('screen-share-video');
+                screenVideoElement.addEventListener('click', () => {
+                    console.log('Video clicked');
+
+                    const mainScreen = document.querySelector('.main-screen video');
+                    if (mainScreen) {
+                        mainScreen.classList.add('my-screen-share');
+                        mainScreen.srcObject = screenVideoElement.srcObject;
+                    } else {
+                        console.error('Main screen video not found');
+                    }
+                })
+                videoGrid.append(screenVideoElement);
+
+
                 // Handle screen share ending
                 screenVideoTrack.onended = () => {
                     stopScreenShare();
@@ -248,6 +274,12 @@ function stopScreenShare() {
     // Reset screen stream
     screenStream = null;
 
+    // Remove screen share video element
+    const screenVideoElement = document.querySelector('.screen-share-video');
+    if (screenVideoElement) {
+        videoGrid.removeChild(screenVideoElement);
+    }
+
     // Update all peer connections
     Object.values(myPeer.connections).forEach(connections => {
         connections.forEach(connection => {
@@ -268,6 +300,12 @@ function stopScreenShare() {
     const localVideoElement = document.querySelector('#local-video');
     if (localVideoElement) {
         localVideoElement.srcObject = localStream;
+    }
+
+    // Change main stream back to local video if it was screen shared
+    const mainVideo = document.getElementById('main-video');
+    if (mainVideo && mainVideo.classList.contains('my-screen-share')) {
+        mainVideo.srcObject = localStream;
     }
 
     // Update UI
