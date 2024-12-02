@@ -14,7 +14,7 @@ navigator.mediaDevices.getUserMedia({
     audio: true
 }).then(stream => {
     localStream = stream; // Store the stream globally
-    addMainVideoStream(myVideo, stream) // Add our video stream to main screen
+    addMainVideoStream(myVideo, stream, myPeer.id) // Add our video stream to main screen
     addVideoStream(myVideo, stream, myPeer.id)
 
     myPeer.on('call', call => {
@@ -30,7 +30,10 @@ navigator.mediaDevices.getUserMedia({
     })
 
     socket.on('user-disconnected', (userId) => {
-        addMainVideoStream(myVideo, stream) // Add our video stream to main screen
+        const mainVideo = document.querySelector('.main-screen video');
+        if (mainVideo.id === userId) {
+            addMainVideoStream(myVideo, stream, myPeer.id) // Add our video stream to main screen
+        }
         console.log('User disconnected:', userId);
         removeVideo(userId);
     });
@@ -62,8 +65,9 @@ function removeVideo(userId) {
     console.log('Removed video:', userId);
     console.log(videoGrid);
 }
-function addMainVideoStream(video, stream) {
-    const mainVideo = document.getElementById('main-video');
+function addMainVideoStream(video, stream, userId) {
+    const mainVideo = document.querySelector('.main-screen video');
+    mainVideo.id = userId;
     mainVideo.srcObject = stream;
     mainVideo.muted = true;
     mainVideo.addEventListener('loadedmetadata', () => { // Play the video as it loads
@@ -83,6 +87,7 @@ function addVideoStream(video, stream, userId) {
             console.log('Video clicked');
 
             const mainScreen = document.querySelector('.main-screen video');
+            mainScreen.id = userId;
             if (mainScreen) {
                 mainScreen.srcObject = video.srcObject;
             } else {
@@ -159,11 +164,41 @@ function toggleCamera() {
 }
 
 function toggleFlip() {
-    const mainVideo = document.getElementById('main-video');
+    const mainVideo = document.querySelector('.main-screen video');
     if (mainVideo.style.transform === 'scaleX(-1)') {
         mainVideo.style.transform = 'scaleX(1)';
     } else {
         mainVideo.style.transform = 'scaleX(-1)';
+    }
+}
+
+function toggleControlButtons() {
+    const controlButtons = document.getElementsByClassName('call-controls')[0];
+    const toggleButton = document.getElementById('toggleControl');
+    const icon = toggleButton.querySelector('i');
+
+    controlButtons.classList.toggle('collapsed');
+    toggleButton.classList.toggle('collapsed');
+
+    if (controlButtons.classList.contains('collapsed')) {
+        icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+    } else {
+        icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+    }
+}
+
+function toggleSidebar() {
+    const videoGrid = document.getElementById('video-grid');
+    const toggleButton = document.getElementById('toggleSidebar');
+    const icon = toggleButton.querySelector('i');
+
+    videoGrid.classList.toggle('collapsed');
+    toggleButton.classList.toggle('collapsed');
+
+    if (videoGrid.classList.contains('collapsed')) {
+        icon.classList.replace('fa-chevron-left', 'fa-chevron-right');
+    } else {
+        icon.classList.replace('fa-chevron-right', 'fa-chevron-left');
     }
 }
 
@@ -303,7 +338,7 @@ function stopScreenShare() {
     }
 
     // Change main stream back to local video if it was screen shared
-    const mainVideo = document.getElementById('main-video');
+    const mainVideo = document.querySelector('.main-screen video');
     if (mainVideo && mainVideo.classList.contains('my-screen-share')) {
         mainVideo.srcObject = localStream;
     }
