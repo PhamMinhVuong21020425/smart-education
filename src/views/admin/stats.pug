@@ -2,11 +2,11 @@ extends index
 
 block content
   .container.mx-auto.p-8
-    h2.text-3xl.font-bold.mb-6.text-gray-900.text-center #{ t('statistics.title') }
+    h2.text-2xl.font-bold.mb-6.text-gray-900.text-center #{ t('statistics.title') }
 
     .flex.flex-wrap.gap-6
       // Card for Total Courses
-      a.bg-white.shadow-lg.rounded-lg.p-6.flex-1.text-decoration-none(
+      a.bg-white.border.rounded-lg.p-6.flex-1.text-decoration-none(
         href='/admin/list-courses'
       )
         h3.text-lg.font-semibold.text-gray-800.text-center #{ t('statistics.total_courses_title') }
@@ -15,7 +15,7 @@ block content
           p.text-sm.text-gray-500 #{ t('statistics.total_courses_description') }
 
       // Card for Total Instructors
-      a.bg-white.shadow-lg.rounded-lg.p-6.flex-1.text-decoration-none(
+      a.bg-white.border.rounded-lg.p-6.flex-1.text-decoration-none(
         href='/admin/list-instructors'
       )
         h3.text-lg.font-semibold.text-gray-800.text-center #{ t('statistics.total_instructors_title') }
@@ -24,7 +24,7 @@ block content
           p.text-sm.text-gray-500 #{ t('statistics.total_instructors_description') }
 
       // Card for Pending Instructors
-      a.bg-white.shadow-lg.rounded-lg.p-6.flex-1.text-decoration-none(
+      a.bg-white.border.rounded-lg.p-6.flex-1.text-decoration-none(
         href='/admin/pending-instructors'
       )
         h3.text-lg.font-semibold.text-gray-800.text-center #{ t('statistics.pending_instructors_title') }

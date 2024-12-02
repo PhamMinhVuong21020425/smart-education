@@ -88,6 +88,45 @@
 
 - Chuyển đổi ngôn ngữ giữa tiếng Anh và tiếng Việt.
 
+## Requirements
+
+```
+node: 20.18.0
+docker: 27.3.1
+```
+
+## How to run with docker compose
+
+**Step 1:** Clone this repository
+
+```bash
+   git clone https://github.com/PhamMinhVuong21020425/smart-education.git
+```
+
+**Step 2:** Create `.env` file in the root directory at the same level as `docker-compose.yml`. Copy the contents of the `.env.example` file into the `.env` file and fill in the values ​​for the environment variables.
+
+```
+# .env
+PORT=3000
+NODE_ENV=development
+
+... other environment variables ...
+```
+
+**Step 3:** Build and run application with docker compose
+
+```bash
+docker compose up -d --build
+```
+
+Now, the application is running on http://localhost
+
+**Step 4:** To stop application run the command:
+
+```bash
+docker compose down
+```
+
 ## Available Scripts
 
 ### `npm run dev:start`

@@ -66,6 +66,7 @@
     "deactivate": "Deactivate"
   },
   "course": {
+    "list_title": "Courses",
     "image_alt": "Course image"
   },
   "instructor": {

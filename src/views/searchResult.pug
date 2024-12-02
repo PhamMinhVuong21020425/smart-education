@@ -12,16 +12,16 @@ block content
 
     // Hiển thị danh sách khóa học nếu có
     if courses.length > 0
-      .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+      .max-w-6xl.mx-auto.bg-white.rounded-lg.p-6
         .flex.justify-between.items-center.mb-6
           h2.text-xl.font-bold #{ t('title.courses') }
         .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
           each course in courses
             a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-              class='hover:shadow-xl hover:scale-105',
+              class='hover:shadow-lg hover:scale-105',
               href=`/courses/${course.id}`
             )
-              .bg-gray-50.rounded-lg.overflow-hidden
+              .rounded-lg.overflow-hidden
                 .flex.justify-center.items-center.h-48
                   img.h-full(
                     src=course.image_url || '/images/course.png',
@@ -36,16 +36,16 @@ block content
     // Hiển thị danh sách giảng viên nếu có
     if instructors.length > 0
       .mb-6
-      .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.p-6
+      .max-w-6xl.mx-auto.bg-white.rounded-lg.p-6
         .flex.justify-between.items-center.mb-6
           h2.text-xl.font-bold #{ t('title.instructors') }
         .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
           each instructor in instructors
             a.block.rounded-lg.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-              class='hover:shadow-xl hover:scale-105',
+              class='hover:shadow-lg hover:scale-105',
               href=`/users/${instructor.id}`
             )
-              .bg-gray-50.rounded-lg.overflow-hidden
+              .rounded-lg.overflow-hidden
                 .flex.justify-center.items-center.h-48
                   img.h-full(
                     src=instructor.avatar_url || '/images/instructor.png',

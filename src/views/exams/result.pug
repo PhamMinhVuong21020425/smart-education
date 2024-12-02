@@ -5,7 +5,7 @@ block content
     // Back button
     a.inline-flex.items-center.text-blue-600.transition-colors(
       class='hover:text-blue-800',
-      href=`/courses/${courseID}/manage?gradePage=${currentGradePage}#grade`
+      href=(current_user.role === UserRole.STUDENT) ? `/courses/${courseID}/exam` : `/courses/${courseID}/manage?gradePage=${currentGradePage}#grade`
     )
       svg.w-5.h-5.mr-2(
         xmlns='http://www.w3.org/2000/svg',

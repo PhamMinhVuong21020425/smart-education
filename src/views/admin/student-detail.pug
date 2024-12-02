@@ -2,7 +2,7 @@ extends index
 
 block content
   body
-    .max-w-2xl.mx-auto.bg-white.shadow-md.rounded-lg.p-6
+    .max-w-2xl.mx-auto.bg-white.border.shadow-sm.rounded-lg.p-6
       .grid.grid-cols-2.gap-4
         .flex.flex-col.items-center.justify-center
           .flex.items-center.space-x-4
@@ -39,7 +39,7 @@ block content
                 | &nbsp;#{ student.phone || t('user.detail.not_available') }
 
     .mb-6
-    .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.px-10.py-8
+    .max-w-6xl.mx-auto.bg-white.rounded-lg.px-10.py-8
       h2.text-xl.font-bold.mb-4 #{ t('user.detail.specialization') }
       p.text-gray-600.text-justify= student.specialization || t('user.detail.not_available')
       .mb-6
@@ -51,7 +51,7 @@ block content
       .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
         each course in userCourses
           a.block.bg-white.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
-            class='hover:shadow-lg hover:scale-105',
+            class='hover:shadow-md hover:scale-105',
             href=`/courses/${course.id}`
           )
             .rounded-lg.overflow-hidden

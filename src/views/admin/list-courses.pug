@@ -1,8 +1,8 @@
 extends index
 
 block content
-  .max-w-6xl.mx-auto.bg-white.rounded-lg.shadow-md.px-10.py-8
-    h2.text-2xl.font-bold.mb-6 #{ t('sidebar.list_courses') }
+  .max-w-6xl.mx-auto.bg-white.rounded-lg.px-10.pb-8
+    h2.text-xl.font-bold.mb-6 #{ t('course.list_title') }
     .grid.gap-6(class='sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3')
       each course in courses
         a.block.bg-white.p-4.mt-4.transition-all.duration-300.ease-in-out.cursor-pointer(
