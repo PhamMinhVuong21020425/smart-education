@@ -1,3 +1,4 @@
+import fs from 'fs';
 import multer from 'multer';
 
 // Allowed file types
@@ -49,7 +50,12 @@ const fileFilter = (
 // Storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'src/public/uploads/'); // Storage directory
+    // Check and create uploads directory if it doesn't exist
+    const dir = 'src/public/uploads/';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    cb(null, dir); // Storage directory
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '$$' + file.originalname);

@@ -384,5 +384,10 @@ function endCall() {
 
     // Optional: Redirect or show a call ended message
     console.log('Call ended and cleaned up');
-    window.history.back();
+    if (window.history.length > 1) {
+      window.history.back();
+    }
+    else {
+      window.location.href = '/';
+    }
 }
