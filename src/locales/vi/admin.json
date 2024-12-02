@@ -66,6 +66,7 @@
     "deactivate": "Vô hiệu hóa"
   },
   "course": {
+    "list_title": "Khóa Học",
     "image_alt": "Hình ảnh khóa học"
   },
   "instructor": {
