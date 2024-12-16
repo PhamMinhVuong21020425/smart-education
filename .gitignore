@@ -131,3 +131,6 @@ dist
 .DS_Store
 uploads/
 .hintrc
+
+# UML Diagrams
+diagrams/

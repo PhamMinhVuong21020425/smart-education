@@ -10,9 +10,11 @@
 - Nguyễn Xuân Hòa - 21020072
 - Phạm Minh Vương - 21020425
 
-## Link báo cáo
+## Link báo cáo Thực hành phát triển phần mềm
 
-[Báo cáo thực hành phát triển phần mềm](https://docs.google.com/document/d/1tuQTjr2iv6Fv_T_O1JT2yrZwbaa1-ehMyewQhRRkIV4/edit?usp=sharing)
+[Link PDF](https://drive.google.com/file/d/1oQX-025xfRhUxlcYLVd1XI0l27WsWDcR/view?usp=sharing)
+
+[Link Google docs](https://docs.google.com/document/d/1tuQTjr2iv6Fv_T_O1JT2yrZwbaa1-ehMyewQhRRkIV4/edit?usp=sharing)
 
 ## Các chức năng chính
 
